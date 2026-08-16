@@ -24,11 +24,16 @@ available in About diagnostics.
 
 Input
 Keyboard gameplay bindings are stored as physical scan-code tokens, with old
-virtual-key INI entries migrated when loaded. Controller state is updated once
-per host frame and then read for both players. Each player remembers a preferred
-SDL GUID across launches. Analogue controls use a configurable deadzone and
-hysteresis. Keyboard, gamepad, or combined input can be selected per player.
-Impossible opposing directions are removed unless explicitly allowed.
+virtual-key INI entries migrated when loaded. Persistent key state is sampled
+inside every emulated SNES frame, including every catch-up frame. A short press
+of B, Y, Select, Start, A, X, L or R is latched until one complete core frame
+consumes it; directions remain held-state only so steering cannot stick.
+Controller state is updated at the host service boundary and sampled for both
+players on each core frame. Each player remembers a preferred SDL GUID across
+launches. Analogue controls use a configurable deadzone and hysteresis.
+Keyboard, gamepad, or combined input can be selected per player. Impossible
+opposing directions are removed unless explicitly allowed. All held and latched
+state is cleared on pause, focus loss, ROM replacement and core failure.
 
 Timing and diagnostics
 The high-resolution waitable timer remains the primary NTSC clock. A short host
