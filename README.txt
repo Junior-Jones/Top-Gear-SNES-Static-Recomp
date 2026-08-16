@@ -1,5 +1,5 @@
 Top Gear (SNES) Static Recompilation - Windows Source
-Version 28 / Launcher 1.0.0
+Release 1.0.0
 
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.

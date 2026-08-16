@@ -2,7 +2,7 @@ TOP GEAR (SNES) STATIC CORE - CUMULATIVE FINDINGS
 =================================================
 
 Updated: 2026-08-09
-Source: Version 27 Windows source, exact USA ROM
+Source: Release 1.0.0 Windows source, exact USA ROM
 ROM SHA-256: ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788
 
 PURPOSE AND UPDATE RULE

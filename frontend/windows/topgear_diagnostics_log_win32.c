@@ -253,7 +253,7 @@ int topgear_diagnostics_write(
                                      ARAM_BYTES, &aram_hash);
         have_frame_hash = hash_frame(game, &frame_hash);
         fprintf(file,
-            "Version=%s\r\nFrame=%u\r\nV27Frame=%llu\r\nInstructions=%llu\r\n"
+            "Version=%s\r\nFrame=%u\r\nCoreFrame=%llu\r\nInstructions=%llu\r\n"
             "Failed=%d\r\nLastError=%s\r\nFrontierReached=%u\r\n"
             "FrontierAddress=%s\r\nFrontierReason=%s\r\n"
             "FrontierInstruction=%llu\r\nCPU=%02X:%04X A=%04X X=%04X Y=%04X "

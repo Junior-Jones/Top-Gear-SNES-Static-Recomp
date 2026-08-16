@@ -76,7 +76,7 @@ int tg_fail_frontier(TopGearRecomp *i,const char *reason,const char *address){
     return 0;
 }
 
-const char *topgear_recomp_version_string(void){return "Version 27";}
+const char *topgear_recomp_version_string(void){return TOPGEAR_RECOMP_VERSION_STRING;}
 const char *topgear_recomp_video_standard(void){return "NTSC";}
 unsigned topgear_recomp_generated_context_count(void){return 266u;}
 unsigned topgear_recomp_generated_smp_context_count(void){return 1148u;}

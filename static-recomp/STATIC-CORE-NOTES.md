@@ -1,4 +1,4 @@
-# Top Gear Version 27 static-core field guide
+# Top Gear static-core field guide (release 1.0.0)
 
 This note separates three kinds of knowledge so future work does not turn a screen label or a player guide into an invented variable name:
 
