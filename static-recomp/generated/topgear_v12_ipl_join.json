@@ -1,0 +1,13 @@
+{
+  "emulator_authority": false,
+  "format": "topgear-v12-ipl-join-manifest-v1",
+  "generated_c_sha256": "84e0d6e3a6169d765079d6bbf8b311f42826bad6e23d059bfa461e0c92e0a51a",
+  "generated_h_sha256": "f5c6158d4339ed53e8e5cab26ff407d73b1a8154712ef7ee100a70f9153355ca",
+  "generator_sha256": "bf5af081aeb0d56b421347ca711929ca7b0a8298c7248419b80aa171e6404bf3",
+  "markdown_sha256": "63b43004cb73a8b2be150ab5af3a724a674f7f799b70456257107795b099a913",
+  "phase_csv_sha256": "d2d64c5bf18eb36073214c7e1b63c19c1d3e332cb16d4a2b6f69d2ca83fa22f6",
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "summary_json_sha256": "81ba5dfcf0f4a69176e219db3f8804ad983bfc42cfc537f6045798f951568890",
+  "timeline_sha256": "09254f85fda8de8a02ff9d341ea60ad4b380f2a4d48e99863848895057b6d933",
+  "version": 12
+}

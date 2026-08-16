@@ -1,0 +1,19 @@
+#ifndef TOPGEAR_V18_A468_TO_HDMA_H
+#define TOPGEAR_V18_A468_TO_HDMA_H
+#include <stdint.h>
+struct TopGearRecomp;
+#define TOPGEAR_V18_A468_HDMA_ROUTE_INSTRUCTION_COUNT 632537u
+#define TOPGEAR_V18_A468_HDMA_BOUNDARY_COUNT 619u
+#define TOPGEAR_V18_WAIT_A251 1u
+#define TOPGEAR_V18_WAIT_90 2u
+int tg_v18_generated_a468_hdma_semantic_step(struct TopGearRecomp *instance);
+int tg_v18_generated_a468_hdma_timing_step(struct TopGearRecomp *instance,uint32_t route_index);
+unsigned tg_v18_generated_a468_hdma_context_count(void);
+uint64_t tg_v18_generated_a468_hdma_processor_cycle_count(void);
+uint64_t tg_v18_generated_a468_hdma_active_master_clock_count(void);
+uint32_t tg_v18_generated_a468_hdma_boundary_route(unsigned index);
+uint8_t tg_v18_generated_a468_hdma_boundary_kind(unsigned index);
+uint8_t tg_v18_generated_a468_hdma_boundary_ticks(unsigned index);
+uint16_t tg_v18_generated_a468_hdma_boundary_return_pc(unsigned index);
+uint16_t tg_v18_generated_a468_hdma_boundary_stack(unsigned index);
+#endif

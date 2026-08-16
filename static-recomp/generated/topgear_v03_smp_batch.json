@@ -1,0 +1,241 @@
+{
+  "authority": {
+    "documented_spc700_semantics": true,
+    "emulator_oracle": false,
+    "exact_rom_derived_aram": true,
+    "oracle_endpoint_state": false
+  },
+  "contexts": [
+    {
+      "bytes": "20",
+      "instruction": "CLRP",
+      "opcode": "20",
+      "pc": "0800",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "cdcf",
+      "instruction": "MOV X,#imm",
+      "opcode": "CD",
+      "pc": "0801",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "bd",
+      "instruction": "MOV SP,X",
+      "opcode": "BD",
+      "pc": "0803",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "e800",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "0804",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "5d",
+      "instruction": "MOV X,A",
+      "opcode": "5D",
+      "pc": "0806",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "af",
+      "instruction": "MOV (X)+,A",
+      "opcode": "AF",
+      "pc": "0807",
+      "reference_visits": 240,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "c8f0",
+      "instruction": "CMP X,#imm",
+      "opcode": "C8",
+      "pc": "0808",
+      "reference_visits": 240,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d0fb",
+      "instruction": "BNE rel",
+      "opcode": "D0",
+      "pc": "080A",
+      "reference_visits": 240,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "5d",
+      "instruction": "MOV X,A",
+      "opcode": "5D",
+      "pc": "080C",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50001",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "080D",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50002",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0810",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50003",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0813",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50004",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0816",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50005",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0819",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50006",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "081C",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d50007",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "081F",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "3d",
+      "instruction": "INC X",
+      "opcode": "3D",
+      "pc": "0822",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "d0e8",
+      "instruction": "BNE rel",
+      "opcode": "D0",
+      "pc": "0823",
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "bc",
+      "instruction": "INC A",
+      "opcode": "BC",
+      "pc": "0825",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "3fa50d",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "0826",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "c438",
+      "instruction": "MOV dp,A",
+      "opcode": "C4",
+      "pc": "0DA5",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "8d7d",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0DA7",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "ccf200",
+      "instruction": "MOV abs,Y",
+      "opcode": "CC",
+      "pc": "0DA9",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "bytes": "e5f300",
+      "instruction": "MOV A,abs",
+      "opcode": "E5",
+      "pc": "0DAC",
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    }
+  ],
+  "endpoint_cpu": {
+    "a": 1,
+    "instructions": 3035,
+    "pc": 3500,
+    "psw": 1,
+    "sp": 205,
+    "x": 0,
+    "y": 125
+  },
+  "endpoint_smp_to_cpu": [
+    205,
+    187,
+    0,
+    0
+  ],
+  "first_context": "0800",
+  "first_fail_closed_frontier": "0DAC",
+  "format": "topgear-generated-smp-bootstrap-manifest-v3",
+  "frontier_instruction": "MOV A,$00F3 (S-DSP DATA read)",
+  "generated_c_sha256": "92b0fb56075949881709f3c73712a6d2f0545e71c13e066c2571e4104ef6ea61",
+  "generated_context_count": 24,
+  "generator_sha256": "df8e79708bd1bd83a02387c3e90ea60592b5fdb5cd6c9a636cde509e9f8b37ce",
+  "post_ipl_smp_to_cpu": [
+    205,
+    187,
+    0,
+    0
+  ],
+  "reference_executor_sha256": "217bb87dffe78f83f41c1af946d2ce400c21368da4e3732fdb5e8368068bf077",
+  "reference_instruction_count": 3035,
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "upload": {
+    "address": "0800",
+    "frontier_aram_sha256": "b797b87d1b3ee14b68240639bcff7f42e09756b811c66e71ba2c600fbaf65f3e",
+    "initial_aram_sha256": "1132b1b4ea43181ff98134f8dad4ad263924f7b12f12607a658ee3e098d893ce",
+    "length": 12489,
+    "sha256": "fb50296cb92b5d7fc0f108f2aca7df36b9257cb880b4c19fed9a653560c88ba8"
+  },
+  "version": "03"
+}

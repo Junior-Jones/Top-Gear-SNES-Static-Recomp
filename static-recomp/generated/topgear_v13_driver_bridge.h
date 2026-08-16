@@ -1,0 +1,5 @@
+#ifndef TOPGEAR_V13_DRIVER_BRIDGE_H
+#define TOPGEAR_V13_DRIVER_BRIDGE_H
+struct TopGearV13DriverBridgeInfo;
+void tg_v13_fill_driver_bridge_info(struct TopGearV13DriverBridgeInfo *info);
+#endif

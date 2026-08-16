@@ -1,0 +1,7 @@
+#ifndef TOPGEAR_V13_SECOND_BBAA_PRODUCER_H
+#define TOPGEAR_V13_SECOND_BBAA_PRODUCER_H
+
+struct TopGearV13SecondBbaaProducerInfo;
+void tg_v13_fill_second_bbaa_producer_info(struct TopGearV13SecondBbaaProducerInfo *info);
+
+#endif

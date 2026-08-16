@@ -1,0 +1,37 @@
+{
+  "authority": {
+    "emulator_endpoint": false,
+    "exact_rom": true,
+    "pinned_wdc_cycle_shapes": true,
+    "runtime_opcode_decoder": false,
+    "version15_reached_handler_state": true
+  },
+  "context_active_master_clocks_sum_once": 1516,
+  "context_processor_cycles_sum_once": 205,
+  "contexts_csv_sha256": "78c532d88990d164fb25ee1e22c57176177a319da53ec6dae670060fa9e3d38c",
+  "dynamic_context": "0F:8038/803B/803D auto-joy busy loop",
+  "entry": "0F:8000",
+  "format": "topgear-v16-first-nmi-generated-v1",
+  "generated_c_sha256": "4bc68254599e354235ffb2ac43377b6527dc1fee85779447b7ae6f3b5d49cd5e",
+  "generated_context_count": 53,
+  "generated_h_sha256": "4a0d40946b371c7ab1de026aabf0e5f5950fa208b89f0831f85a904a3521ee44",
+  "interrupt_context_contract": {
+    "0F:8000-0F:800A": "DBR and D inherited from interrupted code",
+    "0F:800B-0F:800C": "DBR inherited; D established as 0000",
+    "0F:800D-0F:8066": "handler-owned DBR=0F and D=0000",
+    "0F:8067": "DBR restored; D still 0000",
+    "0F:8068-0F:806B": "DBR and D restored from interrupted code"
+  },
+  "natural_return": "0F:8CB9",
+  "natural_skipped_contexts": [
+    "0F:8014",
+    "0F:8016",
+    "0F:8019",
+    "0F:801C",
+    "0F:8026",
+    "0F:8029",
+    "0F:802B"
+  ],
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "version": 16
+}

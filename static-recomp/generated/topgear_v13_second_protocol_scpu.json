@@ -1,0 +1,16 @@
+{
+  "apu_event_context_count": 37,
+  "authority": {
+    "documented_w65c816_semantics": true,
+    "emulator_oracle": false,
+    "exact_rom": true,
+    "hybrid_trace": false
+  },
+  "context_count": 146,
+  "entry": "07:802F",
+  "exit": "RTL at 07:8054 to 00:8068",
+  "format": "topgear-v13-second-protocol-scpu-v1",
+  "generated_c_sha256": "df353ed8b0964d837fd85fcb37d492cbf4982b2ad0bf0d32e7a2ae59f73cd4b7",
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "timing_variant_count": 162
+}

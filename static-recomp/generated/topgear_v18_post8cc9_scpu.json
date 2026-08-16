@@ -1,0 +1,16 @@
+{
+  "active_master_clock_count": 21702444,
+  "checkpoint_sha256": "acb3cf3ee5adde2518c9744229967314b4f490da6436cadac7f5c0bfde838a84",
+  "context_count": 276,
+  "contexts_sha256": "0d2bf6fa10f15973c85a5bc513d70168d53f3b158d24287cd3ea5eb26e3cc02f",
+  "emulator_authority": false,
+  "format": "topgear-v18-post8cc9-generated-scpu-v1",
+  "generated_c_sha256": "c4b3c38dc621d50f3351b950ad7c3c22b80b7a5399f304085d07dfae177c7854",
+  "generated_h_sha256": "f7c03e9e77024b581582ff109f7a42dfa9e9f53d9daa20006cefd35ef5f1289a",
+  "generator_sha256": "3b2ad2dc7d79c47839c94fa3140510bb90c248d5ecc175f2caadece9706ab26c",
+  "instruction_count": 827109,
+  "processor_cycle_count": 2882871,
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "runtime_opcode_decoder": false,
+  "version": "18"
+}

@@ -1,0 +1,14 @@
+#ifndef TOPGEAR_V11_HARDWARE_TIMELINE_H
+#define TOPGEAR_V11_HARDWARE_TIMELINE_H
+
+#include "topgear_static_recomp.h"
+
+extern const uint32_t tg_v11_hw_instruction_index[TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT];
+extern const uint32_t tg_v11_hw_address[TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT];
+extern const uint64_t tg_v11_hw_master_clock_start[TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT];
+extern const uint64_t tg_v11_hw_processor_cycle_start[TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT];
+extern const uint8_t tg_v11_hw_cycle_master_clocks[TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT];
+extern const uint8_t tg_v11_hw_event_type[TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT];
+void tg_v11_fill_hardware_timeline_info(TopGearV11HardwareTimelineInfo *info);
+
+#endif

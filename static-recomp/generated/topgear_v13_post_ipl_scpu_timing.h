@@ -1,0 +1,9 @@
+#ifndef TOPGEAR_V13_POST_IPL_SCPU_TIMING_H
+#define TOPGEAR_V13_POST_IPL_SCPU_TIMING_H
+#include "topgear_v13_interleaved_ipl.h"
+#define TOPGEAR_RECOMP_V13_POST_IPL_TIMING_VARIANT_COUNT 33u
+struct TopGearV13PostIplScpuTimingInfo;
+extern const TgV13ScpuTimingVariant tg_v13_post_ipl_scpu_timing_variants[TOPGEAR_RECOMP_V13_POST_IPL_TIMING_VARIANT_COUNT];
+const TgV13ScpuTimingVariant *tg_v13_find_post_ipl_scpu_timing(uint32_t key,uint32_t next_key,int require_next);
+void tg_v13_fill_post_ipl_scpu_timing_info(struct TopGearV13PostIplScpuTimingInfo *info);
+#endif

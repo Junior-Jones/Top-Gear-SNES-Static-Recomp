@@ -1,0 +1,2943 @@
+{
+  "authority": {
+    "documented_sdsp_register_memory": true,
+    "documented_smp_mmio": true,
+    "documented_spc700_semantics": true,
+    "emulator_oracle": false,
+    "exact_rom_derived_aram": true,
+    "oracle_endpoint_state": false
+  },
+  "contexts": [
+    {
+      "base_cycles": 2,
+      "bytes": "20",
+      "instruction": "CLRP",
+      "opcode": "20",
+      "pc": "0800",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "cdcf",
+      "instruction": "MOV X,#imm",
+      "opcode": "CD",
+      "pc": "0801",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "bd",
+      "instruction": "MOV SP,X",
+      "opcode": "BD",
+      "pc": "0803",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e800",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "0804",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "5d",
+      "instruction": "MOV X,A",
+      "opcode": "5D",
+      "pc": "0806",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "af",
+      "instruction": "MOV (X)+,A",
+      "opcode": "AF",
+      "pc": "0807",
+      "reference_cycle_total": 960,
+      "reference_visits": 240,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "c8f0",
+      "instruction": "CMP X,#imm",
+      "opcode": "C8",
+      "pc": "0808",
+      "reference_cycle_total": 480,
+      "reference_visits": 240,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "d0fb",
+      "instruction": "BNE rel",
+      "opcode": "D0",
+      "pc": "080A",
+      "reference_cycle_total": 958,
+      "reference_visits": 240,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "5d",
+      "instruction": "MOV X,A",
+      "opcode": "5D",
+      "pc": "080C",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50001",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "080D",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50002",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0810",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50003",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0813",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50004",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0816",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50005",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "0819",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50006",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "081C",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "d50007",
+      "instruction": "MOV abs+X,A",
+      "opcode": "D5",
+      "pc": "081F",
+      "reference_cycle_total": 1536,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "3d",
+      "instruction": "INC X",
+      "opcode": "3D",
+      "pc": "0822",
+      "reference_cycle_total": 512,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "d0e8",
+      "instruction": "BNE rel",
+      "opcode": "D0",
+      "pc": "0823",
+      "reference_cycle_total": 1022,
+      "reference_visits": 256,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "bc",
+      "instruction": "INC A",
+      "opcode": "BC",
+      "pc": "0825",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 8,
+      "bytes": "3fa50d",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "0826",
+      "reference_cycle_total": 8,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "a233",
+      "instruction": "SET1 dp.5",
+      "opcode": "A2",
+      "pc": "0829",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e860",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "082B",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d0c",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "082D",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 8,
+      "bytes": "3fe509",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "082F",
+      "reference_cycle_total": 8,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d1c",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0832",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 8,
+      "bytes": "3fe509",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "0834",
+      "reference_cycle_total": 8,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e88a",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "0837",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d5d",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0839",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 8,
+      "bytes": "3fe509",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "083B",
+      "reference_cycle_total": 8,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e890",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "083E",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f100",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "0840",
+      "reference_cycle_total": 5,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e810",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "0843",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5fa00",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "0845",
+      "reference_cycle_total": 5,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "c43d",
+      "instruction": "MOV dp,A",
+      "opcode": "C4",
+      "pc": "0848",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e881",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "084A",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f100",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "084C",
+      "reference_cycle_total": 5,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d0a",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "084F",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "ad05",
+      "instruction": "CMP Y,#imm",
+      "opcode": "AD",
+      "pc": "0851",
+      "reference_cycle_total": 20,
+      "reference_visits": 10,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "f007",
+      "instruction": "BEQ rel",
+      "opcode": "F0",
+      "pc": "0853",
+      "reference_cycle_total": 22,
+      "reference_visits": 10,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "b008",
+      "instruction": "BCS rel",
+      "opcode": "B0",
+      "pc": "0855",
+      "reference_cycle_total": 28,
+      "reference_visits": 9,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 6,
+      "bytes": "693837",
+      "instruction": "CMP dp,dp",
+      "opcode": "69",
+      "pc": "0857",
+      "reference_cycle_total": 24,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "d011",
+      "instruction": "BNE rel",
+      "opcode": "D0",
+      "pc": "085A",
+      "reference_cycle_total": 16,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "e3370e",
+      "instruction": "BBS dp.7,rel",
+      "opcode": "E3",
+      "pc": "085C",
+      "reference_cycle_total": 7,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "f6c408",
+      "instruction": "MOV A,abs+Y",
+      "opcode": "F6",
+      "pc": "085F",
+      "reference_cycle_total": 25,
+      "reference_visits": 5,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f200",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "0862",
+      "reference_cycle_total": 25,
+      "reference_visits": 5,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "f6ce08",
+      "instruction": "MOV A,abs+Y",
+      "opcode": "F6",
+      "pc": "0865",
+      "reference_cycle_total": 25,
+      "reference_visits": 5,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "5d",
+      "instruction": "MOV X,A",
+      "opcode": "5D",
+      "pc": "0868",
+      "reference_cycle_total": 10,
+      "reference_visits": 5,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "e6",
+      "instruction": "MOV A,(X)",
+      "opcode": "E6",
+      "pc": "0869",
+      "reference_cycle_total": 15,
+      "reference_visits": 5,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f300",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "086A",
+      "reference_cycle_total": 25,
+      "reference_visits": 5,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "fee2",
+      "instruction": "DBNZ Y,rel",
+      "opcode": "FE",
+      "pc": "086D",
+      "reference_cycle_total": 58,
+      "reference_visits": 10,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "cb2f",
+      "instruction": "MOV dp,Y",
+      "opcode": "CB",
+      "pc": "086F",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "cb30",
+      "instruction": "MOV dp,Y",
+      "opcode": "CB",
+      "pc": "0871",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "e418",
+      "instruction": "MOV A,dp",
+      "opcode": "E4",
+      "pc": "0873",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "4419",
+      "instruction": "EOR A,dp",
+      "opcode": "44",
+      "pc": "0875",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "5c",
+      "instruction": "LSR A",
+      "opcode": "5C",
+      "pc": "0877",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "5c",
+      "instruction": "LSR A",
+      "opcode": "5C",
+      "pc": "0878",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "ed",
+      "instruction": "NOTC",
+      "opcode": "ED",
+      "pc": "0879",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "6b18",
+      "instruction": "ROR dp",
+      "opcode": "6B",
+      "pc": "087A",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "6b19",
+      "instruction": "ROR dp",
+      "opcode": "6B",
+      "pc": "087C",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "ecfd00",
+      "instruction": "MOV Y,abs",
+      "opcode": "EC",
+      "pc": "087E",
+      "reference_cycle_total": 792,
+      "reference_visits": 199,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "f0fb",
+      "instruction": "BEQ rel",
+      "opcode": "F0",
+      "pc": "0881",
+      "reference_cycle_total": 792,
+      "reference_visits": 198,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "ccf200",
+      "instruction": "MOV abs,Y",
+      "opcode": "CC",
+      "pc": "09E5",
+      "reference_cycle_total": 30,
+      "reference_visits": 6,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f300",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "09E8",
+      "reference_cycle_total": 30,
+      "reference_visits": 6,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "6f",
+      "instruction": "RET",
+      "opcode": "6F",
+      "pc": "09EB",
+      "reference_cycle_total": 30,
+      "reference_visits": 6,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "c438",
+      "instruction": "MOV dp,A",
+      "opcode": "C4",
+      "pc": "0DA5",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d7d",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0DA7",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "ccf200",
+      "instruction": "MOV abs,Y",
+      "opcode": "CC",
+      "pc": "0DA9",
+      "reference_cycle_total": 5,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "e5f300",
+      "instruction": "MOV A,abs",
+      "opcode": "E5",
+      "pc": "0DAC",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "6438",
+      "instruction": "CMP A,dp",
+      "opcode": "64",
+      "pc": "0DAF",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "f02b",
+      "instruction": "BEQ rel",
+      "opcode": "F0",
+      "pc": "0DB1",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "280f",
+      "instruction": "AND A,#imm",
+      "opcode": "28",
+      "pc": "0DB3",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "48ff",
+      "instruction": "EOR A,#imm",
+      "opcode": "48",
+      "pc": "0DB5",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "f33703",
+      "instruction": "BBC dp.7,rel",
+      "opcode": "F3",
+      "pc": "0DB7",
+      "reference_cycle_total": 7,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "c437",
+      "instruction": "MOV dp,A",
+      "opcode": "C4",
+      "pc": "0DBD",
+      "reference_cycle_total": 4,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d04",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0DBF",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "f6c408",
+      "instruction": "MOV A,abs+Y",
+      "opcode": "F6",
+      "pc": "0DC1",
+      "reference_cycle_total": 20,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f200",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "0DC4",
+      "reference_cycle_total": 20,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e800",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "0DC7",
+      "reference_cycle_total": 8,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 5,
+      "bytes": "c5f300",
+      "instruction": "MOV abs,A",
+      "opcode": "C5",
+      "pc": "0DC9",
+      "reference_cycle_total": 20,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 4,
+      "bytes": "fef3",
+      "instruction": "DBNZ Y,rel",
+      "opcode": "FE",
+      "pc": "0DCC",
+      "reference_cycle_total": 22,
+      "reference_visits": 4,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "e433",
+      "instruction": "MOV A,dp",
+      "opcode": "E4",
+      "pc": "0DCE",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "0820",
+      "instruction": "OR A,#imm",
+      "opcode": "08",
+      "pc": "0DD0",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d6c",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0DD2",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 8,
+      "bytes": "3fe509",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "0DD4",
+      "reference_cycle_total": 8,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "e438",
+      "instruction": "MOV A,dp",
+      "opcode": "E4",
+      "pc": "0DD7",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d7d",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0DD9",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 8,
+      "bytes": "3fe509",
+      "instruction": "CALL abs",
+      "opcode": "3F",
+      "pc": "0DDB",
+      "reference_cycle_total": 8,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "1c",
+      "instruction": "ASL A",
+      "opcode": "1C",
+      "pc": "0DDE",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "1c",
+      "instruction": "ASL A",
+      "opcode": "1C",
+      "pc": "0DDF",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "1c",
+      "instruction": "ASL A",
+      "opcode": "1C",
+      "pc": "0DE0",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "48ff",
+      "instruction": "EOR A,#imm",
+      "opcode": "48",
+      "pc": "0DE1",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "80",
+      "instruction": "SETC",
+      "opcode": "80",
+      "pc": "0DE3",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "e839",
+      "instruction": "MOV A,#imm",
+      "opcode": "E8",
+      "pc": "0DE4",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 2,
+      "bytes": "8d6d",
+      "instruction": "MOV Y,#imm",
+      "opcode": "8D",
+      "pc": "0DE6",
+      "reference_cycle_total": 2,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    },
+    {
+      "base_cycles": 3,
+      "bytes": "5fe509",
+      "instruction": "JMP abs",
+      "opcode": "5F",
+      "pc": "0DE8",
+      "reference_cycle_total": 3,
+      "reference_visits": 1,
+      "source": "exact ROM-derived initial ARAM upload"
+    }
+  ],
+  "control_writes": [
+    {
+      "address": "00F1",
+      "instruction": 3106,
+      "pc": "0840",
+      "value": 144
+    },
+    {
+      "address": "00F1",
+      "instruction": 3111,
+      "pc": "084C",
+      "value": 129
+    }
+  ],
+  "cpu_to_smp": [
+    0,
+    0,
+    0,
+    8
+  ],
+  "dsp_reads": [
+    {
+      "dsp_register": 125,
+      "instruction": 3035,
+      "pc": "0DAC",
+      "value": 0
+    }
+  ],
+  "dsp_registers_sha256": "d0ea0d7eeea846e3991bfc637ae4c36cb3f400260c50829a6cfd507a58765ef3",
+  "dsp_writes": [
+    {
+      "address": "00F3",
+      "dsp_register": 77,
+      "instruction": 3046,
+      "pc": "0DC9",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 13,
+      "instruction": 3051,
+      "pc": "0DC9",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 60,
+      "instruction": 3056,
+      "pc": "0DC9",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 44,
+      "instruction": 3061,
+      "pc": "0DC9",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 108,
+      "instruction": 3068,
+      "pc": "09E8",
+      "value": 32,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 125,
+      "instruction": 3074,
+      "pc": "09E8",
+      "value": 1,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 109,
+      "instruction": 3085,
+      "pc": "09E8",
+      "value": 57,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 12,
+      "instruction": 3092,
+      "pc": "09E8",
+      "value": 96,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 28,
+      "instruction": 3097,
+      "pc": "09E8",
+      "value": 96,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 93,
+      "instruction": 3103,
+      "pc": "09E8",
+      "value": 138,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 92,
+      "instruction": 3121,
+      "pc": "086A",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 45,
+      "instruction": 3131,
+      "pc": "086A",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 61,
+      "instruction": 3141,
+      "pc": "086A",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 92,
+      "instruction": 3151,
+      "pc": "086A",
+      "value": 0,
+      "write_enabled": true
+    },
+    {
+      "address": "00F3",
+      "dsp_register": 76,
+      "instruction": 3161,
+      "pc": "086A",
+      "value": 0,
+      "write_enabled": true
+    }
+  ],
+  "endpoint_cpu": {
+    "a": 0,
+    "cycles": 16946,
+    "instructions": 3596,
+    "pc": 2174,
+    "psw": 2,
+    "sp": 207,
+    "x": 47,
+    "y": 0
+  },
+  "first_context": "0800",
+  "first_fail_closed_frontier": "087E",
+  "format": "topgear-generated-smp-dsp-init-manifest-v4",
+  "frontier_aram_sha256": "4feb302086459f89ecd945abf09f58763dca6472ea0da4f3b78ec4da3116104e",
+  "frontier_instruction": "MOV A,$00FD (timer 0 output read)",
+  "generated_c_sha256": "9d13aa29979c422c1c74e498a19604e3f7d50c5f5623d325b6011ca863cbc005",
+  "generated_context_count": 95,
+  "generator_sha256": "c57db2f4093a541860404f335061c6b0e0a84f53a1ede55eff1c5e67eb3adb11",
+  "reference_cycle_count": 16946,
+  "reference_executor_sha256": "654baab6b19b7bbeb57b9cc1f9bc08f39ba027d9bab1cd3cf24ced28d2b9701d",
+  "reference_instruction_count": 3596,
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "smp_to_cpu": [
+    205,
+    187,
+    0,
+    0
+  ],
+  "timer_enable_cycle_max": [
+    15031,
+    null,
+    null
+  ],
+  "timer_enable_cycle_min": [
+    15026,
+    null,
+    null
+  ],
+  "timer_enable_mask": 1,
+  "timer_read_proof_count": 198,
+  "timer_read_proofs": [
+    {
+      "earliest_elapsed": 331,
+      "earliest_possible_increment": 1920,
+      "instruction": 3200,
+      "latest_elapsed": 340,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 339,
+      "earliest_possible_increment": 1920,
+      "instruction": 3202,
+      "latest_elapsed": 348,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 347,
+      "earliest_possible_increment": 1920,
+      "instruction": 3204,
+      "latest_elapsed": 356,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 355,
+      "earliest_possible_increment": 1920,
+      "instruction": 3206,
+      "latest_elapsed": 364,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 363,
+      "earliest_possible_increment": 1920,
+      "instruction": 3208,
+      "latest_elapsed": 372,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 371,
+      "earliest_possible_increment": 1920,
+      "instruction": 3210,
+      "latest_elapsed": 380,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 379,
+      "earliest_possible_increment": 1920,
+      "instruction": 3212,
+      "latest_elapsed": 388,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 387,
+      "earliest_possible_increment": 1920,
+      "instruction": 3214,
+      "latest_elapsed": 396,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 395,
+      "earliest_possible_increment": 1920,
+      "instruction": 3216,
+      "latest_elapsed": 404,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 403,
+      "earliest_possible_increment": 1920,
+      "instruction": 3218,
+      "latest_elapsed": 412,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 411,
+      "earliest_possible_increment": 1920,
+      "instruction": 3220,
+      "latest_elapsed": 420,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 419,
+      "earliest_possible_increment": 1920,
+      "instruction": 3222,
+      "latest_elapsed": 428,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 427,
+      "earliest_possible_increment": 1920,
+      "instruction": 3224,
+      "latest_elapsed": 436,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 435,
+      "earliest_possible_increment": 1920,
+      "instruction": 3226,
+      "latest_elapsed": 444,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 443,
+      "earliest_possible_increment": 1920,
+      "instruction": 3228,
+      "latest_elapsed": 452,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 451,
+      "earliest_possible_increment": 1920,
+      "instruction": 3230,
+      "latest_elapsed": 460,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 459,
+      "earliest_possible_increment": 1920,
+      "instruction": 3232,
+      "latest_elapsed": 468,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 467,
+      "earliest_possible_increment": 1920,
+      "instruction": 3234,
+      "latest_elapsed": 476,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 475,
+      "earliest_possible_increment": 1920,
+      "instruction": 3236,
+      "latest_elapsed": 484,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 483,
+      "earliest_possible_increment": 1920,
+      "instruction": 3238,
+      "latest_elapsed": 492,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 491,
+      "earliest_possible_increment": 1920,
+      "instruction": 3240,
+      "latest_elapsed": 500,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 499,
+      "earliest_possible_increment": 1920,
+      "instruction": 3242,
+      "latest_elapsed": 508,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 507,
+      "earliest_possible_increment": 1920,
+      "instruction": 3244,
+      "latest_elapsed": 516,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 515,
+      "earliest_possible_increment": 1920,
+      "instruction": 3246,
+      "latest_elapsed": 524,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 523,
+      "earliest_possible_increment": 1920,
+      "instruction": 3248,
+      "latest_elapsed": 532,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 531,
+      "earliest_possible_increment": 1920,
+      "instruction": 3250,
+      "latest_elapsed": 540,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 539,
+      "earliest_possible_increment": 1920,
+      "instruction": 3252,
+      "latest_elapsed": 548,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 547,
+      "earliest_possible_increment": 1920,
+      "instruction": 3254,
+      "latest_elapsed": 556,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 555,
+      "earliest_possible_increment": 1920,
+      "instruction": 3256,
+      "latest_elapsed": 564,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 563,
+      "earliest_possible_increment": 1920,
+      "instruction": 3258,
+      "latest_elapsed": 572,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 571,
+      "earliest_possible_increment": 1920,
+      "instruction": 3260,
+      "latest_elapsed": 580,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 579,
+      "earliest_possible_increment": 1920,
+      "instruction": 3262,
+      "latest_elapsed": 588,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 587,
+      "earliest_possible_increment": 1920,
+      "instruction": 3264,
+      "latest_elapsed": 596,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 595,
+      "earliest_possible_increment": 1920,
+      "instruction": 3266,
+      "latest_elapsed": 604,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 603,
+      "earliest_possible_increment": 1920,
+      "instruction": 3268,
+      "latest_elapsed": 612,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 611,
+      "earliest_possible_increment": 1920,
+      "instruction": 3270,
+      "latest_elapsed": 620,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 619,
+      "earliest_possible_increment": 1920,
+      "instruction": 3272,
+      "latest_elapsed": 628,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 627,
+      "earliest_possible_increment": 1920,
+      "instruction": 3274,
+      "latest_elapsed": 636,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 635,
+      "earliest_possible_increment": 1920,
+      "instruction": 3276,
+      "latest_elapsed": 644,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 643,
+      "earliest_possible_increment": 1920,
+      "instruction": 3278,
+      "latest_elapsed": 652,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 651,
+      "earliest_possible_increment": 1920,
+      "instruction": 3280,
+      "latest_elapsed": 660,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 659,
+      "earliest_possible_increment": 1920,
+      "instruction": 3282,
+      "latest_elapsed": 668,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 667,
+      "earliest_possible_increment": 1920,
+      "instruction": 3284,
+      "latest_elapsed": 676,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 675,
+      "earliest_possible_increment": 1920,
+      "instruction": 3286,
+      "latest_elapsed": 684,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 683,
+      "earliest_possible_increment": 1920,
+      "instruction": 3288,
+      "latest_elapsed": 692,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 691,
+      "earliest_possible_increment": 1920,
+      "instruction": 3290,
+      "latest_elapsed": 700,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 699,
+      "earliest_possible_increment": 1920,
+      "instruction": 3292,
+      "latest_elapsed": 708,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 707,
+      "earliest_possible_increment": 1920,
+      "instruction": 3294,
+      "latest_elapsed": 716,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 715,
+      "earliest_possible_increment": 1920,
+      "instruction": 3296,
+      "latest_elapsed": 724,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 723,
+      "earliest_possible_increment": 1920,
+      "instruction": 3298,
+      "latest_elapsed": 732,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 731,
+      "earliest_possible_increment": 1920,
+      "instruction": 3300,
+      "latest_elapsed": 740,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 739,
+      "earliest_possible_increment": 1920,
+      "instruction": 3302,
+      "latest_elapsed": 748,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 747,
+      "earliest_possible_increment": 1920,
+      "instruction": 3304,
+      "latest_elapsed": 756,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 755,
+      "earliest_possible_increment": 1920,
+      "instruction": 3306,
+      "latest_elapsed": 764,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 763,
+      "earliest_possible_increment": 1920,
+      "instruction": 3308,
+      "latest_elapsed": 772,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 771,
+      "earliest_possible_increment": 1920,
+      "instruction": 3310,
+      "latest_elapsed": 780,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 779,
+      "earliest_possible_increment": 1920,
+      "instruction": 3312,
+      "latest_elapsed": 788,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 787,
+      "earliest_possible_increment": 1920,
+      "instruction": 3314,
+      "latest_elapsed": 796,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 795,
+      "earliest_possible_increment": 1920,
+      "instruction": 3316,
+      "latest_elapsed": 804,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 803,
+      "earliest_possible_increment": 1920,
+      "instruction": 3318,
+      "latest_elapsed": 812,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 811,
+      "earliest_possible_increment": 1920,
+      "instruction": 3320,
+      "latest_elapsed": 820,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 819,
+      "earliest_possible_increment": 1920,
+      "instruction": 3322,
+      "latest_elapsed": 828,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 827,
+      "earliest_possible_increment": 1920,
+      "instruction": 3324,
+      "latest_elapsed": 836,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 835,
+      "earliest_possible_increment": 1920,
+      "instruction": 3326,
+      "latest_elapsed": 844,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 843,
+      "earliest_possible_increment": 1920,
+      "instruction": 3328,
+      "latest_elapsed": 852,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 851,
+      "earliest_possible_increment": 1920,
+      "instruction": 3330,
+      "latest_elapsed": 860,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 859,
+      "earliest_possible_increment": 1920,
+      "instruction": 3332,
+      "latest_elapsed": 868,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 867,
+      "earliest_possible_increment": 1920,
+      "instruction": 3334,
+      "latest_elapsed": 876,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 875,
+      "earliest_possible_increment": 1920,
+      "instruction": 3336,
+      "latest_elapsed": 884,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 883,
+      "earliest_possible_increment": 1920,
+      "instruction": 3338,
+      "latest_elapsed": 892,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 891,
+      "earliest_possible_increment": 1920,
+      "instruction": 3340,
+      "latest_elapsed": 900,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 899,
+      "earliest_possible_increment": 1920,
+      "instruction": 3342,
+      "latest_elapsed": 908,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 907,
+      "earliest_possible_increment": 1920,
+      "instruction": 3344,
+      "latest_elapsed": 916,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 915,
+      "earliest_possible_increment": 1920,
+      "instruction": 3346,
+      "latest_elapsed": 924,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 923,
+      "earliest_possible_increment": 1920,
+      "instruction": 3348,
+      "latest_elapsed": 932,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 931,
+      "earliest_possible_increment": 1920,
+      "instruction": 3350,
+      "latest_elapsed": 940,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 939,
+      "earliest_possible_increment": 1920,
+      "instruction": 3352,
+      "latest_elapsed": 948,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 947,
+      "earliest_possible_increment": 1920,
+      "instruction": 3354,
+      "latest_elapsed": 956,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 955,
+      "earliest_possible_increment": 1920,
+      "instruction": 3356,
+      "latest_elapsed": 964,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 963,
+      "earliest_possible_increment": 1920,
+      "instruction": 3358,
+      "latest_elapsed": 972,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 971,
+      "earliest_possible_increment": 1920,
+      "instruction": 3360,
+      "latest_elapsed": 980,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 979,
+      "earliest_possible_increment": 1920,
+      "instruction": 3362,
+      "latest_elapsed": 988,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 987,
+      "earliest_possible_increment": 1920,
+      "instruction": 3364,
+      "latest_elapsed": 996,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 995,
+      "earliest_possible_increment": 1920,
+      "instruction": 3366,
+      "latest_elapsed": 1004,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1003,
+      "earliest_possible_increment": 1920,
+      "instruction": 3368,
+      "latest_elapsed": 1012,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1011,
+      "earliest_possible_increment": 1920,
+      "instruction": 3370,
+      "latest_elapsed": 1020,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1019,
+      "earliest_possible_increment": 1920,
+      "instruction": 3372,
+      "latest_elapsed": 1028,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1027,
+      "earliest_possible_increment": 1920,
+      "instruction": 3374,
+      "latest_elapsed": 1036,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1035,
+      "earliest_possible_increment": 1920,
+      "instruction": 3376,
+      "latest_elapsed": 1044,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1043,
+      "earliest_possible_increment": 1920,
+      "instruction": 3378,
+      "latest_elapsed": 1052,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1051,
+      "earliest_possible_increment": 1920,
+      "instruction": 3380,
+      "latest_elapsed": 1060,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1059,
+      "earliest_possible_increment": 1920,
+      "instruction": 3382,
+      "latest_elapsed": 1068,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1067,
+      "earliest_possible_increment": 1920,
+      "instruction": 3384,
+      "latest_elapsed": 1076,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1075,
+      "earliest_possible_increment": 1920,
+      "instruction": 3386,
+      "latest_elapsed": 1084,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1083,
+      "earliest_possible_increment": 1920,
+      "instruction": 3388,
+      "latest_elapsed": 1092,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1091,
+      "earliest_possible_increment": 1920,
+      "instruction": 3390,
+      "latest_elapsed": 1100,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1099,
+      "earliest_possible_increment": 1920,
+      "instruction": 3392,
+      "latest_elapsed": 1108,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1107,
+      "earliest_possible_increment": 1920,
+      "instruction": 3394,
+      "latest_elapsed": 1116,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1115,
+      "earliest_possible_increment": 1920,
+      "instruction": 3396,
+      "latest_elapsed": 1124,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1123,
+      "earliest_possible_increment": 1920,
+      "instruction": 3398,
+      "latest_elapsed": 1132,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1131,
+      "earliest_possible_increment": 1920,
+      "instruction": 3400,
+      "latest_elapsed": 1140,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1139,
+      "earliest_possible_increment": 1920,
+      "instruction": 3402,
+      "latest_elapsed": 1148,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1147,
+      "earliest_possible_increment": 1920,
+      "instruction": 3404,
+      "latest_elapsed": 1156,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1155,
+      "earliest_possible_increment": 1920,
+      "instruction": 3406,
+      "latest_elapsed": 1164,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1163,
+      "earliest_possible_increment": 1920,
+      "instruction": 3408,
+      "latest_elapsed": 1172,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1171,
+      "earliest_possible_increment": 1920,
+      "instruction": 3410,
+      "latest_elapsed": 1180,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1179,
+      "earliest_possible_increment": 1920,
+      "instruction": 3412,
+      "latest_elapsed": 1188,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1187,
+      "earliest_possible_increment": 1920,
+      "instruction": 3414,
+      "latest_elapsed": 1196,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1195,
+      "earliest_possible_increment": 1920,
+      "instruction": 3416,
+      "latest_elapsed": 1204,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1203,
+      "earliest_possible_increment": 1920,
+      "instruction": 3418,
+      "latest_elapsed": 1212,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1211,
+      "earliest_possible_increment": 1920,
+      "instruction": 3420,
+      "latest_elapsed": 1220,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1219,
+      "earliest_possible_increment": 1920,
+      "instruction": 3422,
+      "latest_elapsed": 1228,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1227,
+      "earliest_possible_increment": 1920,
+      "instruction": 3424,
+      "latest_elapsed": 1236,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1235,
+      "earliest_possible_increment": 1920,
+      "instruction": 3426,
+      "latest_elapsed": 1244,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1243,
+      "earliest_possible_increment": 1920,
+      "instruction": 3428,
+      "latest_elapsed": 1252,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1251,
+      "earliest_possible_increment": 1920,
+      "instruction": 3430,
+      "latest_elapsed": 1260,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1259,
+      "earliest_possible_increment": 1920,
+      "instruction": 3432,
+      "latest_elapsed": 1268,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1267,
+      "earliest_possible_increment": 1920,
+      "instruction": 3434,
+      "latest_elapsed": 1276,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1275,
+      "earliest_possible_increment": 1920,
+      "instruction": 3436,
+      "latest_elapsed": 1284,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1283,
+      "earliest_possible_increment": 1920,
+      "instruction": 3438,
+      "latest_elapsed": 1292,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1291,
+      "earliest_possible_increment": 1920,
+      "instruction": 3440,
+      "latest_elapsed": 1300,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1299,
+      "earliest_possible_increment": 1920,
+      "instruction": 3442,
+      "latest_elapsed": 1308,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1307,
+      "earliest_possible_increment": 1920,
+      "instruction": 3444,
+      "latest_elapsed": 1316,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1315,
+      "earliest_possible_increment": 1920,
+      "instruction": 3446,
+      "latest_elapsed": 1324,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1323,
+      "earliest_possible_increment": 1920,
+      "instruction": 3448,
+      "latest_elapsed": 1332,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1331,
+      "earliest_possible_increment": 1920,
+      "instruction": 3450,
+      "latest_elapsed": 1340,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1339,
+      "earliest_possible_increment": 1920,
+      "instruction": 3452,
+      "latest_elapsed": 1348,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1347,
+      "earliest_possible_increment": 1920,
+      "instruction": 3454,
+      "latest_elapsed": 1356,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1355,
+      "earliest_possible_increment": 1920,
+      "instruction": 3456,
+      "latest_elapsed": 1364,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1363,
+      "earliest_possible_increment": 1920,
+      "instruction": 3458,
+      "latest_elapsed": 1372,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1371,
+      "earliest_possible_increment": 1920,
+      "instruction": 3460,
+      "latest_elapsed": 1380,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1379,
+      "earliest_possible_increment": 1920,
+      "instruction": 3462,
+      "latest_elapsed": 1388,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1387,
+      "earliest_possible_increment": 1920,
+      "instruction": 3464,
+      "latest_elapsed": 1396,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1395,
+      "earliest_possible_increment": 1920,
+      "instruction": 3466,
+      "latest_elapsed": 1404,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1403,
+      "earliest_possible_increment": 1920,
+      "instruction": 3468,
+      "latest_elapsed": 1412,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1411,
+      "earliest_possible_increment": 1920,
+      "instruction": 3470,
+      "latest_elapsed": 1420,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1419,
+      "earliest_possible_increment": 1920,
+      "instruction": 3472,
+      "latest_elapsed": 1428,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1427,
+      "earliest_possible_increment": 1920,
+      "instruction": 3474,
+      "latest_elapsed": 1436,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1435,
+      "earliest_possible_increment": 1920,
+      "instruction": 3476,
+      "latest_elapsed": 1444,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1443,
+      "earliest_possible_increment": 1920,
+      "instruction": 3478,
+      "latest_elapsed": 1452,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1451,
+      "earliest_possible_increment": 1920,
+      "instruction": 3480,
+      "latest_elapsed": 1460,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1459,
+      "earliest_possible_increment": 1920,
+      "instruction": 3482,
+      "latest_elapsed": 1468,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1467,
+      "earliest_possible_increment": 1920,
+      "instruction": 3484,
+      "latest_elapsed": 1476,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1475,
+      "earliest_possible_increment": 1920,
+      "instruction": 3486,
+      "latest_elapsed": 1484,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1483,
+      "earliest_possible_increment": 1920,
+      "instruction": 3488,
+      "latest_elapsed": 1492,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1491,
+      "earliest_possible_increment": 1920,
+      "instruction": 3490,
+      "latest_elapsed": 1500,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1499,
+      "earliest_possible_increment": 1920,
+      "instruction": 3492,
+      "latest_elapsed": 1508,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1507,
+      "earliest_possible_increment": 1920,
+      "instruction": 3494,
+      "latest_elapsed": 1516,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1515,
+      "earliest_possible_increment": 1920,
+      "instruction": 3496,
+      "latest_elapsed": 1524,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1523,
+      "earliest_possible_increment": 1920,
+      "instruction": 3498,
+      "latest_elapsed": 1532,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1531,
+      "earliest_possible_increment": 1920,
+      "instruction": 3500,
+      "latest_elapsed": 1540,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1539,
+      "earliest_possible_increment": 1920,
+      "instruction": 3502,
+      "latest_elapsed": 1548,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1547,
+      "earliest_possible_increment": 1920,
+      "instruction": 3504,
+      "latest_elapsed": 1556,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1555,
+      "earliest_possible_increment": 1920,
+      "instruction": 3506,
+      "latest_elapsed": 1564,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1563,
+      "earliest_possible_increment": 1920,
+      "instruction": 3508,
+      "latest_elapsed": 1572,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1571,
+      "earliest_possible_increment": 1920,
+      "instruction": 3510,
+      "latest_elapsed": 1580,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1579,
+      "earliest_possible_increment": 1920,
+      "instruction": 3512,
+      "latest_elapsed": 1588,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1587,
+      "earliest_possible_increment": 1920,
+      "instruction": 3514,
+      "latest_elapsed": 1596,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1595,
+      "earliest_possible_increment": 1920,
+      "instruction": 3516,
+      "latest_elapsed": 1604,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1603,
+      "earliest_possible_increment": 1920,
+      "instruction": 3518,
+      "latest_elapsed": 1612,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1611,
+      "earliest_possible_increment": 1920,
+      "instruction": 3520,
+      "latest_elapsed": 1620,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1619,
+      "earliest_possible_increment": 1920,
+      "instruction": 3522,
+      "latest_elapsed": 1628,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1627,
+      "earliest_possible_increment": 1920,
+      "instruction": 3524,
+      "latest_elapsed": 1636,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1635,
+      "earliest_possible_increment": 1920,
+      "instruction": 3526,
+      "latest_elapsed": 1644,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1643,
+      "earliest_possible_increment": 1920,
+      "instruction": 3528,
+      "latest_elapsed": 1652,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1651,
+      "earliest_possible_increment": 1920,
+      "instruction": 3530,
+      "latest_elapsed": 1660,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1659,
+      "earliest_possible_increment": 1920,
+      "instruction": 3532,
+      "latest_elapsed": 1668,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1667,
+      "earliest_possible_increment": 1920,
+      "instruction": 3534,
+      "latest_elapsed": 1676,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1675,
+      "earliest_possible_increment": 1920,
+      "instruction": 3536,
+      "latest_elapsed": 1684,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1683,
+      "earliest_possible_increment": 1920,
+      "instruction": 3538,
+      "latest_elapsed": 1692,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1691,
+      "earliest_possible_increment": 1920,
+      "instruction": 3540,
+      "latest_elapsed": 1700,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1699,
+      "earliest_possible_increment": 1920,
+      "instruction": 3542,
+      "latest_elapsed": 1708,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1707,
+      "earliest_possible_increment": 1920,
+      "instruction": 3544,
+      "latest_elapsed": 1716,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1715,
+      "earliest_possible_increment": 1920,
+      "instruction": 3546,
+      "latest_elapsed": 1724,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1723,
+      "earliest_possible_increment": 1920,
+      "instruction": 3548,
+      "latest_elapsed": 1732,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1731,
+      "earliest_possible_increment": 1920,
+      "instruction": 3550,
+      "latest_elapsed": 1740,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1739,
+      "earliest_possible_increment": 1920,
+      "instruction": 3552,
+      "latest_elapsed": 1748,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1747,
+      "earliest_possible_increment": 1920,
+      "instruction": 3554,
+      "latest_elapsed": 1756,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1755,
+      "earliest_possible_increment": 1920,
+      "instruction": 3556,
+      "latest_elapsed": 1764,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1763,
+      "earliest_possible_increment": 1920,
+      "instruction": 3558,
+      "latest_elapsed": 1772,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1771,
+      "earliest_possible_increment": 1920,
+      "instruction": 3560,
+      "latest_elapsed": 1780,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1779,
+      "earliest_possible_increment": 1920,
+      "instruction": 3562,
+      "latest_elapsed": 1788,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1787,
+      "earliest_possible_increment": 1920,
+      "instruction": 3564,
+      "latest_elapsed": 1796,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1795,
+      "earliest_possible_increment": 1920,
+      "instruction": 3566,
+      "latest_elapsed": 1804,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1803,
+      "earliest_possible_increment": 1920,
+      "instruction": 3568,
+      "latest_elapsed": 1812,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1811,
+      "earliest_possible_increment": 1920,
+      "instruction": 3570,
+      "latest_elapsed": 1820,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1819,
+      "earliest_possible_increment": 1920,
+      "instruction": 3572,
+      "latest_elapsed": 1828,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1827,
+      "earliest_possible_increment": 1920,
+      "instruction": 3574,
+      "latest_elapsed": 1836,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1835,
+      "earliest_possible_increment": 1920,
+      "instruction": 3576,
+      "latest_elapsed": 1844,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1843,
+      "earliest_possible_increment": 1920,
+      "instruction": 3578,
+      "latest_elapsed": 1852,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1851,
+      "earliest_possible_increment": 1920,
+      "instruction": 3580,
+      "latest_elapsed": 1860,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1859,
+      "earliest_possible_increment": 1920,
+      "instruction": 3582,
+      "latest_elapsed": 1868,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1867,
+      "earliest_possible_increment": 1920,
+      "instruction": 3584,
+      "latest_elapsed": 1876,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1875,
+      "earliest_possible_increment": 1920,
+      "instruction": 3586,
+      "latest_elapsed": 1884,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1883,
+      "earliest_possible_increment": 1920,
+      "instruction": 3588,
+      "latest_elapsed": 1892,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1891,
+      "earliest_possible_increment": 1920,
+      "instruction": 3590,
+      "latest_elapsed": 1900,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1899,
+      "earliest_possible_increment": 1920,
+      "instruction": 3592,
+      "latest_elapsed": 1908,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    },
+    {
+      "earliest_elapsed": 1907,
+      "earliest_possible_increment": 1920,
+      "instruction": 3594,
+      "latest_elapsed": 1916,
+      "pc": "087E",
+      "timer": 0,
+      "value": 0
+    }
+  ],
+  "timer_targets": [
+    16,
+    0,
+    0
+  ],
+  "version": "04"
+}

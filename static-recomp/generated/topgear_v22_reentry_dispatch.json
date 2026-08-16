@@ -1,0 +1,332 @@
+{
+  "analysis_edges": 118800,
+  "analysis_rows": 107645,
+  "analysis_truncated": false,
+  "emulator_authority": false,
+  "files": [
+    {
+      "contexts": 295,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0020.c",
+      "sha256": "7ade8b913f3313b64acbb3e6d0dcc4a6462c34561afcb0c0118f5423e1259f6e"
+    },
+    {
+      "contexts": 408,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0021.c",
+      "sha256": "ccdd4c73163fcf8f4ef31ff24219ae74037fc33ef9b23c7225a497c9c3445b54"
+    },
+    {
+      "contexts": 209,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0022.c",
+      "sha256": "8607574a0807173c98a9e89bf5f74531d3e21d0147cab511ec59469d4a8fc9ef"
+    },
+    {
+      "contexts": 348,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0024.c",
+      "sha256": "93d0f293624cf87988b6b7d66764b87dbaea191a843e9a0e206bfbb432f00a9c"
+    },
+    {
+      "contexts": 212,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0025.c",
+      "sha256": "157040f46a455b0229257fb010b06d49a44974533ee70c1f176ff44a77d7d4ab"
+    },
+    {
+      "contexts": 296,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0028.c",
+      "sha256": "7f2d930e57c991447533e038fe7089efe218c994f8e1881e2982abcac3cc83e3"
+    },
+    {
+      "contexts": 205,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0029.c",
+      "sha256": "336c5a0e5c807ff6c10391aaad853e03f11fdd5fb5d2b78d8faa3b910bad310a"
+    },
+    {
+      "contexts": 390,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002A.c",
+      "sha256": "62c08faa7be5a4f24ca995462239a41026e2a279d59bf81211212919ee85e623"
+    },
+    {
+      "contexts": 466,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002B.c",
+      "sha256": "1ffdc00a2a0c710910521ec76a400ea6b5849bf56c54cca1d1b76b3c1253e1aa"
+    },
+    {
+      "contexts": 365,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002C.c",
+      "sha256": "41ddd43edd9adaaf4a0ada0ff2b5dae4259f6847b4885a21cd0963498d6ba153"
+    },
+    {
+      "contexts": 60,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002D.c",
+      "sha256": "6c6b976cf0e8c863640216b48095900533f9dd311ba9f0f1196487c248ea2b67"
+    },
+    {
+      "contexts": 116,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002F.c",
+      "sha256": "e601682c3f7f92e1726c1e3d2e0c4b00d8c9355d01c182d41c202e7138b04d27"
+    },
+    {
+      "contexts": 460,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0030.c",
+      "sha256": "0a7cd837ed7c1aa27f45195cb5eab5b5b534a4a2a19001de6a801de57254fc7f"
+    },
+    {
+      "contexts": 369,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0031.c",
+      "sha256": "1a767c7304083db32a903dbb81379b7cf9f54daeb1f8986e8eba51f384040d76"
+    },
+    {
+      "contexts": 367,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0032.c",
+      "sha256": "ddc7366dcc5e58b1b8c25872465b51b4bc18d3eb2254b5d1d0a4393a01d1e3d3"
+    },
+    {
+      "contexts": 421,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0033.c",
+      "sha256": "563b2eedaad6b54b8a8e9a25ed250304b06cf844848f14e2d221a0445123b8aa"
+    },
+    {
+      "contexts": 466,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0034.c",
+      "sha256": "67ce009cd6e731b41c2fe2573b8dad21d78cdf9b84d42e63a21e25be981d9dba"
+    },
+    {
+      "contexts": 270,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0035.c",
+      "sha256": "3e8434bbca87bf4cba4841135b65180d4e2e50e7afafeee0c9d4dbeb3ed2d04c"
+    },
+    {
+      "contexts": 310,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0036.c",
+      "sha256": "8a2694c6031a1b8f80f6aebcd603ec5a0ffec46676e03fb9b17fef5968b942b6"
+    },
+    {
+      "contexts": 202,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0037.c",
+      "sha256": "ee5538dd9305aa4eb074aeea3fc483dca2a1d2097079f26fbd5ca249dc13bbd4"
+    },
+    {
+      "contexts": 242,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0038.c",
+      "sha256": "092b91225f96beccac30d2e0359dfca3eaa13a20e9df87c71eb7ee74917dd114"
+    },
+    {
+      "contexts": 487,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0039.c",
+      "sha256": "7685b889ee34df26c1a0fc8dfd818c376566ce4ff967f811ccc36596aff27b95"
+    },
+    {
+      "contexts": 257,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_003A.c",
+      "sha256": "a2ae8f24310146c3fba9d23eb292b4f7efc38f9dc59526159594e856c2db2855"
+    },
+    {
+      "contexts": 6,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_003B.c",
+      "sha256": "d3bf0154f3ba8fe34a75c05bc0794ae65909b7b55643c90b3bd733596c387c85"
+    },
+    {
+      "contexts": 441,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0060.c",
+      "sha256": "b78a77b8c482e8d95cb52d752919d7d6998f63b87785e4625f6691dcd46e39e4"
+    },
+    {
+      "contexts": 461,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0061.c",
+      "sha256": "9e30ae6e01ef6d774c4de9832c95745bdeac8907817e1a78b0788738d7644ad4"
+    },
+    {
+      "contexts": 469,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0062.c",
+      "sha256": "3eb3631d6ea37ca98bf586f837ae5256dcda2958996ffd1f2d94e3a2879b7d3e"
+    },
+    {
+      "contexts": 469,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0063.c",
+      "sha256": "468b70c5ff0169de322da9b6634a9c5167439244ef6e3842bae8ec6fd62bafa8"
+    },
+    {
+      "contexts": 438,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0064.c",
+      "sha256": "f98008e01a01ce1e5aa2feffbeac249de17e608930be106f2f54017742b83c87"
+    },
+    {
+      "contexts": 442,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0065.c",
+      "sha256": "4666f7ecaf4fbc4b906d497b67b9512b3091d79ef6cc821b60c3e6f73e9d911a"
+    },
+    {
+      "contexts": 470,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0066.c",
+      "sha256": "cefbd2c5ea58621dbae4241db06232d13448512b082045288044f73b78eb83c6"
+    },
+    {
+      "contexts": 454,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0067.c",
+      "sha256": "00c0e6930b2319d48fbaa99b26e38828735c308d1ac5cc9857619df58b6a457d"
+    },
+    {
+      "contexts": 477,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0068.c",
+      "sha256": "9dc58a2171c9e72d2c19dd65fab6d744541b79f671b25e41e74dd67406c7aee0"
+    },
+    {
+      "contexts": 228,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0069.c",
+      "sha256": "1d172f111acccae629dfde50327e5956a8541a90f7eacf0e329996071d14108d"
+    },
+    {
+      "contexts": 127,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0174.c",
+      "sha256": "a40f431a6f8a979900d3a4bf38f8356b6d9b1d6d6df8e06b0e14118f8da23590"
+    },
+    {
+      "contexts": 463,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0175.c",
+      "sha256": "73358a1780db12edb3fb9248cc1276d55a83b241578ab4193d24843484a336a9"
+    },
+    {
+      "contexts": 437,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0176.c",
+      "sha256": "b635f09318130280d687cebe4fb4a504ec29331d178edbbda1957ccf8ef98b2f"
+    },
+    {
+      "contexts": 466,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0177.c",
+      "sha256": "72fbf22f489c34d6472986f6bcccc6e17b7b97f0c7928845eb7cbb9516e462b8"
+    },
+    {
+      "contexts": 445,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0178.c",
+      "sha256": "d1b36c3c81a48d792e0e64e9b8b5e9733dcf8da7fb62d90f3197a9dcca9ad8a9"
+    },
+    {
+      "contexts": 411,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0179.c",
+      "sha256": "79b0331b4d6fbe5e22ed585488b6ebffa06e9f533cafd652902aa1cb65455cba"
+    },
+    {
+      "contexts": 465,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017A.c",
+      "sha256": "4524238385dd6db787bf5fb5bced4742cacf3a8e56c785847863dc128791414a"
+    },
+    {
+      "contexts": 462,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017B.c",
+      "sha256": "5582538de8200426a80f07c2e61beac44c767708b904f4ad3480acd9eeba4675"
+    },
+    {
+      "contexts": 461,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017C.c",
+      "sha256": "1bd453792009c83ce059517dbaef559f72844c99d43cd23d12b9f0175f075df4"
+    },
+    {
+      "contexts": 328,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017D.c",
+      "sha256": "72b43afd86bfc8bb303678bdfabb3e149236279613c94d26c27106940cf45e80"
+    },
+    {
+      "contexts": 169,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_01E0.c",
+      "sha256": "f16b84259a9820676d20ad7514f2f0acafbc887777b02e6ebbf830ca4bd0b9e7"
+    },
+    {
+      "contexts": 387,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E0.c",
+      "sha256": "abd33c8efdf0af4a34035935cea1f1c69e0679b56f37f26fbf57d36bf9f18fbf"
+    },
+    {
+      "contexts": 421,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E1.c",
+      "sha256": "b6282d82bdf462e6bcb92ca7254ddb4e0c051bd8716ca3c00b27185645ea9d12"
+    },
+    {
+      "contexts": 479,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E2.c",
+      "sha256": "4a844c0c468dc22ac870684ce2bfe7ac18719b987f839174fbee87c93c2cadc1"
+    },
+    {
+      "contexts": 422,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E3.c",
+      "sha256": "f0a9af7209b73fcd765b70cf87a2581180a522c5168621ad1b13fcf3e7364d4c"
+    },
+    {
+      "contexts": 426,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E4.c",
+      "sha256": "835fea4b64471a6a0e08b8792d81856f5f345d1bedfc37f6df9dd6f133e1ec6f"
+    },
+    {
+      "contexts": 425,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E5.c",
+      "sha256": "8c134ce4bde3f467b0cd8483b1cf339c360b7d3ecf11968be5b9964a55ca8cd7"
+    },
+    {
+      "contexts": 431,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E6.c",
+      "sha256": "10254cd557355b8734fb5fb4fa4a78a22feb4651bc2c36bd970fee08d7c14bb9"
+    },
+    {
+      "contexts": 472,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E7.c",
+      "sha256": "a9fe3bf63a1eaa2cc7b46c2111c054289713bf5decf127687c35ba2184a8066a"
+    },
+    {
+      "contexts": 496,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E8.c",
+      "sha256": "48a8767444c39afdabc9307ab333e665d580aa5a8df525a20d42cdf6e0917ee0"
+    },
+    {
+      "contexts": 290,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E9.c",
+      "sha256": "d56e99cced27350ab81aafb63a68d4e97e02410d2df4c4158f5b120be4b79677"
+    },
+    {
+      "contexts": 142,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03EC.c",
+      "sha256": "3fe41045b4eabe29cfae3aeaf2bd8ef08e61b2a6e819e5b3b31774a0122180d1"
+    },
+    {
+      "contexts": 69,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03ED.c",
+      "sha256": "a155d17abf84d28661219eab45e5b31d48522edb8486b3974f295e3fdc5f3d72"
+    },
+    {
+      "contexts": 0,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_index.c",
+      "sha256": "6d7069b306b7aa6bd7390ebe1746953398e985ce11c3fb5192969c22ab875c88"
+    }
+  ],
+  "format": "topgear-v22-rom-reentry-static-shards-v1",
+  "frontiers": [
+    {
+      "address": "7E:2000",
+      "reason": "7E:2000 is not cartridge ROM"
+    },
+    {
+      "address": "7E:2000",
+      "reason": "7E:2000 is not cartridge ROM"
+    },
+    {
+      "address": "7E:2000",
+      "reason": "7E:2000 is not cartridge ROM"
+    },
+    {
+      "address": "7E:2000",
+      "reason": "7E:2000 is not cartridge ROM"
+    }
+  ],
+  "generator_sha256": "a6cc2f0cfa968ca8322736a48235a0b4b86d200e588b9c632cf5d449edd6d551",
+  "normalized_contexts": 20270,
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "roots": [
+    "00:84BB/E0M0X0",
+    "00:84D1/E0M0X0",
+    "00:85FA/E0M0X0",
+    "05:E9E1/E0M0X0",
+    "05:E9D9/E0M0X0",
+    "05:D86B/E0M0X0",
+    "00:8766/E0M0X0"
+  ],
+  "runtime_opcode_decoder": false,
+  "shards": 57,
+  "version": "22"
+}

@@ -1,0 +1,78 @@
+{
+  "actual_timer_enable": {
+    "a": 129,
+    "aram_sha256": "149c586acb8e0cd6c425cf4a9346097e914816005688a74fae23bad97aa24fe5",
+    "cpu_to_smp": [
+      0,
+      0,
+      0,
+      8
+    ],
+    "driver_cycles": 15031,
+    "driver_instructions": 3112,
+    "dsp_registers_sha256": "d0ea0d7eeea846e3991bfc637ae4c36cb3f400260c50829a6cfd507a58765ef3",
+    "pc": "084F",
+    "psw": 129,
+    "smp_to_cpu": [
+      205,
+      187,
+      0,
+      0
+    ],
+    "sp": 207,
+    "x": 0,
+    "y": 93
+  },
+  "authority": {
+    "documented_spc700_semantics": true,
+    "documented_timer_semantics": true,
+    "emulator_trace": false,
+    "exact_rom": true,
+    "hybrid_trace": false,
+    "oracle_state": false,
+    "rom_derived_aram": true
+  },
+  "claim_boundary": {
+    "actual_entry_reconverges_at_timer_enable": true,
+    "all_cold_boot_profiles_reach_entry": true,
+    "all_driver_profiles_reconverged": true,
+    "exact_physical_phase_selected": false,
+    "exact_physical_rate_selected": false,
+    "scpu_parallel_execution_proved": false,
+    "text": "The real IPL-exit state reaches the same timer-enable edge used by the exhaustive timer/DSP family. This bridges cold boot into the isolated S-SMP proof only; it does not prove parallel S-CPU progress."
+  },
+  "driver_phase_set": {
+    "all_profiles_reconverged": true,
+    "apu_port_read_count_max": 0,
+    "apu_port_write_count_max": 0,
+    "aram_sha256": "123aa6ca3c85fb2da34e671df80bf007253f4ce2389056faef1c90de91023b10",
+    "combined_phase_profile_count": 4096,
+    "conservative_cold_boot_cross_product_count": 524288,
+    "cycle_count_max": 17156,
+    "cycle_count_min": 17028,
+    "dsp_phase_profile_count": 32,
+    "dsp_registers_sha256": "d0ea0d7eeea846e3991bfc637ae4c36cb3f400260c50829a6cfd507a58765ef3",
+    "instruction_count_max": 3649,
+    "instruction_count_min": 3617,
+    "pc": "084F",
+    "timer_phase_profile_count": 128,
+    "timer_state_count_at_reconvergence": 8
+  },
+  "format": "topgear-v13-driver-handoff-audit-v1",
+  "real_ipl_entry": {
+    "aram_sha256": "5f810b59e9196d6575dc352c2ca6a981ff4ae392c538869e99f205f2e7336061",
+    "master_clock_max": 17167241,
+    "master_clock_min": 17166995,
+    "pc": "0800",
+    "phase_profile_count": 128,
+    "scpu_instruction_max": 669300,
+    "scpu_instruction_min": 669290,
+    "smp_cycle_max": 818505,
+    "smp_cycle_min": 818494,
+    "smp_instruction_max": 200155,
+    "smp_instruction_min": 200155,
+    "upload_sha256": "fb50296cb92b5d7fc0f108f2aca7df36b9257cb880b4c19fed9a653560c88ba8"
+  },
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "version": 13
+}

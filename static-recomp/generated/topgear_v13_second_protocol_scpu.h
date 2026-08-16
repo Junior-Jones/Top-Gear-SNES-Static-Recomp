@@ -1,0 +1,10 @@
+#ifndef TOPGEAR_V13_SECOND_PROTOCOL_SCPU_H
+#define TOPGEAR_V13_SECOND_PROTOCOL_SCPU_H
+#include "topgear_v13_interleaved_ipl.h"
+#define TOPGEAR_RECOMP_V13_SECOND_PROTOCOL_CONTEXT_COUNT 146u
+#define TOPGEAR_RECOMP_V13_SECOND_PROTOCOL_TIMING_VARIANT_COUNT 162u
+struct TopGearRecomp;
+int tg_v13_second_protocol_scpu_step(struct TopGearRecomp *instance);
+extern const TgV13ScpuTimingVariant tg_v13_second_protocol_timing_variants[TOPGEAR_RECOMP_V13_SECOND_PROTOCOL_TIMING_VARIANT_COUNT];
+const TgV13ScpuTimingVariant *tg_v13_find_second_protocol_timing(uint32_t key,uint32_t next_key,int require_next);
+#endif

@@ -1,0 +1,8 @@
+#ifndef TOPGEAR_V18_POST8077_APU_READ_H
+#define TOPGEAR_V18_POST8077_APU_READ_H
+#include <stdint.h>
+struct TgV18SmpPost8077State { uint32_t source_target_driver_cycle,initial_timer_phase,next_apu_read_cycle,completed_instructions; uint16_t next_apu_read_pc,next_apu_read_address,pc_after_read_instruction,source_pending_pc; uint8_t source_pending_total_cycles,source_pending_elapsed_cycles,next_apu_read_value,read_cycle_offset,a,x,y,sp,psw,timer_phase,timer_stage2,timer_output; uint8_t cpu_to_smp[4],smp_to_cpu[4]; uint64_t aram_hash64,dsp_hash64; uint32_t dsp_write_count; };
+struct TgV18SmpPost8077Summary { uint32_t source_target_driver_cycle,timer_phase_count,dsp_phase_count,combined_phase_count,full_timing_state_class_count,processor_arch_class_count,next_read_cycle_class_count,next_read_cycle_min,next_read_cycle_max,unique_aram_hash_count,unique_dsp_hash_count; };
+int tg_v18_generated_post8077_state(uint32_t target,uint32_t phase,struct TgV18SmpPost8077State*out);
+int tg_v18_generated_post8077_summary(uint32_t target,struct TgV18SmpPost8077Summary*out);
+#endif

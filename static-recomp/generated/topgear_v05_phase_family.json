@@ -1,0 +1,91 @@
+{
+  "authority": {
+    "chosen_bus_microcycle": false,
+    "chosen_timer_phase": false,
+    "documented_smp_timer_semantics": true,
+    "documented_spc700_semantics": true,
+    "emulator_trace": false,
+    "exact_rom_derived_aram": true,
+    "oracle_state": false
+  },
+  "format": "topgear-v05-phase-family-generated-receipt-v1",
+  "generated_c_sha256": "fa5df447cf3988865cbecfcf70e7fd9ad9b00a4102ea4a5db4fbfb31de09f1a7",
+  "generated_context_union_count": 112,
+  "generator_sha256": "aa00af78012c46330a5bf0dbd17dae5b06726ac30879e94a74be32df93e834bc",
+  "new_contexts": [
+    "0883",
+    "0884",
+    "0886",
+    "0887",
+    "0888",
+    "088A",
+    "088C",
+    "0895",
+    "0896",
+    "0898",
+    "0899",
+    "089A",
+    "089C",
+    "089E",
+    "08AB",
+    "08AD",
+    "08AF"
+  ],
+  "profile_count": 640,
+  "reconvergence": {
+    "aram_changes_from_v04": [
+      {
+        "address": "001B",
+        "after": 32,
+        "before": 0
+      },
+      {
+        "address": "003B",
+        "after": 16,
+        "before": 0
+      },
+      {
+        "address": "01CF",
+        "after": 1,
+        "before": 8
+      }
+    ],
+    "aram_sha256": "123aa6ca3c85fb2da34e671df80bf007253f4ce2389056faef1c90de91023b10",
+    "cycle_count_max": 17156,
+    "cycle_count_min": 17028,
+    "dsp_registers_sha256": "d0ea0d7eeea846e3991bfc637ae4c36cb3f400260c50829a6cfd507a58765ef3",
+    "dsp_write_count": 15,
+    "endpoint": {
+      "a": 0,
+      "pc": "084F",
+      "psw": 2,
+      "sp": 207,
+      "x": 47,
+      "y": 0
+    },
+    "instruction_count_max": 3649,
+    "instruction_count_min": 3617,
+    "pc": "084F",
+    "ports": {
+      "cpu_to_smp": [
+        0,
+        0,
+        0,
+        8
+      ],
+      "smp_to_cpu": [
+        205,
+        187,
+        0,
+        0
+      ]
+    },
+    "service_steps_max": 537,
+    "service_steps_min": 505,
+    "timer_read_count_max": 216,
+    "timer_read_count_min": 200
+  },
+  "reference_json_sha256": "b932852c27aa29a4755a19a7492c6ef96928233dbef87867907747597743a2e6",
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "version": "05"
+}

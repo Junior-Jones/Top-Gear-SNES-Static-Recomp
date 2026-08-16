@@ -1,0 +1,7 @@
+#ifndef TOPGEAR_V18_NMI_OPTIONAL_DMA_H
+#define TOPGEAR_V18_NMI_OPTIONAL_DMA_H
+struct TopGearRecomp;
+unsigned tg_v18_generated_optional_nmi_context_count(void);
+int tg_v18_generated_optional_nmi_timing_step(struct TopGearRecomp *instance);
+int tg_v18_generated_optional_nmi_semantic_step(struct TopGearRecomp *instance);
+#endif

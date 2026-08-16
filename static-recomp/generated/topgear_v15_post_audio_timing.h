@@ -1,0 +1,12 @@
+#ifndef TOPGEAR_V15_POST_AUDIO_TIMING_H
+#define TOPGEAR_V15_POST_AUDIO_TIMING_H
+
+#include "topgear_static_recomp.h"
+
+extern const uint8_t tg_v15_post_audio_master_clock_deltas[TOPGEAR_RECOMP_V15_POST_AUDIO_INSTRUCTION_COUNT];
+extern const uint8_t tg_v15_post_audio_processor_cycle_deltas[TOPGEAR_RECOMP_V15_POST_AUDIO_INSTRUCTION_COUNT];
+extern const uint32_t tg_v15_post_audio_cycle_starts[TOPGEAR_RECOMP_V15_POST_AUDIO_INSTRUCTION_COUNT + 1u];
+extern const uint8_t tg_v15_post_audio_cycle_durations[TOPGEAR_RECOMP_V15_POST_AUDIO_PROCESSOR_CYCLE_COUNT];
+void tg_v15_fill_post_audio_timing_info(TopGearV15PostAudioTimingInfo *info);
+
+#endif
