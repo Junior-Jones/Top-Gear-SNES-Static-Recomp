@@ -179,6 +179,10 @@ static int g_resume_after_failed_load;
 static int g_play_after_load;
 static int g_adjacent_rom_found;
 static uint16_t g_held_input[TOPGEAR_PLAYER_COUNT];
+/* Mesen-style short-press safety: action-key transitions remain pending until
+   one emulated SNES frame has sampled them. Directions intentionally remain
+   held-state only so steering cannot stick after a quick tap. */
+static uint16_t g_latched_input[TOPGEAR_PLAYER_COUNT];
 static uint16_t g_gamepad_input[TOPGEAR_PLAYER_COUNT];
 static TopGearGamepadInputWin32 g_gamepad[TOPGEAR_PLAYER_COUNT];
 static uint32_t g_frame_pixels[TOPGEAR_RECOMP_FRAME_WIDTH * TOPGEAR_RECOMP_FRAME_HEIGHT];
@@ -557,6 +561,13 @@ static int keyboard_gameplay_active(unsigned player) {
             !topgear_gamepad_win32_connected(&g_gamepad[player]));
 }
 
+static uint16_t action_input_mask(void) {
+    return (uint16_t)(TOPGEAR_INPUT_B | TOPGEAR_INPUT_Y |
+                      TOPGEAR_INPUT_SELECT | TOPGEAR_INPUT_START |
+                      TOPGEAR_INPUT_A | TOPGEAR_INPUT_X |
+                      TOPGEAR_INPUT_L | TOPGEAR_INPUT_R);
+}
+
 static uint16_t sanitize_gameplay_input(uint16_t input) {
     if (g_frontend_settings.allow_invalid_input) return input;
     if ((input & (TOPGEAR_INPUT_UP | TOPGEAR_INPUT_DOWN)) ==
@@ -569,17 +580,20 @@ static uint16_t sanitize_gameplay_input(uint16_t input) {
 }
 
 static uint16_t current_gameplay_input(unsigned player) {
+    uint16_t keyboard_input;
     if (player >= TOPGEAR_PLAYER_COUNT) return 0u;
+    keyboard_input = (uint16_t)(g_held_input[player] |
+                                g_latched_input[player]);
     if (topgear_gamepad_win32_connected(&g_gamepad[player])) {
         if (g_frontend_settings.input_source[player] ==
             TOPGEAR_INPUT_SOURCE_GAMEPAD)
             return sanitize_gameplay_input(g_gamepad_input[player]);
         if (g_frontend_settings.input_source[player] ==
             TOPGEAR_INPUT_SOURCE_COMBINED)
-            return sanitize_gameplay_input((uint16_t)(g_held_input[player] |
+            return sanitize_gameplay_input((uint16_t)(keyboard_input |
                                              g_gamepad_input[player]));
     }
-    return sanitize_gameplay_input(g_held_input[player]);
+    return sanitize_gameplay_input(keyboard_input);
 }
 
 static void record_input_history(uint64_t first_frame, uint32_t frame_count,
@@ -843,6 +857,7 @@ static void pause_game(const wchar_t *message) {
     if (g_game) topgear_recomp_audio_clear(g_game);
     g_paused = 1;
     memset(g_held_input, 0, sizeof(g_held_input));
+    memset(g_latched_input, 0, sizeof(g_latched_input));
     memset(g_gamepad_input, 0, sizeof(g_gamepad_input));
     restore_paused_presentation();
     SetWindowTextW(g_window, LAUNCHER_TITLE);
@@ -865,6 +880,7 @@ static void stop_game_on_core_failure(void) {
     topgear_audio_output_pause(&g_audio_output);
     g_paused = 1;
     memset(g_held_input, 0, sizeof(g_held_input));
+    memset(g_latched_input, 0, sizeof(g_latched_input));
     memset(g_gamepad_input, 0, sizeof(g_gamepad_input));
     set_status_utf8(topgear_recomp_last_error(g_game));
     InvalidateRect(g_window, NULL, FALSE);
@@ -877,6 +893,7 @@ static void play_game(void) {
     g_paused = 0;
     SetWindowTextW(g_window, APP_TITLE);
     memset(g_held_input, 0, sizeof(g_held_input));
+    memset(g_latched_input, 0, sizeof(g_latched_input));
     memset(g_gamepad_input, 0, sizeof(g_gamepad_input));
     topgear_audio_output_resume(&g_audio_output);
     reset_pacing_clock();
@@ -2151,28 +2168,36 @@ static void reset_pacing_clock(void) {
 static int advance_frame_batch(uint32_t frame_count) {
     TopGearRecompFrameResult result;
     wchar_t message[512];
-    uint32_t headless_count;
-    uint16_t player1_input;
-    uint16_t player2_input;
-    uint64_t first_frame_index;
+    uint32_t frame_index;
     int recorder_was_active;
     if (!g_game || frame_count == 0u) return 1;
     memset(&result, 0, sizeof(result));
-    player1_input = current_gameplay_input(0u);
-    player2_input = current_gameplay_input(1u);
-    first_frame_index = topgear_recomp_v27_frame_count(g_game) + 1u;
-    headless_count = frame_count > 1u ? frame_count - 1u : 0u;
-    g_video_output.diagnostics.dropped_presentations += headless_count;
-    if (headless_count &&
-        !topgear_recomp_advance_headless(g_game, player1_input, player2_input,
-                                         headless_count, &result)) {
-        stop_game_on_core_failure();
-        return 0;
-    }
-    memset(&result, 0, sizeof(result));
-    if (!topgear_recomp_advance(g_game, player1_input, player2_input, 1u, &result)) {
-        stop_game_on_core_failure();
-        return 0;
+    for (frame_index = 0u; frame_index < frame_count; ++frame_index) {
+        uint16_t player1_input = current_gameplay_input(0u);
+        uint16_t player2_input = current_gameplay_input(1u);
+        uint64_t current_frame = topgear_recomp_v27_frame_count(g_game) + 1u;
+        int final_frame = frame_index + 1u == frame_count;
+        int advanced;
+
+        memset(&result, 0, sizeof(result));
+        if (final_frame) {
+            advanced = topgear_recomp_advance(
+                g_game, player1_input, player2_input, 1u, &result);
+        } else {
+            ++g_video_output.diagnostics.dropped_presentations;
+            advanced = topgear_recomp_advance_headless(
+                g_game, player1_input, player2_input, 1u, &result);
+        }
+        if (!advanced) {
+            stop_game_on_core_failure();
+            return 0;
+        }
+        record_input_history(current_frame, 1u,
+                             player1_input, player2_input);
+        /* Clear only after a complete core frame consumes the transition. A
+           key released between Windows messages and this point still reaches
+           exactly one emulated frame. */
+        memset(g_latched_input, 0, sizeof(g_latched_input));
     }
     recorder_was_active = topgear_audio_recorder_win32_active(&g_audio_recorder);
     topgear_audio_output_pump(&g_audio_output, &g_audio_recorder, g_game);
@@ -2185,8 +2210,6 @@ static int advance_frame_batch(uint32_t frame_count) {
         message[(sizeof(message) / sizeof(message[0])) - 1u] = L'\0';
         set_status(message);
     }
-    record_input_history(first_frame_index, frame_count,
-                         player1_input, player2_input);
     maybe_flush_battery_sram_win32();
     if (topgear_recomp_audio_overflowed(g_game)) {
         topgear_recomp_audio_clear_overflow(g_game);
@@ -3139,6 +3162,10 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                         physical_key_to_input(player, wparam, lparam) : 0u;
                     if (mask != 0u) {
                         g_held_input[player] = (uint16_t)(g_held_input[player] | mask);
+                        if ((lparam & (1L << 30)) == 0)
+                            g_latched_input[player] = (uint16_t)(
+                                g_latched_input[player] |
+                                (mask & action_input_mask()));
                         handled = 1;
                     }
                 }
@@ -3165,6 +3192,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
 
         case WM_KILLFOCUS:
             memset(g_held_input, 0, sizeof(g_held_input));
+            memset(g_latched_input, 0, sizeof(g_latched_input));
             memset(g_gamepad_input, 0, sizeof(g_gamepad_input));
             if (g_frontend_settings.pause_on_focus_loss &&
                 g_game && !g_paused)
@@ -3215,6 +3243,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             free(result);
             g_paused = 1;
             memset(g_held_input, 0, sizeof(g_held_input));
+            memset(g_latched_input, 0, sizeof(g_latched_input));
             (void)open_audio(1);
             InvalidateRect(window, NULL, TRUE);
             update_controls();
