@@ -1,5 +1,5 @@
 Top Gear (SNES) Static Recompilation - Windows Source
-Release 1.0.0
+Release 1.1.1
 
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.
@@ -21,8 +21,33 @@ The build downloads and statically links SDL 3.4.10. Release builds also use
 the static Visual C++ runtime. Launcher.exe therefore does not require a
 separate SDL DLL or Visual C++ redistributable.
 
+Tests
+CTest builds the ROM-free API, renderer-instance, hook, audio FIFO, generated
+dispatch, snapshot and integrity tests by default. To include the optional
+cold-boot smoke test, configure with the exact legally obtained ROM:
+
+  cmake -S . -B build -G "Visual Studio 17 2022" -A x64 ^
+    -DTOPGEAR_TEST_ROM="C:\path\to\Top Gear (USA).sfc"
+  cmake --build build --config Release
+  ctest --test-dir build -C Release --output-on-failure
+
+Public core API
+Applications should include static-recomp\include\topgear_static_recomp.h.
+Historical research receipts and milestone-specific declarations are available
+only through the opt-in topgear_static_recomp_diagnostics.h header.
+
+Source integrity
+SOURCE-MANIFEST.json inventories the distributable source.
+GENERATED-PROVENANCE.json records every generated dispatch and static-audio
+authority file and binds it to the required ROM hash. SHA256SUMS.txt pins all
+three inventories. Run this check from the source root:
+
+  py -3 -B tools\integrity_manifests.py
+
 Frontend architecture
 - Native Win32 menus, toolbar and dialogs use standard Windows controls.
+- Static-core frame rendering passes its core instance through every helper;
+  simultaneous cores cannot overwrite a file-global renderer context.
 - SDL3 presents double-buffered game frames through Direct3D with a software
   fallback, optional VSync, integer scaling and optional SNES 4:3 correction.
 - F8 screenshots overlay the stable core framebuffer and do not depend on the
@@ -32,6 +57,11 @@ Frontend architecture
 - Full Static audio remains native 32,040 Hz inside the core and in WAV files.
   SDL3 resamples speaker output to the selected device and applies bounded
   queue-depth drift correction.
+- Music on the toolbar lists all seven ROM music sequences and the 16
+  independently playable effects, labelled with exact table/ARAM addresses.
+  The real driver upload path renders a five-minute music loop or six-second
+  effect offline; Play, Stop and a five-second keyboard seek slider then play
+  the cached WAV without opening or advancing the game window.
 - Keyboard gameplay bindings use physical scan codes. SDL gamepads use stable
   GUID preference, configurable deadzone and hysteresis, and one state snapshot
   per emulated frame.

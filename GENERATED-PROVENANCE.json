@@ -1,0 +1,1244 @@
+{
+  "authority_roots": [
+    "static-recomp/generated/",
+    "static-recomp/static-audio/topgear-bapu-aot/"
+  ],
+  "file_count": 205,
+  "files": [
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 102313,
+      "path": "static-recomp/generated/topgear_v03_scpu_batch.c",
+      "sha256": "3338b61c88caf99904bcff39b2fb5ae4b08b0d71fa83b30c6e403544120d5505"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 213,
+      "path": "static-recomp/generated/topgear_v03_scpu_batch.h",
+      "sha256": "3a4f61faac56cc54d38835e4758f8e4d1c587ec7d25b74a2725f1cff714a082e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 66690,
+      "path": "static-recomp/generated/topgear_v03_scpu_batch.json",
+      "sha256": "c8ab9ac0171854afe9a540b3bc5853ab9460abefa94672d2b7f33970fe0157c1"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 10725,
+      "path": "static-recomp/generated/topgear_v03_smp_batch.c",
+      "sha256": "92b0fb56075949881709f3c73712a6d2f0545e71c13e066c2571e4104ef6ea61"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 209,
+      "path": "static-recomp/generated/topgear_v03_smp_batch.h",
+      "sha256": "438317b61d08b5cefc3e5f43eda46c945bbf140848681e68be5e3ebe218a6ebf"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 6175,
+      "path": "static-recomp/generated/topgear_v03_smp_batch.json",
+      "sha256": "d7f2b3b45d7e4cdb0b0aa996e7fbcb6e15626acd3d9119ec4081dd8140021f27"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 59437,
+      "path": "static-recomp/generated/topgear_v04_smp_batch.c",
+      "sha256": "9d13aa29979c422c1c74e498a19604e3f7d50c5f5623d325b6011ca863cbc005"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 209,
+      "path": "static-recomp/generated/topgear_v04_smp_batch.h",
+      "sha256": "3adc85aac57a3d18427f0e3ef3d85d377041f36d649c4973a091169b8902bfdb"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 68130,
+      "path": "static-recomp/generated/topgear_v04_smp_batch.json",
+      "sha256": "33a6453132ccc08c57256f6a060ccb8f8d47570f448d52a5d1b7c89ef6098bed"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1355,
+      "path": "static-recomp/generated/topgear_v05_phase_family.c",
+      "sha256": "fa5df447cf3988865cbecfcf70e7fd9ad9b00a4102ea4a5db4fbfb31de09f1a7"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 189,
+      "path": "static-recomp/generated/topgear_v05_phase_family.h",
+      "sha256": "61f88bc470c72246f6006ceaa33362ac464908b71b05ce5c6d2411e9310f457e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2096,
+      "path": "static-recomp/generated/topgear_v05_phase_family.json",
+      "sha256": "a077c8ff35fc8ea4e114ea4b1a4e481d99e9c281042c6ffb34b099067c65d6f9"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 744,
+      "path": "static-recomp/generated/topgear_v11_hardware_timeline.h",
+      "sha256": "2e131c44470fd984f4201bb425e11c34eb73f26f7e9a60cef75daf7f6f3944e2"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1057,
+      "path": "static-recomp/generated/topgear_v11_hardware_timeline.json",
+      "sha256": "dff47ab8af2067434782bfb0359263a6c8401341e2d1bfa2e9f7ffa26bb4cf88"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2981,
+      "path": "static-recomp/generated/topgear_v12_ipl_join.c",
+      "sha256": "84e0d6e3a6169d765079d6bbf8b311f42826bad6e23d059bfa461e0c92e0a51a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 452,
+      "path": "static-recomp/generated/topgear_v12_ipl_join.h",
+      "sha256": "f5c6158d4339ed53e8e5cab26ff407d73b1a8154712ef7ee100a70f9153355ca"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 818,
+      "path": "static-recomp/generated/topgear_v12_ipl_join.json",
+      "sha256": "bfa278b80ce7f9571205ac6a37b1d921efe419bdb634a753f56dc5dc066c7563"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2053,
+      "path": "static-recomp/generated/topgear_v13_driver_bridge.c",
+      "sha256": "64040658589c6ded955f09ed4c968ed2a123a66d6bee96e6dc7308c6337ad523"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 192,
+      "path": "static-recomp/generated/topgear_v13_driver_bridge.h",
+      "sha256": "7d440f3e14d67ca504b5591f4d58b014456f9639c08ef2f56a6d09af05ffe9f5"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2610,
+      "path": "static-recomp/generated/topgear_v13_driver_bridge.json",
+      "sha256": "f6d0a4d5794408a9ed321c9dab120c372fcdde81c5b67f53cb9ddd46d82c114e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 9934,
+      "path": "static-recomp/generated/topgear_v13_interleaved_ipl.c",
+      "sha256": "9956b594fa2da0f0e747ca923be2e7b194313ee07866ece42db9ab6ec8f65213"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1512,
+      "path": "static-recomp/generated/topgear_v13_interleaved_ipl.h",
+      "sha256": "1c59bbc05e3d2c431890446a02d059b526276185c8831e1786dc97bb391b3f40"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1309,
+      "path": "static-recomp/generated/topgear_v13_interleaved_ipl.json",
+      "sha256": "422aabb264623b43aa3fd18df6cc572e78c98910c88d761cccecd339284e7139"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 5800,
+      "path": "static-recomp/generated/topgear_v13_post_ipl_scpu_timing.c",
+      "sha256": "33bf66515858e46a572038dd197185dc53e629b01d4733f0347bba10a0cbc8ad"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 562,
+      "path": "static-recomp/generated/topgear_v13_post_ipl_scpu_timing.h",
+      "sha256": "9768bc320d2e056a328e5c1d6a7964a4b8b98e2f6bb7861a7c93443c4c75c973"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 10062,
+      "path": "static-recomp/generated/topgear_v13_post_ipl_scpu_timing.json",
+      "sha256": "2d551e86affbfb4551489d2fef5cda5dbb1fa8958c80d3aff1b14f15b7ffcca9"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2462,
+      "path": "static-recomp/generated/topgear_v13_second_bbaa_producer.c",
+      "sha256": "da5d33c89ba3f3293288134efdf64d56ad69d529faefb4b28f2e1cd9545d65db"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 227,
+      "path": "static-recomp/generated/topgear_v13_second_bbaa_producer.h",
+      "sha256": "b6f527535a70c7537b25efa8f1dc1ef19dae44b5417d7beade9bc82a31f56609"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 343076,
+      "path": "static-recomp/generated/topgear_v13_second_bbaa_producer.json",
+      "sha256": "4d3c3348d229c466c30099172326c0b0884c7d6b2fd71f6b9578122f1068af37"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 74146,
+      "path": "static-recomp/generated/topgear_v13_second_protocol_scpu.c",
+      "sha256": "df353ed8b0964d837fd85fcb37d492cbf4982b2ad0bf0d32e7a2ae59f73cd4b7"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 605,
+      "path": "static-recomp/generated/topgear_v13_second_protocol_scpu.h",
+      "sha256": "a46ea6807f761636112feca79ab7c5d13013ddd7ebc19fab10b8f1f6f074a161"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 522,
+      "path": "static-recomp/generated/topgear_v13_second_protocol_scpu.json",
+      "sha256": "ddc3b638f1723e961f1b251bdd36b25d0fb0f9bb20a5e12bc4ebbe159c89e4e8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2074,
+      "path": "static-recomp/generated/topgear_v13_second_wait.c",
+      "sha256": "dc972d8236d56ba3ea1c382669030f24d5d6b378b9433d10d5ad5024842d472f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 182,
+      "path": "static-recomp/generated/topgear_v13_second_wait.h",
+      "sha256": "159b220fac4125138cf7b78ace31171399ce58a8b4b9a3bd4e4d784c5c9e5efd"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 3997,
+      "path": "static-recomp/generated/topgear_v13_second_wait.json",
+      "sha256": "97ebd8cb67db85ef4b474fe5e6259bea6ee6a03e805c59b89771b5f0365b075d"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 102081,
+      "path": "static-recomp/generated/topgear_v14_post_audio_scpu.c",
+      "sha256": "05fe9b4a3548a9d2a3f58948330182735b6fe3bbbd2e9b80a046671c23a805ac"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 233,
+      "path": "static-recomp/generated/topgear_v14_post_audio_scpu.h",
+      "sha256": "e0423a3d9b2dd5f9b284b0561bb82cb5b5e0287c2830f7d901cc5ea2f8092660"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 58373,
+      "path": "static-recomp/generated/topgear_v14_post_audio_scpu.json",
+      "sha256": "de76e38d1629aa120baaa42913756fbb3c8656fc663c59784176c1b8502def63"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 15234,
+      "path": "static-recomp/generated/topgear_v14_static_join.c",
+      "sha256": "d3a9ac2e38104f884cfebb9132152aec0e0b612d8d8ff5a22d44ad5a2c7627fa"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 467,
+      "path": "static-recomp/generated/topgear_v14_static_join.h",
+      "sha256": "a314618bc13102291cc16cc44d8aadae66e85425364f65b042fe2eae66cea585"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 59433,
+      "path": "static-recomp/generated/topgear_v14_static_join.json",
+      "sha256": "9d4a59faa3fdb57c5036886ef11c3b1210f927d45bdbe74adf3611e1b7a8ac50"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 641,
+      "path": "static-recomp/generated/topgear_v15_post_audio_timing.h",
+      "sha256": "18666ca568b292167b031045a14ad971ef31751995de3a29a33233ff091deda2"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 973,
+      "path": "static-recomp/generated/topgear_v15_post_audio_timing_manifest.json",
+      "sha256": "8fbb487c71a97650f5e29cc44b1184e3749429f797d15eb9d62d7ff3891efbb8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 52249,
+      "path": "static-recomp/generated/topgear_v16_nmi_handler.c",
+      "sha256": "4bc68254599e354235ffb2ac43377b6527dc1fee85779447b7ae6f3b5d49cd5e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 290,
+      "path": "static-recomp/generated/topgear_v16_nmi_handler.h",
+      "sha256": "4a0d40946b371c7ab1de026aabf0e5f5950fa208b89f0831f85a904a3521ee44"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1346,
+      "path": "static-recomp/generated/topgear_v16_nmi_handler.json",
+      "sha256": "6f810692bb1d7b0af48b2743f7f568e616ff5dfa7ebc22669a766a30da9a1599"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 47893,
+      "path": "static-recomp/generated/topgear_v17_second_apu_rendezvous.c",
+      "sha256": "5fecad3e5ef31849ffe4023af0d92138f42cc05260faa025556af87b26233adf"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1000,
+      "path": "static-recomp/generated/topgear_v17_second_apu_rendezvous.h",
+      "sha256": "3a6bfb29b12001c533224f5c1c83c5ccb238ec9ddb6847133e6dcf54cba79e43"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 197936,
+      "path": "static-recomp/generated/topgear_v17_second_apu_rendezvous.json",
+      "sha256": "15c05e73d4e75b7cebdee5bc1a01804ec6104345556be8cb3dfe39ddf82ea9ab"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1002,
+      "path": "static-recomp/generated/topgear_v18_a468_to_hdma.h",
+      "sha256": "4cc3b416fc980b39b03c10da6b1ed69a7f0bad57a734b79ac7131117ad7ed3c6"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 941,
+      "path": "static-recomp/generated/topgear_v18_a468_to_hdma.json",
+      "sha256": "b299bc345cdfb130ae0a0464e82cc532acbd1a4ae3d149f93dee85d49d2b5908"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 12680,
+      "path": "static-recomp/generated/topgear_v18_nmi_optional_dma.c",
+      "sha256": "e64ddfb6d324495c2e5c7c275fb546b1426be1cf9d75beaaac13f087b1d90592"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 327,
+      "path": "static-recomp/generated/topgear_v18_nmi_optional_dma.h",
+      "sha256": "e9a97133dc47087eea6b122a042fba939e8e9761854af0ae34fbdfb0f127f10a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 770,
+      "path": "static-recomp/generated/topgear_v18_nmi_optional_dma.json",
+      "sha256": "dd8c46fd41c1878c466471143f06c9d2e0c3b8a2c6e50ae2b609298bfded467f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 59088,
+      "path": "static-recomp/generated/topgear_v18_post8077_apu_read.c",
+      "sha256": "2d72f082a13890b80e32c90fd5f3f5261cbe6ae213e9d5e4efed324935fc6c96"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1077,
+      "path": "static-recomp/generated/topgear_v18_post8077_apu_read.h",
+      "sha256": "0247480a164d8bf150078ba40dd4bc37bbf9b0fc0690be5db0c1ca7097e94423"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 260689,
+      "path": "static-recomp/generated/topgear_v18_post8077_apu_read.json",
+      "sha256": "e4807373387e0076a6aa78bd1afc2d5e53baee9cb37200e7950ef6cadc62edad"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 537,
+      "path": "static-recomp/generated/topgear_v18_post8cc9_scpu.h",
+      "sha256": "f7c03e9e77024b581582ff109f7a42dfa9e9f53d9daa20006cefd35ef5f1289a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 812,
+      "path": "static-recomp/generated/topgear_v18_post8cc9_scpu.json",
+      "sha256": "ea4421f6e1d2b389c983fbd59311bcfc3dd09cb7ee670cc24461b8c870660939"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 58979,
+      "path": "static-recomp/generated/topgear_v20_post1098_apu_write.c",
+      "sha256": "9633fddae7c87e4786e1bbd81e9558a82471b64172debde1f5bbd90d10c927a3"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 943,
+      "path": "static-recomp/generated/topgear_v20_post1098_apu_write.h",
+      "sha256": "57e4801da68d02d570c65d6b6c1e9d3730fbd16863ec01b87d0d4edf19f984ae"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 234984,
+      "path": "static-recomp/generated/topgear_v20_post1098_apu_write.json",
+      "sha256": "7516eea90f0c802ff5ff152e1815ea6444f6267ac4c79eee195f777cbb2cc2c5"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 9895,
+      "path": "static-recomp/generated/topgear_v21_absolute_first_apu_clear.c",
+      "sha256": "adb157dfabf2f144f6d3c7464146d9ef21240c9a9ced44455e9d693d391033da"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 825,
+      "path": "static-recomp/generated/topgear_v21_absolute_first_apu_clear.h",
+      "sha256": "451267084b9fcd31698eec657c185f57cd204db33bf60c0f89588071c1954187"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 58209,
+      "path": "static-recomp/generated/topgear_v21_post08db_apu_read.c",
+      "sha256": "5de01b67cfba84694d03a83d86fd6e5b3c090b43fffe10140ecc8a7ed6b5eab4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 935,
+      "path": "static-recomp/generated/topgear_v21_post08db_apu_read.h",
+      "sha256": "92e57702191a25c5b0bff7e66a391351116641deecefd2cde58d6d67d0d57dc4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 232972,
+      "path": "static-recomp/generated/topgear_v21_post08db_apu_read.json",
+      "sha256": "a9733696d8c1d289c3462f4780ecc00c11285adc89d5fd07dcfc1f8a1c3dc6c8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 608023,
+      "path": "static-recomp/generated/topgear_v22_interrupt_dispatch.c",
+      "sha256": "d16983876741628e53747604bd7c4b6e4dff6579f26b011302dde7ebade32dbc"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 226,
+      "path": "static-recomp/generated/topgear_v22_interrupt_dispatch.h",
+      "sha256": "6b50a9a082927aa83c9ee2c35cdf9ef18de60d1026b78edd34139b8b21c210f3"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 840,
+      "path": "static-recomp/generated/topgear_v22_interrupt_dispatch.json",
+      "sha256": "8148296f7130065340643fc14fb767aafbe26e07d670614400ec9d38145203a7"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 12892,
+      "path": "static-recomp/generated/topgear_v22_reentry_dispatch.json",
+      "sha256": "c31650abbcc055ead2f728b6e5b06d00cde39e2b6324f3acd0cb95249790294a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 4511,
+      "path": "static-recomp/generated/topgear_v22_romwide_dispatch.json",
+      "sha256": "c0e4710f8702153035a1e5044777be2acad6233367d82f7a17dd6a0b2eeba891"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1255341,
+      "path": "static-recomp/generated/topgear_v22_wram_epoch.c",
+      "sha256": "a09fec34cb66baa418e1efff20fe468cac735ba882baf3bd8d0e69714517be95"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 271,
+      "path": "static-recomp/generated/topgear_v22_wram_epoch.h",
+      "sha256": "0e96ee8ed1a83813212abaffb9c6e226af1285c21760d908d641133de0c48dab"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1117,
+      "path": "static-recomp/generated/topgear_v22_wram_epoch.json",
+      "sha256": "d5d83ed485f4eca005920e30a0f3d372c711cd6ac500107fc87ff1ea6e4cfbba"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 747386,
+      "path": "static-recomp/generated/topgear_v23_nominal_timing.c",
+      "sha256": "08e826c72f42ba373e04be4f0b2ad193fdd4b3c863c5402e4385a07d57a843cf"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 333,
+      "path": "static-recomp/generated/topgear_v23_nominal_timing.h",
+      "sha256": "c073a1ca2fddae0dcd4771f5ccf0f3ed8f563e39c64c91a84e5bd8d39c4f6c9f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 13047,
+      "path": "static-recomp/generated/topgear_v23_nominal_timing.json",
+      "sha256": "b8266f08a69fc50d31f535338c93e983f77d34df2f0a721de8b7446371be6519"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 662999,
+      "path": "static-recomp/generated/topgear_v23_wram_epoch2.c",
+      "sha256": "5a28511ad583c37cd890515f4a948bdf36b95698c1c08180d36b4010bd20fe3e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 276,
+      "path": "static-recomp/generated/topgear_v23_wram_epoch2.h",
+      "sha256": "7481f91c34d7507b40768d949f37646093d16b1f6aecdea3b665205686092b18"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1117,
+      "path": "static-recomp/generated/topgear_v23_wram_epoch2.json",
+      "sha256": "e56ae19393503e656a515182decd5ec73f1c546b49a07a906dd0d1d87bbc0aeb"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 662999,
+      "path": "static-recomp/generated/topgear_v23_wram_epoch3.c",
+      "sha256": "ee8f8004e36a4e1dac3ffdf6d79afab33760a822cf3904a70a3255c8f321857e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 276,
+      "path": "static-recomp/generated/topgear_v23_wram_epoch3.h",
+      "sha256": "72a0da55710a58dc8d7f06f013e93c027171aa15ea2c972422bda060c05c1a8f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1117,
+      "path": "static-recomp/generated/topgear_v23_wram_epoch3.json",
+      "sha256": "0f3c3a92bb5fa71c6a410e7befd071bf484e92b8344e11c0100025613708c0bc"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2171,
+      "path": "static-recomp/generated/v22/topgear_v22_dispatch_index.c",
+      "sha256": "5380fe2d53be251a35205e47c9cf6f91ecd88be18db3317e202cc8ffcd91f705"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 110869,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0020.c",
+      "sha256": "f2576789392b015a6dfe137abdc3b032bfb8c78f82e7f4b63cfbbf33d4d3bff1"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 18570,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0021.c",
+      "sha256": "b164e7fcdd412a6ac7ce4e6b81e7e8cea1fd4975c8d81dc6d6fa0cac5d54c9c6"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 56781,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0029.c",
+      "sha256": "f35010bf93062cafe37da073ac0fcfc1b01021eeae68d7c93c211aa6cbeb619f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 53216,
+      "path": "static-recomp/generated/v22/topgear_v22_group_002A.c",
+      "sha256": "eccfb7a8ca5c8ca373cb243b009e7ab888b0d1e796e82a8134010722f3a862ad"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 88568,
+      "path": "static-recomp/generated/v22/topgear_v22_group_002B.c",
+      "sha256": "68ef8ddc672d32e2367c61aa967fc6bb698ed3a8fd7bce0ea1dd2f7de18801c4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 16072,
+      "path": "static-recomp/generated/v22/topgear_v22_group_002D.c",
+      "sha256": "ec1024f9c87ee10989d5778c885307666e4b2fcc9f80b8c013a094d8d5b585a8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 33749,
+      "path": "static-recomp/generated/v22/topgear_v22_group_002F.c",
+      "sha256": "223e05657e2e3809a786fdebfd89ffbd507ab560861791a17bc092ed2c449a42"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 126850,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0030.c",
+      "sha256": "e3359f093f301f00da70de3f842dc1bc4c922674e38920cbfe2ec5b87b55f843"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 96745,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0031.c",
+      "sha256": "e6aa2dc87838c47b681b63a8f6941674d52c3a100884cd5f26f3eabbb4ea25fd"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 92290,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0032.c",
+      "sha256": "13b469d594bfc0eedd70587a7639a091860267dc8304d3d2dd4b6025210d6210"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 69435,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0033.c",
+      "sha256": "4480fd5f4a98b794c9d0b5ea12c43055de9ed495c796468a3333581247d4cbf8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 40145,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0036.c",
+      "sha256": "2f4133685e7c1fe5ad0ae9acf6f739f7261951cb9107103f81a4c24cb1f8c0e3"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 63823,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0038.c",
+      "sha256": "2a73b92ec03539678f12165c49f075a77d550179725f22a8489adf3c7470b301"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 128320,
+      "path": "static-recomp/generated/v22/topgear_v22_group_0039.c",
+      "sha256": "c8c0b60c4d409443eb1adff3ae43b3ce245a33e9a1f6d5eff8577f5b25e0507c"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 78853,
+      "path": "static-recomp/generated/v22/topgear_v22_group_003A.c",
+      "sha256": "6bac374f8a3e86366d3cc773343809d772e5a4e39c2afa3b7a78651366d47573"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 3935,
+      "path": "static-recomp/generated/v22/topgear_v22_group_003B.c",
+      "sha256": "88985e51b425f1e033b61649c51ca425d20bbe4fdf1210384057db1613544ed9"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 46235,
+      "path": "static-recomp/generated/v22/topgear_v22_group_01E0.c",
+      "sha256": "a19539350a71d47ace0aec8b823bcda9b0418ce4839aa69565923b35b1a446e0"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 100278,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E0.c",
+      "sha256": "2e74f59725a7c60dd7c59b778da8cecb664787c0cf5f3c3b9123899519826924"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 104757,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E1.c",
+      "sha256": "5f6f7e9e3e83c31085dbd671581ad117e039ab25c1f983c385c9e25c7f83e3cc"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 125014,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E2.c",
+      "sha256": "c4104147d48e83582172905a51a56c7b7a39f3f90c30a9b5c499dce8e7fedeee"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 102705,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E3.c",
+      "sha256": "4a12727021cefd5f012c9d926b92f159bd4160f49e7417fa344fd3fa4de3906e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 105940,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E4.c",
+      "sha256": "f4a8fcef4f2b0b89e32214feb389dd2f32a276e7b077cb8bf8c4dd787a6b161a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 104450,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E5.c",
+      "sha256": "154f85c8e16f6d415851b5793bb7445821203ad054fe9ce5b3ee83e7c577cf35"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 112499,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E6.c",
+      "sha256": "5fbc187fa5fdd37937ccddaea2baac5494d82d54ed2fd1bc731010da270b13f2"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 123630,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E7.c",
+      "sha256": "a6b430ff46677fcd3c2e5c1439e495cf0dc4209bece2b4169fe5850fe9647aa1"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 131462,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E8.c",
+      "sha256": "ed2e9c55d119aee481770ad36d34eeede4d5457e43645899806e992883b4ccda"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 76343,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03E9.c",
+      "sha256": "cab3d02ac8a4485e5636f6b35ee12826f51ae54798e8beab5596a7d16f33b23b"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 38395,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03EC.c",
+      "sha256": "1094a8de442546bdf526c048e416bed10c82673e6d23333cf44a7d31c054c3b0"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 18637,
+      "path": "static-recomp/generated/v22/topgear_v22_group_03ED.c",
+      "sha256": "26a904e56cd25c020026b4f8a7a1d3628c34a7adf88ee076edd096371ccb16a7"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 1896,
+      "path": "static-recomp/generated/v22/topgear_v22_romwide_dispatch.h",
+      "sha256": "a38c75ca1d996ddf6b6148c08b51068e6f0028cb6839f2b51f89046c059aabca"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 76346,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0020.c",
+      "sha256": "7ade8b913f3313b64acbb3e6d0dcc4a6462c34561afcb0c0118f5423e1259f6e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 104138,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0021.c",
+      "sha256": "ccdd4c73163fcf8f4ef31ff24219ae74037fc33ef9b23c7225a497c9c3445b54"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 54933,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0022.c",
+      "sha256": "8607574a0807173c98a9e89bf5f74531d3e21d0147cab511ec59469d4a8fc9ef"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 96838,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0024.c",
+      "sha256": "93d0f293624cf87988b6b7d66764b87dbaea191a843e9a0e206bfbb432f00a9c"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 79613,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0025.c",
+      "sha256": "157040f46a455b0229257fb010b06d49a44974533ee70c1f176ff44a77d7d4ab"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 78728,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0028.c",
+      "sha256": "7f2d930e57c991447533e038fe7089efe218c994f8e1881e2982abcac3cc83e3"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 55234,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0029.c",
+      "sha256": "336c5a0e5c807ff6c10391aaad853e03f11fdd5fb5d2b78d8faa3b910bad310a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 97993,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002A.c",
+      "sha256": "62c08faa7be5a4f24ca995462239a41026e2a279d59bf81211212919ee85e623"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 115909,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002B.c",
+      "sha256": "1ffdc00a2a0c710910521ec76a400ea6b5849bf56c54cca1d1b76b3c1253e1aa"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 114034,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002C.c",
+      "sha256": "41ddd43edd9adaaf4a0ada0ff2b5dae4259f6847b4885a21cd0963498d6ba153"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 15877,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002D.c",
+      "sha256": "6c6b976cf0e8c863640216b48095900533f9dd311ba9f0f1196487c248ea2b67"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 32812,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002F.c",
+      "sha256": "e601682c3f7f92e1726c1e3d2e0c4b00d8c9355d01c182d41c202e7138b04d27"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 123595,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0030.c",
+      "sha256": "0a7cd837ed7c1aa27f45195cb5eab5b5b534a4a2a19001de6a801de57254fc7f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 94849,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0031.c",
+      "sha256": "1a767c7304083db32a903dbb81379b7cf9f54daeb1f8986e8eba51f384040d76"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 90500,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0032.c",
+      "sha256": "ddc7366dcc5e58b1b8c25872465b51b4bc18d3eb2254b5d1d0a4393a01d1e3d3"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 115316,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0033.c",
+      "sha256": "8f1947453973659cbbf655b2991e39a920a56c816858501ee4399830fa32895f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 114230,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0034.c",
+      "sha256": "51fadffbc817237d34311ee8d11402833763c123b947682551acf7e72ea11286"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 72324,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0035.c",
+      "sha256": "3e8434bbca87bf4cba4841135b65180d4e2e50e7afafeee0c9d4dbeb3ed2d04c"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 77447,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0036.c",
+      "sha256": "8a2694c6031a1b8f80f6aebcd603ec5a0ffec46676e03fb9b17fef5968b942b6"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 49922,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0037.c",
+      "sha256": "ee5538dd9305aa4eb074aeea3fc483dca2a1d2097079f26fbd5ca249dc13bbd4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 62532,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0038.c",
+      "sha256": "092b91225f96beccac30d2e0359dfca3eaa13a20e9df87c71eb7ee74917dd114"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 125744,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0039.c",
+      "sha256": "7685b889ee34df26c1a0fc8dfd818c376566ce4ff967f811ccc36596aff27b95"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 66755,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_003A.c",
+      "sha256": "a2ae8f24310146c3fba9d23eb292b4f7efc38f9dc59526159594e856c2db2855"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 2151,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_003B.c",
+      "sha256": "d3bf0154f3ba8fe34a75c05bc0794ae65909b7b55643c90b3bd733596c387c85"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 116240,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0060.c",
+      "sha256": "b78a77b8c482e8d95cb52d752919d7d6998f63b87785e4625f6691dcd46e39e4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 126796,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0061.c",
+      "sha256": "9e30ae6e01ef6d774c4de9832c95745bdeac8907817e1a78b0788738d7644ad4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 132139,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0062.c",
+      "sha256": "3eb3631d6ea37ca98bf586f837ae5256dcda2958996ffd1f2d94e3a2879b7d3e"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 141249,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0063.c",
+      "sha256": "468b70c5ff0169de322da9b6634a9c5167439244ef6e3842bae8ec6fd62bafa8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 119366,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0064.c",
+      "sha256": "f98008e01a01ce1e5aa2feffbeac249de17e608930be106f2f54017742b83c87"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 111841,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0065.c",
+      "sha256": "4666f7ecaf4fbc4b906d497b67b9512b3091d79ef6cc821b60c3e6f73e9d911a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 123811,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0066.c",
+      "sha256": "cefbd2c5ea58621dbae4241db06232d13448512b082045288044f73b78eb83c6"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 114556,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0067.c",
+      "sha256": "00c0e6930b2319d48fbaa99b26e38828735c308d1ac5cc9857619df58b6a457d"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 130628,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0068.c",
+      "sha256": "9dc58a2171c9e72d2c19dd65fab6d744541b79f671b25e41e74dd67406c7aee0"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 65761,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0069.c",
+      "sha256": "1d172f111acccae629dfde50327e5956a8541a90f7eacf0e329996071d14108d"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 34445,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0174.c",
+      "sha256": "a40f431a6f8a979900d3a4bf38f8356b6d9b1d6d6df8e06b0e14118f8da23590"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 121031,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0175.c",
+      "sha256": "73358a1780db12edb3fb9248cc1276d55a83b241578ab4193d24843484a336a9"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 111682,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0176.c",
+      "sha256": "b635f09318130280d687cebe4fb4a504ec29331d178edbbda1957ccf8ef98b2f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 122009,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0177.c",
+      "sha256": "72fbf22f489c34d6472986f6bcccc6e17b7b97f0c7928845eb7cbb9516e462b8"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 114474,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0178.c",
+      "sha256": "d1b36c3c81a48d792e0e64e9b8b5e9733dcf8da7fb62d90f3197a9dcca9ad8a9"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 104367,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0179.c",
+      "sha256": "79b0331b4d6fbe5e22ed585488b6ebffa06e9f533cafd652902aa1cb65455cba"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 120855,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017A.c",
+      "sha256": "4524238385dd6db787bf5fb5bced4742cacf3a8e56c785847863dc128791414a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 118050,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017B.c",
+      "sha256": "5582538de8200426a80f07c2e61beac44c767708b904f4ad3480acd9eeba4675"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 116639,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017C.c",
+      "sha256": "1bd453792009c83ce059517dbaef559f72844c99d43cd23d12b9f0175f075df4"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 86070,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017D.c",
+      "sha256": "72b43afd86bfc8bb303678bdfabb3e149236279613c94d26c27106940cf45e80"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 45369,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_01E0.c",
+      "sha256": "f16b84259a9820676d20ad7514f2f0acafbc887777b02e6ebbf830ca4bd0b9e7"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 98274,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E0.c",
+      "sha256": "abd33c8efdf0af4a34035935cea1f1c69e0679b56f37f26fbf57d36bf9f18fbf"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 102966,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E1.c",
+      "sha256": "1ddef8b9d1a4faf5b3c3de392b0abc34d766c016fbb5916f2000a36ed730ff3c"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 122343,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E2.c",
+      "sha256": "95a99dcd34a39afdbcfbaf5379b83ced30ac0ebe10a3c81b3ad47a39a0cb967a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 100694,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E3.c",
+      "sha256": "f0a9af7209b73fcd765b70cf87a2581180a522c5168621ad1b13fcf3e7364d4c"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 103933,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E4.c",
+      "sha256": "835fea4b64471a6a0e08b8792d81856f5f345d1bedfc37f6df9dd6f133e1ec6f"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 102329,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E5.c",
+      "sha256": "aba83428f4917f4f6932bfc4dda1000d6426882952c3e6f1bacae594c97f3344"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 109958,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E6.c",
+      "sha256": "74ae188a1860d710be95f283f2c424b1741af705f2762240b70cbbe88c1a3a1a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 120769,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E7.c",
+      "sha256": "a9fe3bf63a1eaa2cc7b46c2111c054289713bf5decf127687c35ba2184a8066a"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 128409,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E8.c",
+      "sha256": "48a8767444c39afdabc9307ab333e665d580aa5a8df525a20d42cdf6e0917ee0"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 74838,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E9.c",
+      "sha256": "d56e99cced27350ab81aafb63a68d4e97e02410d2df4c4158f5b120be4b79677"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 37616,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03EC.c",
+      "sha256": "3fe41045b4eabe29cfae3aeaf2bd8ef08e61b2a6e819e5b3b31774a0122180d1"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 18295,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03ED.c",
+      "sha256": "a155d17abf84d28661219eab45e5b31d48522edb8486b3974f295e3fdc5f3d72"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 12727,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_index.c",
+      "sha256": "6d7069b306b7aa6bd7390ebe1746953398e985ce11c3fb5192969c22ab875c88"
+    },
+    {
+      "authority": "generated-scpu-or-reentry",
+      "bytes": 267,
+      "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_shards.h",
+      "sha256": "966fe404803af6c12a61f1378d707d73d898a220458506d59f0939c1f71670e1"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 1158,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/PROVENANCE.md",
+      "sha256": "cdc26883cf1566e9c922533e9fb9a454d47ee4a3c3d83d242d124ba1f0423f1f"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 7047,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/SNES9X-LICENSE.txt",
+      "sha256": "70efeee282d82a6e9d26aeed5466d08c632369858371dc6a4644c8dcedc2be78"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 46019,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/SPC_DSP.cpp",
+      "sha256": "11f2c447b1c9a45713ee62cdcfefad7dded4e5446a21db4a068194cd1224ccb2"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 9684,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/SPC_DSP.h",
+      "sha256": "ee7aa1e570ffbe657aa151da228700c59eec424003931de6184629aabae83f62"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 5205,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_common.h",
+      "sha256": "4bc17a19fe46de2860868d3f88c037aee718b4dedc61450a28de3d1336053dba"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 702,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_config.h",
+      "sha256": "b09d42a2130a9b2beedd9fa460e885d6953852cfcfbc30c19a28cd503b03e8b1"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 6364,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_endian.h",
+      "sha256": "97062e15b46e1347a4fc2e95fd131bcb89c1b8947b28d20a27c1f342a387d637"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 3037,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_source.h",
+      "sha256": "bd6b376d6d9b1bccce3b89e915b1ad9a6fede7d43b273258bfa13c3855fb1a6a"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 14105,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sc_static_sdsp_primitives.inc",
+      "sha256": "e226416e5e8a9a26b081cf4745c1f72e47f49387f9b0784c0189b5e4badfe40d"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 2656,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sdsp.cpp",
+      "sha256": "17a390229a3e675c62d3f5e6a54914e174049e3061315a2688874161df1ddf16"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 393,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sdsp.hpp",
+      "sha256": "0961d7ddc0626fd7a04fcaeca81626cc2a95f4cfb965a3c7bc47d66b83e0c36d"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 2307,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/sc_audio_clock_profile.h",
+      "sha256": "d71f5f8a02a79374d4a2c14b973193ce7f6212fcee5205dc87c4a7a9284dbccc"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 19571,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/sc_static_apu.cpp",
+      "sha256": "caa070e0314d8046588c58280201f5f564df3a17f976a70991934a3d7f60b99d"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 3710,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/sc_static_apu.h",
+      "sha256": "9de6519cb0d4f9a4f3726b64a3610b5e9fbfab895ad63dd6cf40407ed664cccc"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 2180,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/algorithms.cpp",
+      "sha256": "60d11d0871e9934323b9caae78e0f0270ed4ec083eb1db6cbb39bf5b2126c37c"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 1781,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core.cpp",
+      "sha256": "0082f2cec444b5728ff88a86263f849a5a64664bb8725266c3521eaf26758111"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 4326,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_misc.cpp",
+      "sha256": "7ab0aee29e1ba8144490f4a45986db0ec43c39fb7b39708a071232d89eb898e1"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 10618,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_mov.cpp",
+      "sha256": "de015670802074a2220e50941d5976ee62f20d5d41116be33a5d07e80b3973d5"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 8469,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_pc.cpp",
+      "sha256": "2a9311e1d4adaaf8573821f093ec8616fd0ca105d57e1a420fe5d529bfd9abaa"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 12220,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_read.cpp",
+      "sha256": "c07fa73b7a6e470035c33eeb1dabe6bb329a39b01b4a44eb0db7282a93bafb45"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 3841,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_rmw.cpp",
+      "sha256": "f6d3c0bf572102e76210ed64f442290c703d7cd6b91d0e398cd023d31d9ba9f6"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 1694,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/iplrom.cpp",
+      "sha256": "759204fa3a7237c8d76ace29b4a5974066677297ba12772fc1c0be3e712961d5"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 2483,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/memory.cpp",
+      "sha256": "c879905b948f07a90b07cd582b2054413aaecc82cc894378c6fdca91e24c7b17"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 50784,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_code_bitmap.inc",
+      "sha256": "ea6a91341ee66777525db85f8f376499c7fa07437280466f03649a310d8f07b4"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 17879,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_dispatch.inc",
+      "sha256": "841957066dbdb1af48c026b5ec82e3ecfbf84217076a638af5608d913d156f78"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 47387,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_lookup.inc",
+      "sha256": "9928b5dfbefcb7cb154363e26c9da30397b39191ad79e33f9755ec21a5a721dc"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 1560,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/smp.cpp",
+      "sha256": "aee83cf91ffa6ab8a092df67ae8f400d90fed141ffac54b336bce3c68ddc63de"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 3672,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/smp.hpp",
+      "sha256": "579f1ea7f95a81d122ca004f9cb1aa04c863f4f3fc37923cc8b806fec92f58c7"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 617,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/smp/timing.cpp",
+      "sha256": "6263a99d1092e7d8f299e4e9a0985b8a53210020401a5df8b375ccc9692fe980"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 575,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/static_snes.hpp",
+      "sha256": "4dc05734b354cd7ac9781224789dba5b07e0388df87cd8d5b16c83648a7fdbb6"
+    },
+    {
+      "authority": "static-smp-sdsp-aot",
+      "bytes": 1121,
+      "path": "static-recomp/static-audio/topgear-bapu-aot/static_types.hpp",
+      "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
+    }
+  ],
+  "inventory_sha256": "ed8dcb4aa12954ee447a538ab5d252282133297321f857c3dbddfe38aa4172cd",
+  "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
+  "project_version": "1.1.1",
+  "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
+  "schema": "topgear-generated-provenance-v1"
+}

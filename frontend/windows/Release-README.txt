@@ -1,5 +1,5 @@
 Top Gear (SNES) Static Recompilation
-Launcher 1.0.0 for Windows 10 and 11 (64-bit)
+Launcher 1.1.1 for Windows 10 and 11 (64-bit)
 
 1. Place the legally obtained Top Gear (USA) ROM in the Rom folder.
 2. The ROM must be a 524,288-byte .sfc file with SHA-256:
@@ -20,6 +20,13 @@ F7      Run selected ROM
 F8      Screenshot
 F9      Start or stop native Full Static WAV recording
 1/2     Save/load the current snapshot slot
+
+Music on the toolbar opens seven ROM music sequences and 16 standalone sound
+effects, each labelled with its exact table/ARAM address. Play renders the
+selection headlessly from the real audio-driver upload path; Stop and the
+position slider provide five-second keyboard seeking. Temporary WAV files and
+the optional safety snapshot use the Windows temporary folder and are removed
+when Launcher.exe closes; they never add folders to this package.
 
 The Settings dialog provides VSync, corrected SNES 4:3 output and integer
 scaling. Controls supports keyboard, gamepad, or combined input for two players,

@@ -1,5 +1,5 @@
-#include "topgear_static_recomp.h"
 #include "topgear_internal.h"
+#include "topgear_snapshot_format.h"
 #include "sc_static_apu.h"
 
 #include <stdio.h>
@@ -10,18 +10,7 @@
 #include <windows.h>
 #endif
 
-#define TOPGEAR_SNAPSHOT_VERSION 1u
 #define TOPGEAR_FRAME_MAX_INSTRUCTIONS UINT64_C(50000000)
-
-typedef struct TopGearSnapshotHeader {
-    char magic[8];
-    uint32_t version;
-    uint32_t core_size;
-    uint32_t apu_size;
-    uint32_t reserved;
-    uint64_t core_hash;
-    uint64_t apu_hash;
-} TopGearSnapshotHeader;
 
 static uint64_t snapshot_hash(const void *data, size_t size) {
     const unsigned char *bytes = (const unsigned char *)data;
@@ -161,7 +150,7 @@ int topgear_recomp_snapshot_save(const TopGearRecomp *instance,
         goto cleanup;
     }
     memset(&header, 0, sizeof(header));
-    memcpy(header.magic, "TGSNAP27", 8u);
+    memcpy(header.magic, TOPGEAR_SNAPSHOT_MAGIC, TOPGEAR_SNAPSHOT_MAGIC_SIZE);
     header.version = TOPGEAR_SNAPSHOT_VERSION;
     header.core_size = (uint32_t)sizeof(*core);
     header.apu_size = (uint32_t)apu_size;
@@ -243,7 +232,8 @@ int topgear_recomp_snapshot_load(TopGearRecomp *instance, const char *path,
         goto cleanup;
     }
     if (fread(&header, 1u, sizeof(header), file) != sizeof(header) ||
-        memcmp(header.magic, "TGSNAP27", 8u) != 0 ||
+        memcmp(header.magic, TOPGEAR_SNAPSHOT_MAGIC,
+               TOPGEAR_SNAPSHOT_MAGIC_SIZE) != 0 ||
         header.version != TOPGEAR_SNAPSHOT_VERSION ||
         header.core_size != sizeof(*core) || header.apu_size != apu_size) {
         snapshot_error(error, error_capacity,

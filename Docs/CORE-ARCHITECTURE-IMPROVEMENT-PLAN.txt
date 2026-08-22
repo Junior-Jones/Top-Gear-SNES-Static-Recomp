@@ -1,0 +1,35 @@
+TOP GEAR STATIC-CORE ARCHITECTURE IMPROVEMENT PLAN
+
+Recommended order
+
+1. INSTANCE-SAFE VIDEO RENDERING
+   Remove the renderer's file-global current-core pointer and pass the
+   TopGearRecomp instance through rendering helpers. This makes simultaneous
+   core instances and parallel tests safe.
+
+2. STABLE AND RESEARCH API SEPARATION
+   Keep lifecycle, frame, input, audio, snapshot, hook and status operations in
+   the stable public header. Move historical V02-V25 research receipts and
+   milestone-specific entry points into an opt-in diagnostics header.
+
+3. PUBLISHED CTEST COVERAGE
+   Register ROM-free architecture, snapshot-format, hook-contract, audio FIFO,
+   generated-dispatch and renderer tests in the official source package. Keep
+   ROM-dependent routes optional through an explicit CMake ROM path.
+
+4. REPRODUCIBLE SOURCE AND EVIDENCE INTEGRITY
+   Add a checked source inventory, generated-code provenance manifest and clean
+   regeneration checks for the current generated dispatch and static-audio
+   authority.
+
+Why this order
+
+The renderer's global state is a correctness issue. Separating the API next
+gives tests a stable surface. CTest can then verify that surface, after which the
+integrity inventory can pin the finalized source and generated evidence.
+
+Status
+
+1-4. Implemented on 2026-08-19. The renderer is instance-explicit; research
+declarations are opt-in; ROM-free and optional ROM CTests are published; and the
+source/generated authority is covered by reproducible manifests and checksums.

@@ -1,7 +1,7 @@
 #ifndef TOPGEAR_INTERNAL_H
 #define TOPGEAR_INTERNAL_H
 
-#include "topgear_static_recomp.h"
+#include "topgear_static_recomp_diagnostics.h"
 #define TG_V16_CYCLE_FETCH 1u
 #define TG_V16_CYCLE_IDLE 2u
 #define TG_V16_CYCLE_DATA_READ 3u

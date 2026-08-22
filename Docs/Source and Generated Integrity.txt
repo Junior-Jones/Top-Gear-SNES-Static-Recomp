@@ -1,0 +1,29 @@
+TOP GEAR SOURCE AND GENERATED-EVIDENCE INTEGRITY
+
+The source package publishes three checked inventories:
+
+SOURCE-MANIFEST.json
+  Every distributable source/document/configuration file, with size and SHA-256.
+  The manifest files themselves and compiler/cache products are excluded.
+
+GENERATED-PROVENANCE.json
+  Every file under static-recomp/generated and the Full Static S-SMP/S-DSP AOT
+  authority, separated by authority class and bound to the accepted ROM SHA-256.
+
+SHA256SUMS.txt
+  Checksums of both manifests, the stable/diagnostics API headers, both CMake
+  entry points and the integrity tool.
+
+Verification:
+
+  py -3 -B tools/integrity_manifests.py
+
+Intentional source or generated-authority changes require:
+
+  py -3 -B tools/integrity_manifests.py --write
+
+Review the resulting manifest diff with the source/provenance evidence. Do not
+refresh a manifest merely to silence a failure. The historical research generator
+is not distributed in this release, so the generated provenance manifest pins the
+reviewed authority; it does not falsely claim that historical generation can be
+rerun from this release tree alone.

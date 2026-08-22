@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <commdlg.h>
 #include <commctrl.h>
+#include <mmsystem.h>
 #include <shellapi.h>
 
 #include "topgear_audio_output_sdl3.h"
@@ -26,6 +27,7 @@
 #define SNAPSHOT_CLASS_NAME L"TopGearStaticRecompSnapshotWindow"
 #define INFO_CLASS_NAME L"TopGearStaticRecompInformationWindow"
 #define GETTING_STARTED_CLASS_NAME L"TopGearGettingStartedWindow"
+#define MUSIC_CLASS_NAME L"TopGearMusicBoxWindow"
 #define APP_TITLE L"Top Gear (SNES)"
 #define LAUNCHER_TITLE L"Launcher"
 #define WM_APP_LOAD_COMPLETE (WM_APP + 1u)
@@ -53,7 +55,6 @@
 #define ID_SNAPSHOT_LOAD 1014
 #define ID_RECORD 1015
 #define ID_SHORTCUTS 1016
-#define ID_CONTROLS 1017
 #define ID_RESET 1018
 #define ID_BROWSE_MENU 1019
 #define ID_FULLSCREEN 1020
@@ -62,6 +63,7 @@
 #define ID_GETTING_STARTED 1023
 #define ID_SNAPSHOT_SAVE_CURRENT 1024
 #define ID_SNAPSHOT_LOAD_CURRENT 1025
+#define ID_MUSIC 1026
 #define ID_ROM_NOTICE_CLOSE 4001
 #define ID_SNAPSHOT_SLOT_BASE 5000
 #define ID_SNAPSHOT_LABEL_BASE 5100
@@ -70,6 +72,19 @@
 #define ID_INFO_TEXT 5300
 #define ID_INFO_CLOSE 5301
 #define ID_GETTING_STARTED_CLOSE 5400
+#define ID_MUSIC_LIST 5500
+#define ID_MUSIC_PREVIOUS 5501
+#define ID_MUSIC_PLAY 5502
+#define ID_MUSIC_RESTART 5503
+#define ID_MUSIC_STOP 5504
+#define ID_MUSIC_NEXT 5505
+#define ID_MUSIC_LOOP 5506
+#define ID_MUSIC_DETAILS 5507
+#define ID_MUSIC_CLOSE 5508
+#define ID_MUSIC_SLIDER 5509
+#define MUSIC_CATALOG_CAPACITY 36u
+#define MUSIC_BOX_TIMER_ID 5510u
+#define MUSIC_BOX_MCI_ALIAS L"TopGearMusicBoxAudio"
 
 #define ID_AUDIO_ENABLED 2001
 #define ID_AUDIO_ENGINE 2002
@@ -135,7 +150,7 @@ typedef struct SnapshotDialogState {
 } SnapshotDialogState;
 
 typedef struct InfoDialogState {
-    const wchar_t *body;
+    wchar_t body[8192];
     HWND text;
     HWND close_button;
 } InfoDialogState;
@@ -146,6 +161,14 @@ typedef struct GettingStartedDialogState {
     HFONT heading_font;
     HFONT body_font;
 } GettingStartedDialogState;
+
+typedef struct MusicBoxState {
+    HWND list;
+    HWND play_button;
+    HWND stop_button;
+    HWND slider;
+    HWND close_button;
+} MusicBoxState;
 
 
 static HINSTANCE g_instance;
@@ -158,12 +181,15 @@ static HWND g_pause_play_button;
 static HWND g_reset_button;
 static HWND g_keys_button;
 static HWND g_audio_button;
+static HWND g_music_button;
 static HWND g_fullscreen_checkbox;
 static HWND g_auto_run_checkbox;
 static HWND g_rom_path;
 static HWND g_status;
 static HWND g_getting_started_window;
 static HWND g_rom_info_window;
+static HWND g_info_window;
+static HWND g_music_window;
 static HMENU g_menu;
 static TopGearRecomp *g_game;
 static HANDLE g_loader_thread;
@@ -212,9 +238,21 @@ static uint64_t g_pacing_skipped_deadlines;
 static uint32_t g_pacing_max_batch;
 static uint64_t g_pacing_resyncs;
 static GettingStartedDialogState g_getting_started_state;
+static InfoDialogState g_info_dialog_state;
 static int g_getting_started_mark_seen;
 static int g_startup_pending;
 static volatile LONG g_crash_log_started;
+static MusicBoxState g_music_state;
+static wchar_t g_music_cache_paths[MUSIC_CATALOG_CAPACITY][PATH_CAPACITY];
+static size_t g_music_list_catalog_indices[MUSIC_CATALOG_CAPACITY];
+static size_t g_music_list_count;
+static size_t g_music_open_catalog_index = (size_t)-1;
+static uint32_t g_music_duration_ms;
+static int g_music_mci_open;
+static int g_music_mci_playing;
+_Static_assert(sizeof(g_music_cache_paths) / sizeof(g_music_cache_paths[0]) ==
+                   MUSIC_CATALOG_CAPACITY,
+               "Music cache must match the complete audio catalogue.");
 
 typedef struct InputHistoryEntry {
     uint64_t frame_index;
@@ -250,6 +288,7 @@ static void show_snapshot_window(int save_mode);
 static void show_information_window(const wchar_t *title,
                                     const wchar_t *body,
                                     int width, int height);
+static void show_music_box(void);
 
 static void capture_host_diagnostic_state(TopGearHostDiagnosticState *state) {
     unsigned player;
@@ -707,6 +746,7 @@ static void set_toolbar_visible(int visible) {
     ShowWindow(g_reset_button, command);
     ShowWindow(g_keys_button, command);
     ShowWindow(g_audio_button, command);
+    ShowWindow(g_music_button, command);
     ShowWindow(g_fullscreen_checkbox, command);
     ShowWindow(g_auto_run_checkbox, command);
     ShowWindow(g_status, command);
@@ -792,6 +832,9 @@ static void update_controls(void) {
     EnableWindow(g_reset_button, !loading && g_game != NULL);
     EnableWindow(g_keys_button, TRUE);
     EnableWindow(g_audio_button, !loading);
+    /* Music Box owns a separate headless preview core. A verified ROM path is
+       sufficient; users do not have to start gameplay or press Escape first. */
+    EnableWindow(g_music_button, !loading && rom_path_known());
     EnableWindow(g_fullscreen_checkbox, !loading);
     EnableWindow(g_auto_run_checkbox, !loading);
     set_control_text_notified(g_browse_button,
@@ -1266,40 +1309,6 @@ static void show_key_bindings(void) {
     if (resume_after && g_game) play_game();
 }
 
-static void show_game_controls(void) {
-    wchar_t key_name[TOPGEAR_PLAYER_COUNT][TOPGEAR_WIN_BINDING_COUNT][64];
-    wchar_t message[4096];
-    size_t used = 0u;
-    int index,player;
-    for (player = 0; player < TOPGEAR_PLAYER_COUNT; ++player)
-        for (index = 0; index < TOPGEAR_WIN_BINDING_COUNT; ++index)
-            topgear_frontend_settings_win32_key_name(
-                g_frontend_settings.bindings[player][index],
-                key_name[player][index], 64u);
-    used = (size_t)_snwprintf(message,
-        sizeof(message) / sizeof(message[0]),
-        L"Top Gear (SNES) current keyboard bindings\r\n\r\n");
-    for (player = 0; player < TOPGEAR_PLAYER_COUNT &&
-         used < sizeof(message) / sizeof(message[0]); ++player) {
-        int written = _snwprintf(message + used,
-            sizeof(message) / sizeof(message[0]) - used,
-            L"Player %d\r\nUp %s; Down %s; Left %s; Right %s\r\n"
-            L"B %s; A %s; Y %s; X %s; L %s; R %s; Start %s; Select %s\r\n\r\n",
-            player + 1, key_name[player][TG_WIN_BIND_UP],
-            key_name[player][TG_WIN_BIND_DOWN],key_name[player][TG_WIN_BIND_LEFT],
-            key_name[player][TG_WIN_BIND_RIGHT],key_name[player][TG_WIN_BIND_SNES_B],
-            key_name[player][TG_WIN_BIND_SNES_A],key_name[player][TG_WIN_BIND_SNES_Y],
-            key_name[player][TG_WIN_BIND_SNES_X],key_name[player][TG_WIN_BIND_SNES_L],
-            key_name[player][TG_WIN_BIND_SNES_R],key_name[player][TG_WIN_BIND_START],
-            key_name[player][TG_WIN_BIND_SELECT]);
-        if (written < 0) break;
-        used += (size_t)written;
-    }
-    message[(sizeof(message) / sizeof(message[0])) - 1u] = L'\0';
-    MessageBoxW(g_window, message, L"Top Gear (SNES) Controls",
-                MB_OK | MB_ICONINFORMATION);
-}
-
 static const wchar_t g_welcome_text[] =
     L"This launcher runs the statically recompiled Super Nintendo version of Top Gear\r\n\r\n"
     L"Essential launcher shortcuts\r\n"
@@ -1318,10 +1327,7 @@ static const wchar_t g_welcome_text[] =
     L"F9 - Start or stop audio recording";
 
 static void show_shortcuts(void) {
-    int resume_after = g_game && !g_paused;
-    if (resume_after) pause_game(L"Paused while Launcher Shortcut Keys is open.");
     show_information_window(L"Launcher Shortcut Keys", g_welcome_text, 680, 520);
-    if (resume_after && g_game) play_game();
 }
 
 static void show_frontend_settings(void) {
@@ -1798,6 +1804,13 @@ static LRESULT CALLBACK info_dialog_proc(HWND window, UINT message,
         case WM_CLOSE:
             DestroyWindow(window);
             return 0;
+        case WM_DESTROY:
+            if (window == g_info_window) {
+                g_info_window = NULL;
+                g_info_dialog_state.text = NULL;
+                g_info_dialog_state.close_button = NULL;
+            }
+            return 0;
         default:
             break;
     }
@@ -1807,33 +1820,40 @@ static LRESULT CALLBACK info_dialog_proc(HWND window, UINT message,
 static void show_information_window(const wchar_t *title,
                                     const wchar_t *body,
                                     int width, int height) {
-    InfoDialogState state;
     HWND dialog;
-    MSG message;
-    int message_result = 1;
-    ZeroMemory(&message, sizeof(message));
-    ZeroMemory(&state, sizeof(state));
-    state.body = body;
+    wcsncpy_s(g_info_dialog_state.body,
+              sizeof(g_info_dialog_state.body) /
+                  sizeof(g_info_dialog_state.body[0]),
+              body ? body : L"", _TRUNCATE);
+    if (IsWindow(g_info_window)) {
+        SetWindowTextW(g_info_window, title);
+        SetWindowTextW(g_info_dialog_state.text, g_info_dialog_state.body);
+        notify_control_value(g_info_dialog_state.text);
+        ShowWindow(g_info_window, SW_RESTORE);
+        SetWindowPos(g_info_window, HWND_TOP, 0, 0, 0, 0,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+        SetForegroundWindow(g_info_window);
+        SetFocus(g_info_dialog_state.text);
+        NotifyWinEvent(EVENT_OBJECT_FOCUS, g_info_dialog_state.text,
+                       OBJID_CLIENT, CHILDID_SELF);
+        return;
+    }
+    g_info_dialog_state.text = NULL;
+    g_info_dialog_state.close_button = NULL;
     dialog = CreateWindowExW(
         WS_EX_DLGMODALFRAME | WS_EX_CONTROLPARENT,
         INFO_CLASS_NAME, title,
         WS_CAPTION | WS_SYSMENU | WS_POPUP | WS_VISIBLE | WS_THICKFRAME,
         CW_USEDEFAULT, CW_USEDEFAULT, width, height,
-        g_window, NULL, g_instance, &state);
+        g_window, NULL, g_instance, &g_info_dialog_state);
     if (!dialog) return;
+    g_info_window = dialog;
     SetWindowTextW(dialog, title);
     center_window_on_parent(dialog, g_window);
-    EnableWindow(g_window, FALSE);
-    while (IsWindow(dialog) &&
-           (message_result = GetMessageW(&message, NULL, 0, 0)) > 0) {
-        if (!IsDialogMessageW(dialog, &message)) {
-            TranslateMessage(&message);
-            DispatchMessageW(&message);
-        }
-    }
-    EnableWindow(g_window, TRUE);
-    SetForegroundWindow(g_window);
-    if (message_result == 0) PostQuitMessage((int)message.wParam);
+    ShowWindow(dialog, SW_SHOWNORMAL);
+    SetWindowPos(dialog, HWND_TOP, 0, 0, 0, 0,
+                 SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    SetForegroundWindow(dialog);
 }
 
 static HWND create_getting_started_text(HWND parent, const wchar_t *text,
@@ -2175,7 +2195,7 @@ static int advance_frame_batch(uint32_t frame_count) {
     for (frame_index = 0u; frame_index < frame_count; ++frame_index) {
         uint16_t player1_input = current_gameplay_input(0u);
         uint16_t player2_input = current_gameplay_input(1u);
-        uint64_t current_frame = topgear_recomp_v27_frame_count(g_game) + 1u;
+        uint64_t current_frame = (uint64_t)topgear_recomp_current_frame(g_game) + 1u;
         int final_frame = frame_index + 1u == frame_count;
         int advanced;
 
@@ -2307,9 +2327,10 @@ static void layout_controls(HWND window) {
     MoveWindow(g_reset_button, 218, 8, 80, 30, TRUE);
     MoveWindow(g_audio_button, 304, 8, 80, 30, TRUE);
     MoveWindow(g_keys_button, 390, 8, 72, 30, TRUE);
-    MoveWindow(g_fullscreen_checkbox, 478, 10, 112, 26, TRUE);
-    MoveWindow(g_auto_run_checkbox, 600, 10,
-               width > 820 ? 112 : 100, 26, TRUE);
+    MoveWindow(g_music_button, 468, 8, 82, 30, TRUE);
+    MoveWindow(g_fullscreen_checkbox, 566, 10, 112, 26, TRUE);
+    MoveWindow(g_auto_run_checkbox, 688, 10,
+               width > 920 ? 112 : 100, 26, TRUE);
     MoveWindow(g_status, 12, 48, width - 24, 24, TRUE);
 }
 
@@ -2386,6 +2407,501 @@ static void paint_window(HWND window) {
 static void set_control_font(HWND control) {
     SendMessageW(control, WM_SETFONT,
                  (WPARAM)GetStockObject(DEFAULT_GUI_FONT), TRUE);
+}
+
+/* Music is rendered offline by the static core, then handed to Windows MCI.
+   MCI gives the simple player accurate seeking without running a game window. */
+static size_t music_box_selected_catalog_index(void) {
+    LRESULT row;
+    if (!IsWindow(g_music_state.list)) return (size_t)-1;
+    row = SendMessageW(g_music_state.list, LB_GETCURSEL, 0, 0);
+    if (row == LB_ERR || (size_t)row >= g_music_list_count)
+        return (size_t)-1;
+    return g_music_list_catalog_indices[(size_t)row];
+}
+
+static void music_box_close_audio(void) {
+    if (g_music_mci_open)
+        (void)mciSendStringW(L"close " MUSIC_BOX_MCI_ALIAS, NULL, 0u, NULL);
+    g_music_mci_open = 0;
+    g_music_mci_playing = 0;
+    g_music_duration_ms = 0u;
+    g_music_open_catalog_index = (size_t)-1;
+    if (IsWindow(g_music_state.slider)) {
+        SendMessageW(g_music_state.slider, TBM_SETRANGEMAX, TRUE, 1);
+        SendMessageW(g_music_state.slider, TBM_SETPOS, TRUE, 0);
+    }
+}
+
+static int music_box_mci(const wchar_t *command,
+                         wchar_t *result, size_t result_capacity) {
+    MCIERROR code = mciSendStringW(
+        command, result, result_capacity ? (UINT)result_capacity : 0u, NULL);
+    if (code != 0u) {
+        wchar_t message[256] = {0};
+        (void)mciGetErrorStringW(code, message,
+                                (UINT)(sizeof(message) / sizeof(message[0])));
+        MessageBoxW(g_music_window,
+                    message[0] ? message : L"Windows could not play the audio.",
+                    L"Music", MB_OK | MB_ICONERROR);
+        return 0;
+    }
+    return 1;
+}
+
+static int music_box_open_audio(size_t catalog_index) {
+    wchar_t command[PATH_CAPACITY + 96u];
+    wchar_t result[64];
+    unsigned long length;
+    if (catalog_index >= MUSIC_CATALOG_CAPACITY ||
+        !g_music_cache_paths[catalog_index][0]) return 0;
+    music_box_close_audio();
+    (void)_snwprintf(command, sizeof(command) / sizeof(command[0]),
+                     L"open \"%s\" type waveaudio alias %s",
+                     g_music_cache_paths[catalog_index], MUSIC_BOX_MCI_ALIAS);
+    command[(sizeof(command) / sizeof(command[0])) - 1u] = L'\0';
+    if (!music_box_mci(command, NULL, 0u)) return 0;
+    g_music_mci_open = 1;
+    if (!music_box_mci(
+            L"set " MUSIC_BOX_MCI_ALIAS L" time format milliseconds",
+            NULL, 0u) ||
+        !music_box_mci(L"status " MUSIC_BOX_MCI_ALIAS L" length",
+                       result, sizeof(result) / sizeof(result[0]))) {
+        music_box_close_audio();
+        return 0;
+    }
+    length = wcstoul(result, NULL, 10);
+    if (!length) {
+        music_box_close_audio();
+        MessageBoxW(g_music_window, L"The rendered audio has no duration.",
+                    L"Music", MB_OK | MB_ICONERROR);
+        return 0;
+    }
+    g_music_duration_ms = length > 0x7FFFFFFFul ?
+                          0x7FFFFFFFu : (uint32_t)length;
+    g_music_open_catalog_index = catalog_index;
+    SendMessageW(g_music_state.slider, TBM_SETRANGEMIN, TRUE, 0);
+    SendMessageW(g_music_state.slider, TBM_SETRANGEMAX, TRUE,
+                 (LPARAM)g_music_duration_ms);
+    SendMessageW(g_music_state.slider, TBM_SETLINESIZE, 0, 5000);
+    SendMessageW(g_music_state.slider, TBM_SETPAGESIZE, 0, 5000);
+    SendMessageW(g_music_state.slider, TBM_SETPOS, TRUE, 0);
+    return 1;
+}
+
+static void music_box_seek(uint32_t position_ms, int resume) {
+    wchar_t command[128];
+    if (!g_music_mci_open) return;
+    if (position_ms > g_music_duration_ms) position_ms = g_music_duration_ms;
+    (void)_snwprintf(command, sizeof(command) / sizeof(command[0]),
+                     L"seek %s to %lu", MUSIC_BOX_MCI_ALIAS,
+                     (unsigned long)position_ms);
+    command[(sizeof(command) / sizeof(command[0])) - 1u] = L'\0';
+    if (!music_box_mci(command, NULL, 0u)) return;
+    SendMessageW(g_music_state.slider, TBM_SETPOS, TRUE,
+                 (LPARAM)position_ms);
+    g_music_mci_playing = 0;
+    if (resume && position_ms < g_music_duration_ms) {
+        (void)_snwprintf(command, sizeof(command) / sizeof(command[0]),
+                         L"play %s from %lu", MUSIC_BOX_MCI_ALIAS,
+                         (unsigned long)position_ms);
+        command[(sizeof(command) / sizeof(command[0])) - 1u] = L'\0';
+        if (music_box_mci(command, NULL, 0u)) g_music_mci_playing = 1;
+    }
+}
+
+static void music_box_update_position(void) {
+    wchar_t result[64];
+    unsigned long position;
+    if (!g_music_mci_open || !g_music_mci_playing) return;
+    if (mciSendStringW(L"status " MUSIC_BOX_MCI_ALIAS L" position",
+                       result, (UINT)(sizeof(result) / sizeof(result[0])),
+                       NULL) != 0u) return;
+    position = wcstoul(result, NULL, 10);
+    if (position > g_music_duration_ms) position = g_music_duration_ms;
+    SendMessageW(g_music_state.slider, TBM_SETPOS, TRUE, (LPARAM)position);
+    if (position >= g_music_duration_ms) g_music_mci_playing = 0;
+}
+
+static int music_box_advance_and_drain(TopGearRecomp *core,
+                                       uint32_t frames,
+                                       TopGearAudioRecorderWin32 *recorder,
+                                       uint64_t *nonzero_samples,
+                                       wchar_t *error,
+                                       size_t error_capacity) {
+    uint32_t frame;
+    int16_t samples[2048u * 2u];
+    for (frame = 0u; frame < frames; ++frame) {
+        char core_error[256] = {0};
+        size_t available;
+        if (!topgear_recomp_audio_preview_advance(
+                core, TOPGEAR_RECOMP_NTSC_MASTER_CLOCK_HZ / 60u,
+                core_error, sizeof(core_error))) {
+            utf8_to_wide(core_error, error, error_capacity);
+            if (!error[0]) copy_wide(error, error_capacity,
+                                     L"The static audio core stopped.");
+            return 0;
+        }
+        while ((available = topgear_recomp_audio_available(core)) != 0u) {
+            size_t count = available > 2048u ? 2048u : available;
+            size_t read = topgear_recomp_audio_read(core, samples, count);
+            size_t sample;
+            if (!read) break;
+            if (nonzero_samples)
+                for (sample = 0u; sample < read * 2u; ++sample)
+                    if (samples[sample] != 0) (*nonzero_samples)++;
+            if (recorder &&
+                !topgear_audio_recorder_win32_write(recorder, samples, read)) {
+                copy_wide(error, error_capacity,
+                          recorder->last_error[0] ? recorder->last_error :
+                          L"The Music WAV could not be written.");
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+static int music_box_render_item(HWND owner, size_t catalog_index) {
+    const TopGearAudioCatalogInfo *item =
+        topgear_recomp_audio_catalog_item(catalog_index);
+    TopGearAudioRecorderWin32 recorder;
+    TopGearRecomp *core = g_game;
+    uint8_t *rom = NULL;
+    size_t rom_size = 0u;
+    wchar_t rom_path[PATH_CAPACITY];
+    wchar_t temp_directory[PATH_CAPACITY] = {0};
+    wchar_t snapshot_path[PATH_CAPACITY] = {0};
+    char snapshot_utf8[PATH_CAPACITY * 3u] = {0};
+    char core_error[256] = {0};
+    wchar_t error[512] = {0};
+    uint64_t nonzero_samples = 0u;
+    int private_core = 0;
+    int snapshot_saved = 0;
+    int recorder_started = 0;
+    int game_audio_closed = 0;
+    int succeeded = 0;
+
+    if (!item || !item->playable ||
+        catalog_index >= MUSIC_CATALOG_CAPACITY) return 0;
+    if (topgear_audio_recorder_win32_active(&g_audio_recorder)) {
+        MessageBoxW(owner, L"Stop the F9 recording before using Music.",
+                    L"Music", MB_OK | MB_ICONINFORMATION);
+        return 0;
+    }
+    GetWindowTextW(g_rom_path, rom_path,
+                   (int)(sizeof(rom_path) / sizeof(rom_path[0])));
+    if (!rom_path[0] ||
+        !GetTempPathW((DWORD)(sizeof(temp_directory) /
+                              sizeof(temp_directory[0])), temp_directory)) {
+        MessageBoxW(owner, L"Browse for the exact Top Gear ROM first.",
+                    L"Music", MB_OK | MB_ICONINFORMATION);
+        return 0;
+    }
+    topgear_audio_recorder_win32_init(&recorder);
+    if (core) {
+        if (!g_paused) pause_game(L"Paused while Music prepares audio.");
+        close_audio();
+        game_audio_closed = 1;
+        if (!GetTempFileNameW(temp_directory, L"TGM", 0u, snapshot_path) ||
+            !wide_to_utf8(snapshot_path, snapshot_utf8,
+                          sizeof(snapshot_utf8))) {
+            copy_wide(error, sizeof(error) / sizeof(error[0]),
+                      L"Windows could not create a temporary snapshot.");
+            goto cleanup;
+        }
+        if (!topgear_recomp_snapshot_save(core, snapshot_utf8, core_error,
+                                          sizeof(core_error))) {
+            utf8_to_wide(core_error, error,
+                         sizeof(error) / sizeof(error[0]));
+            goto cleanup;
+        }
+        snapshot_saved = 1;
+    } else {
+        if (!read_rom_file(rom_path, &rom, &rom_size, error,
+                           sizeof(error) / sizeof(error[0]))) goto cleanup;
+        if (!topgear_recomp_create(&core, rom, rom_size, core_error,
+                                   sizeof(core_error))) {
+            utf8_to_wide(core_error, error,
+                         sizeof(error) / sizeof(error[0]));
+            goto cleanup;
+        }
+        private_core = 1;
+    }
+
+    /* Every item starts at the ROM's real command-$18/upload path. Music
+       replaces only the selector at $00:8077. Effects then stop that music
+       and use the proved APUIO1 table entry on the initialized driver. */
+    if (!topgear_recomp_music_preview_prepare(
+            core, item->command_port == 0u ? item->command : 1u,
+            core_error, sizeof(core_error))) {
+        utf8_to_wide(core_error, error, sizeof(error) / sizeof(error[0]));
+        goto cleanup;
+    }
+    if (item->command_port == 1u) {
+        if (!topgear_recomp_music_command(core, 0u, core_error,
+                                          sizeof(core_error)) ||
+            !music_box_advance_and_drain(core, 120u, NULL, NULL, error,
+                                         sizeof(error) / sizeof(error[0])) ||
+            !topgear_recomp_sound_command(core, 0u, core_error,
+                                          sizeof(core_error)) ||
+            !music_box_advance_and_drain(core, 2u, NULL, NULL, error,
+                                         sizeof(error) / sizeof(error[0])) ||
+            !topgear_recomp_sound_command(core, item->command, core_error,
+                                          sizeof(core_error))) {
+            if (!error[0]) utf8_to_wide(
+                core_error, error, sizeof(error) / sizeof(error[0]));
+            goto cleanup;
+        }
+        topgear_recomp_audio_clear(core);
+    }
+    if (!topgear_audio_recorder_win32_start(&recorder, temp_directory)) {
+        copy_wide(error, sizeof(error) / sizeof(error[0]),
+                  recorder.last_error[0] ? recorder.last_error :
+                  L"The temporary Music WAV could not be created.");
+        goto cleanup;
+    }
+    recorder_started = 1;
+    if (!music_box_advance_and_drain(
+            core, item->recommended_preview_seconds * 60u, &recorder,
+            &nonzero_samples, error,
+            sizeof(error) / sizeof(error[0]))) goto cleanup;
+    if (!topgear_audio_recorder_win32_stop(&recorder)) {
+        copy_wide(error, sizeof(error) / sizeof(error[0]),
+                  recorder.last_error);
+        recorder_started = 0;
+        goto cleanup;
+    }
+    recorder_started = 0;
+    if (!recorder.frames_written || !nonzero_samples) {
+        copy_wide(error, sizeof(error) / sizeof(error[0]),
+                  L"This static-core command produced no audible PCM.");
+        DeleteFileW(recorder.path);
+        goto cleanup;
+    }
+    if (g_music_cache_paths[catalog_index][0])
+        DeleteFileW(g_music_cache_paths[catalog_index]);
+    copy_wide(g_music_cache_paths[catalog_index], PATH_CAPACITY,
+              recorder.path);
+    succeeded = 1;
+
+cleanup:
+    if (recorder_started) {
+        (void)topgear_audio_recorder_win32_stop(&recorder);
+        DeleteFileW(recorder.path);
+    }
+    if (snapshot_saved &&
+        !topgear_recomp_snapshot_load(core, snapshot_utf8, core_error,
+                                      sizeof(core_error))) {
+        utf8_to_wide(core_error, error, sizeof(error) / sizeof(error[0]));
+        succeeded = 0;
+    }
+    if (private_core && core) topgear_recomp_destroy(core);
+    free(rom);
+    if (snapshot_path[0]) DeleteFileW(snapshot_path);
+    if (game_audio_closed) {
+        topgear_recomp_audio_clear(g_game);
+        (void)open_audio(0);
+        topgear_audio_output_pause(&g_audio_output);
+        reset_pacing_clock();
+        InvalidateRect(g_window, NULL, TRUE);
+    }
+    if (!succeeded) {
+        if (!error[0]) copy_wide(error, sizeof(error) / sizeof(error[0]),
+                                 L"The selected audio could not be prepared.");
+        MessageBoxW(owner, error, L"Music", MB_OK | MB_ICONERROR);
+    }
+    return succeeded;
+}
+
+static void music_box_play(HWND owner) {
+    size_t index = music_box_selected_catalog_index();
+    const TopGearAudioCatalogInfo *item =
+        topgear_recomp_audio_catalog_item(index);
+    wchar_t command[128];
+    uint32_t position;
+    if (!item || !item->playable) return;
+    if (!g_music_cache_paths[index][0] ||
+        GetFileAttributesW(g_music_cache_paths[index]) ==
+        INVALID_FILE_ATTRIBUTES) {
+        EnableWindow(owner, FALSE);
+        SetCursor(LoadCursorW(NULL, IDC_WAIT));
+        if (!music_box_render_item(owner, index)) {
+            EnableWindow(owner, TRUE);
+            SetForegroundWindow(owner);
+            SetCursor(LoadCursorW(NULL, IDC_ARROW));
+            return;
+        }
+        EnableWindow(owner, TRUE);
+        SetForegroundWindow(owner);
+        SetCursor(LoadCursorW(NULL, IDC_ARROW));
+    }
+    if (!g_music_mci_open || g_music_open_catalog_index != index)
+        if (!music_box_open_audio(index)) return;
+    position = (uint32_t)SendMessageW(g_music_state.slider,
+                                      TBM_GETPOS, 0, 0);
+    if (position >= g_music_duration_ms) position = 0u;
+    (void)_snwprintf(command, sizeof(command) / sizeof(command[0]),
+                     L"play %s from %lu", MUSIC_BOX_MCI_ALIAS,
+                     (unsigned long)position);
+    command[(sizeof(command) / sizeof(command[0])) - 1u] = L'\0';
+    if (music_box_mci(command, NULL, 0u)) g_music_mci_playing = 1;
+}
+
+static void music_box_stop(void) {
+    if (!g_music_mci_open) return;
+    (void)mciSendStringW(L"stop " MUSIC_BOX_MCI_ALIAS, NULL, 0u, NULL);
+    g_music_mci_playing = 0;
+    music_box_seek(0u, 0);
+}
+
+static LRESULT CALLBACK music_box_proc(HWND window, UINT message,
+                                       WPARAM wparam, LPARAM lparam) {
+    switch (message) {
+        case WM_CREATE: {
+            size_t index;
+            ZeroMemory(&g_music_state, sizeof(g_music_state));
+            g_music_list_count = 0u;
+            set_control_font(CreateWindowExW(
+                0, L"STATIC", L"&Tracks and sound effects:",
+                WS_CHILD | WS_VISIBLE, 16, 14, 300, 22,
+                window, NULL, g_instance, NULL));
+            g_music_state.list = CreateWindowExW(
+                WS_EX_CLIENTEDGE, L"LISTBOX", L"Top Gear audio",
+                WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
+                LBS_NOTIFY | LBS_WANTKEYBOARDINPUT,
+                16, 40, 700, 240, window,
+                (HMENU)(INT_PTR)ID_MUSIC_LIST, g_instance, NULL);
+            set_control_font(g_music_state.list);
+            for (index = 0u;
+                 index < topgear_recomp_audio_catalog_count() &&
+                 g_music_list_count < MUSIC_CATALOG_CAPACITY; ++index) {
+                const TopGearAudioCatalogInfo *item =
+                    topgear_recomp_audio_catalog_item(index);
+                wchar_t name[224];
+                if (!item || !item->playable) continue;
+                utf8_to_wide(item->display_name, name,
+                             sizeof(name) / sizeof(name[0]));
+                SendMessageW(g_music_state.list, LB_ADDSTRING, 0,
+                             (LPARAM)name);
+                g_music_list_catalog_indices[g_music_list_count++] = index;
+            }
+            g_music_state.play_button = CreateWindowExW(
+                0, L"BUTTON", L"&Play",
+                WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON,
+                16, 296, 100, 32, window,
+                (HMENU)(INT_PTR)ID_MUSIC_PLAY, g_instance, NULL);
+            g_music_state.stop_button = CreateWindowExW(
+                0, L"BUTTON", L"&Stop", WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+                128, 296, 100, 32, window,
+                (HMENU)(INT_PTR)ID_MUSIC_STOP, g_instance, NULL);
+            set_control_font(CreateWindowExW(
+                0, L"STATIC",
+                L"&Position (Left or Right arrow seeks 5 seconds):",
+                WS_CHILD | WS_VISIBLE, 16, 344, 360, 22,
+                window, NULL, g_instance, NULL));
+            g_music_state.slider = CreateWindowExW(
+                0, TRACKBAR_CLASSW, L"Track position",
+                WS_CHILD | WS_VISIBLE | WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS,
+                16, 368, 570, 42, window,
+                (HMENU)(INT_PTR)ID_MUSIC_SLIDER, g_instance, NULL);
+            g_music_state.close_button = CreateWindowExW(
+                0, L"BUTTON", L"&Close", WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+                606, 368, 110, 32, window,
+                (HMENU)(INT_PTR)ID_MUSIC_CLOSE, g_instance, NULL);
+            set_control_font(g_music_state.play_button);
+            set_control_font(g_music_state.stop_button);
+            set_control_font(g_music_state.slider);
+            set_control_font(g_music_state.close_button);
+            SendMessageW(g_music_state.slider, TBM_SETRANGEMAX, TRUE, 1);
+            SendMessageW(g_music_state.slider, TBM_SETLINESIZE, 0, 5000);
+            SendMessageW(g_music_state.slider, TBM_SETPAGESIZE, 0, 5000);
+            if (g_music_list_count)
+                SendMessageW(g_music_state.list, LB_SETCURSEL, 0, 0);
+            SetTimer(window, MUSIC_BOX_TIMER_ID, 250u, NULL);
+            SetFocus(g_music_state.list);
+            return 0;
+        }
+        case WM_TIMER:
+            if (wparam == MUSIC_BOX_TIMER_ID) {
+                music_box_update_position();
+                return 0;
+            }
+            break;
+        case WM_VKEYTOITEM:
+            if ((HWND)lparam == g_music_state.list &&
+                LOWORD(wparam) == VK_RETURN) {
+                music_box_play(window);
+                return -2;
+            }
+            break;
+        case WM_HSCROLL:
+            if ((HWND)lparam == g_music_state.slider && g_music_mci_open) {
+                uint32_t position = (uint32_t)SendMessageW(
+                    g_music_state.slider, TBM_GETPOS, 0, 0);
+                music_box_seek(position, g_music_mci_playing);
+                return 0;
+            }
+            break;
+        case WM_COMMAND:
+            switch (LOWORD(wparam)) {
+                case ID_MUSIC_LIST:
+                    if (HIWORD(wparam) == LBN_SELCHANGE)
+                        music_box_close_audio();
+                    else if (HIWORD(wparam) == LBN_DBLCLK)
+                        music_box_play(window);
+                    return 0;
+                case ID_MUSIC_PLAY: music_box_play(window); return 0;
+                case ID_MUSIC_STOP: music_box_stop(); return 0;
+                case ID_MUSIC_CLOSE: DestroyWindow(window); return 0;
+                default: break;
+            }
+            break;
+        case WM_KEYDOWN:
+            if (wparam == VK_ESCAPE) {
+                DestroyWindow(window);
+                return 0;
+            }
+            break;
+        case WM_CLOSE: DestroyWindow(window); return 0;
+        case WM_DESTROY:
+            KillTimer(window, MUSIC_BOX_TIMER_ID);
+            music_box_close_audio();
+            if (window == g_music_window) g_music_window = NULL;
+            ZeroMemory(&g_music_state, sizeof(g_music_state));
+            SetFocus(g_music_button);
+            return 0;
+        default: break;
+    }
+    return DefWindowProcW(window, message, wparam, lparam);
+}
+
+static void show_music_box(void) {
+    if (!rom_path_known()) {
+        MessageBoxW(g_window, L"Browse for the exact Top Gear ROM first.",
+                    L"Music", MB_OK | MB_ICONINFORMATION);
+        return;
+    }
+    if (IsWindow(g_music_window)) {
+        ShowWindow(g_music_window, SW_RESTORE);
+        SetForegroundWindow(g_music_window);
+        return;
+    }
+    if (g_game && !g_paused)
+        pause_game(L"Paused while the Music window is open.");
+    g_music_window = CreateWindowExW(
+        WS_EX_CONTROLPARENT, MUSIC_CLASS_NAME, L"Top Gear (SNES) Music",
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+        CW_USEDEFAULT, CW_USEDEFAULT, 750, 460,
+        g_window, NULL, g_instance, NULL);
+    if (!g_music_window) {
+        MessageBoxW(g_window, L"The Music window could not be created.",
+                    L"Music", MB_OK | MB_ICONERROR);
+        return;
+    }
+    center_window_on_parent(g_music_window, g_window);
+    ShowWindow(g_music_window, SW_SHOWNORMAL);
+    SetForegroundWindow(g_music_window);
 }
 
 static AudioDialogState *audio_dialog_state(HWND window) {
@@ -2687,6 +3203,7 @@ static HMENU create_menu_bar(void) {
     HMENU bar = CreateMenu();
     HMENU file = CreatePopupMenu();
     HMENU settings = CreatePopupMenu();
+    HMENU help = CreatePopupMenu();
     AppendMenuW(file, MF_STRING, ID_BROWSE_MENU, L"&Browse ROM...\tCtrl+O");
     AppendMenuW(file, MF_STRING, ID_RUN, L"&Run\tF7");
     AppendMenuW(file, MF_STRING, ID_PAUSE_PLAY, L"&Play\tEscape");
@@ -2717,8 +3234,15 @@ static HMENU create_menu_bar(void) {
                 L"Use &Full Screen When Playing");
     AppendMenuW(settings, MF_STRING, ID_AUTO_RUN,
                 L"&Auto-Run at Startup");
+    AppendMenuW(help, MF_STRING, ID_GETTING_STARTED,
+                L"&Getting Started");
+    AppendMenuW(help, MF_STRING, ID_SHORTCUTS,
+                L"Launcher &Shortcut Keys\tF1");
+    AppendMenuW(help, MF_SEPARATOR, 0, NULL);
+    AppendMenuW(help, MF_STRING, ID_ABOUT, L"&About");
     AppendMenuW(bar, MF_POPUP, (UINT_PTR)file, L"&File");
     AppendMenuW(bar, MF_POPUP, (UINT_PTR)settings, L"&Settings");
+    AppendMenuW(bar, MF_POPUP, (UINT_PTR)help, L"&Help");
     return bar;
 }
 
@@ -2972,6 +3496,11 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
                 426, 8, 82, 30, window, (HMENU)(INT_PTR)ID_KEYS,
                 g_instance, NULL);
+            g_music_button = CreateWindowExW(
+                0, L"BUTTON", L"&Music",
+                WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+                514, 8, 82, 30, window, (HMENU)(INT_PTR)ID_MUSIC,
+                g_instance, NULL);
             g_fullscreen_checkbox = CreateWindowExW(
                 0, L"BUTTON", L"&Full screen",
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
@@ -2999,6 +3528,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             set_control_font(g_reset_button);
             set_control_font(g_keys_button);
             set_control_font(g_audio_button);
+            set_control_font(g_music_button);
             set_control_font(g_fullscreen_checkbox);
             set_control_font(g_auto_run_checkbox);
             set_control_font(g_rom_path);
@@ -3014,7 +3544,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
 
         case WM_GETMINMAXINFO: {
             MINMAXINFO *info = (MINMAXINFO *)lparam;
-            info->ptMinTrackSize.x = 820;
+            info->ptMinTrackSize.x = 920;
             info->ptMinTrackSize.y = 580;
             return 0;
         }
@@ -3035,9 +3565,9 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 case ID_RESET: reset_game(); return 0;
                 case ID_PAUSE_PLAY: toggle_pause_play(); return 0;
                 case ID_KEYS: show_key_bindings(); return 0;
-                case ID_CONTROLS: show_game_controls(); return 0;
                 case ID_FRONTEND_SETTINGS: show_frontend_settings(); return 0;
                 case ID_AUDIO_SETTINGS: show_audio_settings(); return 0;
+                case ID_MUSIC: show_music_box(); return 0;
                 case ID_FULLSCREEN:
                     if (lparam == 0) {
                         LRESULT checked = SendMessageW(g_fullscreen_checkbox,
@@ -3095,7 +3625,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                                      sizeof(renderer_name) /
                                      sizeof(renderer_name[0]));
                         (void)_snwprintf(about, sizeof(about) / sizeof(about[0]),
-                            L"Top Gear (SNES) Static Recomp\r\n\r\n"
+                            L"Top Gear (SNES) Static Recomp 1.1.1\r\n\r\n"
                             L"Launcher file: Launcher.exe\r\n"
                             L"Game window: Top Gear (SNES)\r\n\r\n"
                             L"Generated static S-CPU execution with native video, controller and PCM host frontends. Full Static audio is the only linked audio path and fails closed.\r\n\r\n"
@@ -3309,6 +3839,7 @@ int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previous,
     WNDCLASSEXW snapshot_class;
     WNDCLASSEXW info_class;
     WNDCLASSEXW getting_started_class;
+    WNDCLASSEXW music_class;
     MSG message;
     (void)previous;
 
@@ -3398,6 +3929,16 @@ int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previous,
     getting_started_class.lpszClassName = GETTING_STARTED_CLASS_NAME;
     if (!RegisterClassExW(&getting_started_class)) return 1;
 
+    ZeroMemory(&music_class, sizeof(music_class));
+    music_class.cbSize = sizeof(music_class);
+    music_class.lpfnWndProc = music_box_proc;
+    music_class.hInstance = instance;
+    music_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
+    music_class.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+    music_class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    music_class.lpszClassName = MUSIC_CLASS_NAME;
+    if (!RegisterClassExW(&music_class)) return 1;
+
     g_window = CreateWindowExW(
         WS_EX_CONTROLPARENT, APP_CLASS_NAME, LAUNCHER_TITLE,
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -3475,6 +4016,23 @@ int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previous,
                         if (IsDialogMessageW(g_rom_info_window, &message))
                             continue;
                     }
+                    if (IsWindow(g_info_window) &&
+                        (message.hwnd == g_info_window ||
+                         IsChild(g_info_window, message.hwnd))) {
+                        if (message.message == WM_KEYDOWN &&
+                            message.wParam == VK_ESCAPE) {
+                            DestroyWindow(g_info_window);
+                            continue;
+                        }
+                        if (IsDialogMessageW(g_info_window, &message))
+                            continue;
+                    }
+                    if (IsWindow(g_music_window) &&
+                        (message.hwnd == g_music_window ||
+                         IsChild(g_music_window, message.hwnd))) {
+                        if (IsDialogMessageW(g_music_window, &message))
+                            continue;
+                    }
                     root_shortcut =
                         message.message == WM_KEYDOWN &&
                         (message.wParam == VK_ESCAPE || message.wParam == VK_F1 ||
@@ -3525,6 +4083,17 @@ int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previous,
         (void)CancelWaitableTimer(g_frame_timer);
         CloseHandle(g_frame_timer);
         g_frame_timer = NULL;
+    }
+    PlaySoundW(NULL, NULL, 0);
+    music_box_close_audio();
+    {
+        size_t index;
+        for (index = 0u; index <
+             sizeof(g_music_cache_paths) / sizeof(g_music_cache_paths[0]);
+             ++index) {
+            if (g_music_cache_paths[index][0])
+                DeleteFileW(g_music_cache_paths[index]);
+        }
     }
     return (int)message.wParam;
 }

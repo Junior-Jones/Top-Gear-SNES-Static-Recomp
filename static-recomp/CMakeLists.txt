@@ -74,3 +74,52 @@ set_source_files_properties(
 set_source_files_properties(
     static-audio/topgear-bapu-aot/sc_static_apu.cpp
     PROPERTIES COMPILE_OPTIONS "$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wno-class-memaccess>")
+
+if(BUILD_TESTING)
+    function(topgear_add_core_test target source needs_internal)
+        add_executable(${target} "tests/${source}")
+        target_link_libraries(${target} PRIVATE topgear-static-recomp)
+        if(${needs_internal})
+            target_include_directories(${target} PRIVATE
+                "${CMAKE_CURRENT_SOURCE_DIR}/internal"
+                "${CMAKE_CURRENT_SOURCE_DIR}/generated"
+                "${CMAKE_CURRENT_SOURCE_DIR}/generated/v22"
+                "${CMAKE_CURRENT_SOURCE_DIR}/generated/v22_reentry")
+        endif()
+        if(MSVC)
+            target_compile_options(${target} PRIVATE /W4 /WX)
+        else()
+            target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        endif()
+        add_test(NAME ${target} COMMAND ${target})
+    endfunction()
+
+    topgear_add_core_test(topgear-api-surface test_api_surface.c FALSE)
+    topgear_add_core_test(topgear-diagnostics-surface test_diagnostics_surface.c FALSE)
+    topgear_add_core_test(topgear-renderer-instances test_renderer_instances.c TRUE)
+    topgear_add_core_test(topgear-hook-contract test_hook_contract.c TRUE)
+    topgear_add_core_test(topgear-audio-fifo test_audio_fifo.c TRUE)
+    topgear_add_core_test(topgear-generated-dispatch test_generated_dispatch.c TRUE)
+    topgear_add_core_test(topgear-snapshot-contract test_snapshot_contract.c TRUE)
+
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME topgear-integrity-manifests
+            COMMAND "${Python3_EXECUTABLE}" -B
+                    "${CMAKE_SOURCE_DIR}/tools/integrity_manifests.py"
+                    --root "${CMAKE_SOURCE_DIR}")
+    endif()
+
+    if(TOPGEAR_TEST_ROM)
+        add_executable(topgear-rom-smoke tests/test_rom_smoke.c)
+        target_link_libraries(topgear-rom-smoke PRIVATE topgear-static-recomp)
+        if(MSVC)
+            target_compile_options(topgear-rom-smoke PRIVATE /W4 /WX)
+        else()
+            target_compile_options(topgear-rom-smoke PRIVATE
+                -Wall -Wextra -Wpedantic -Werror)
+        endif()
+        add_test(NAME topgear-rom-smoke
+            COMMAND topgear-rom-smoke "${TOPGEAR_TEST_ROM}")
+    endif()
+endif()

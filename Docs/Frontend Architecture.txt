@@ -1,5 +1,5 @@
 Top Gear Windows Frontend Architecture
-Release 1.0.0
+Release 1.1.1
 
 Rendering
 The static core owns a deterministic 256x224 BGRA frame. The Windows frontend
@@ -8,6 +8,11 @@ Direct3D renderer on Windows and falls back to its software renderer if a GPU
 renderer cannot be created. VSync and 4:3 correction are user settings. Native
 Win32 menus, buttons and dialogs remain separate from the custom-drawn game
 surface.
+
+The scanline decoder receives its TopGearRecomp instance explicitly through
+every rendering helper. It has no file-global current-core pointer, so private
+Music cores, test cores and the active game core can render concurrently
+without exchanging renderer state.
 
 F8 screenshot capture keeps the Windows chrome but replaces the game rectangle
 with one newly decoded static-core frame. This avoids black and partially stale
@@ -21,6 +26,22 @@ latency target with a bounded plus/minus 0.25 percent frequency correction.
 This correction affects speaker presentation only, never core state or WAV
 recording. Queue failures, underruns, depth, target and output sample rate are
 available in About diagnostics.
+
+The toolbar Music window shows the seven APUIO0 music sequences and 16
+independently playable APUIO1 effects, each labelled with exact table and ARAM
+addresses. The remaining APUIO1 masks, no-ops, reset and parameter halves stay
+documented in the static-core catalogue but are omitted from the player.
+
+Choosing Play runs the real ROM power-on audio path headlessly: command `$18`,
+the `$07:8000` driver upload, APUIO0 clear/delay, then the selector write at
+`$00:8077`. Only that final selector byte is changed. The S-CPU is then frozen
+while Full Static S-SMP/S-DSP renders a five-minute music loop or six-second
+effect to a temporary WAV. If a game core already exists, a temporary snapshot
+brackets this operation; otherwise a private core is created from the selected
+ROM, so no game window is run. Windows MCI plays the finished WAV and provides
+Play, Stop, and five-second keyboard seeking on the position slider. Invalid or
+silent output, static failures, snapshot failures and concurrent F9 recording
+are rejected. Temporary WAVs are deleted at shutdown.
 
 Input
 Keyboard gameplay bindings are stored as physical scan-code tokens, with old
@@ -48,3 +69,15 @@ SDL and the Visual C++ runtime are statically linked in Release builds. No SDL
 DLL or VC redistributable is required. Windows system components such as
 Kernel32, User32, GDI32, COMCTL32, OLE32, DXGI and Direct3D are provided by
 Windows 10 and 11.
+
+Core API and verification
+topgear_static_recomp.h is the stable application surface: lifecycle, frame,
+input, audio, snapshot, hook and status operations. Historical milestone and
+research declarations are isolated in topgear_static_recomp_diagnostics.h.
+
+The published CTest suite checks both header surfaces, concurrent renderer
+instances, hook contracts, audio FIFO behavior, unknown generated-dispatch
+failure, snapshot compatibility and the integrity inventories. An exact-ROM
+cold-boot smoke test is enabled by TOPGEAR_TEST_ROM. SOURCE-MANIFEST.json and
+GENERATED-PROVENANCE.json provide deterministic source and generated-authority
+inventories; SHA256SUMS.txt pins those inventories.

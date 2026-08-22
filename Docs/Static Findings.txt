@@ -2,7 +2,7 @@ TOP GEAR (SNES) STATIC CORE - CUMULATIVE FINDINGS
 =================================================
 
 Updated: 2026-08-09
-Source: Release 1.0.0 Windows source, exact USA ROM
+Source: Release 1.1.1 Windows source, exact USA ROM
 ROM SHA-256: ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788
 
 PURPOSE AND UPDATE RULE
@@ -692,3 +692,56 @@ observed and restored 22 DBR=`$07` entries, and continued 11,272 frames beyond
 the last such entry without a frontier. This covers the lightly used
 post-race/non-finish transition that exposed the defect rather than stopping
 at the formerly failing instruction.
+
+MUSIC COMMAND CATALOGUE AND MUSIC WINDOW (RELEASE 1.1.1)
+---------------------------------------------------------
+
+Music and sound effects are separate command systems. APUIO0 selectors
+`$01-$07` are all music. Race setup at
+generated S-CPU `$00:817C-$00:81A0` reads `$1F06`, keeps its low two bits,
+XORs them with 3, then adds 2. That produces exactly `$02`, `$03`, `$04`, or
+`$05`, so these are the four race-music selectors. The common routine at
+`$0F:8133-$0F:8159` clears APUIO0, performs the command-$18 driver handshake,
+increments the caller's value and writes the resulting music selector. Its
+callers at `$0F:858D` and `$0F:8563` supply `$05` and `$06`, proving menu/title-
+side soundtrack selectors `$06` and `$07`. The `$0F:8675` caller supplies zero,
+which the common routine increments to `$01`; S-SMP `$0A17-$0A24` doubles that
+selector and resolves sequence `$13AB` from the table at `$1397`. The seven
+sequence addresses are `$13AB`, `$13B3`, `$13BB`, `$13C3`, `$13CB`, `$13D3`,
+and `$13DB` for selectors `$01-$07` respectively.
+
+Each sequence address is an eight-byte descriptor, not a finished PCM track.
+The descriptors select channel-pointer blocks beginning at `$13E3`, `$13F3`,
+`$1403`, `$1413`, `$1423`, `$1433`, and `$1443`; those blocks lead to the
+channel streams whose notes, instrument events, pattern calls and loops assemble
+each complete soundtrack.
+
+`topgear_recomp_music_command` is a narrow host-facing form of the same
+S-CPU-to-S-SMP port-0 write. It accepts stop `$00` and the seven proved music
+selectors. APUIO1 is a separate 29-command sound-effect/control dispatcher:
+S-SMP `$1092-$10A3` indexes little-endian handler pointers at `$10A7-$10E0`.
+The Music window lists every table address and target entry. Commands `$05`
+at `$1124` and `$0B` at `$11AF` are the gameplay-proved turbo and collision/
+rival effects. Sixteen independently playable effect handlers produced static
+PCM in isolated tests. `$02/$03` and `$0D/$0E` are parameterized setup/pitch
+pairs; voice-mask controls, return-only entries, and the `$18` IPL reset are
+documented but deliberately not played.
+
+The first Music implementation still made an invalid shortcut: it wrote a new
+APUIO0 selector into the already-running opening-song driver state. Top Gear's
+real change protocol is the power-on path `$00:805A-$00:807A`: command `$18`
+on APUIO1, the complete `$07:8000` driver upload, APUIO0 clear, a delay, then
+the selector write at `$00:8077`. The new
+`topgear_recomp_music_preview_prepare` follows that generated path headlessly
+and changes only the accumulator byte immediately before the real write. All
+seven selectors then produced distinct PCM hashes and remained audible for the
+complete 300-second test window with no silent tail.
+
+The simplified Windows Music window lists only the seven sequences and 16
+standalone effects. Play renders five minutes of a looping music sequence or
+six seconds of an effect entirely offline using static S-SMP/S-DSP time. If the
+game exists, a snapshot preserves and restores it; otherwise the selected ROM
+is loaded into a private headless core, so the game window never needs to run.
+Windows MCI plays the completed temporary WAV and supplies Stop plus Left/Right
+five-second seeking on the position slider. Cached WAVs are deleted when
+Launcher.exe closes; no output folder is created in the release.

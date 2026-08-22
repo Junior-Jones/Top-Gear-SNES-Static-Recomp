@@ -3,7 +3,6 @@
    execution surface and common host APIs. Historical linear-route milestones are
    compiled only by the explicit certification build so their large generated
    receipts do not slow every normal compile. */
-#include "topgear_static_recomp.h"
 #include "topgear_internal.h"
 #include "sc_static_apu.h"
 
@@ -80,6 +79,171 @@ const char *topgear_recomp_version_string(void){return TOPGEAR_RECOMP_VERSION_ST
 const char *topgear_recomp_video_standard(void){return "NTSC";}
 unsigned topgear_recomp_generated_context_count(void){return 266u;}
 unsigned topgear_recomp_generated_smp_context_count(void){return 1148u;}
+
+/* Port-0 selector A is doubled at S-SMP $0A17 and indexes the little-endian
+   sequence-pointer table at $1397. Selectors $01-$07 resolve to eight-byte
+   sequence descriptors $13AB/$13B3/$13BB/$13C3/$13CB/$13D3/$13DB. Those
+   descriptors select channel-pointer blocks beginning at $13E3/$13F3/$1403/
+   $1413/$1423/$1433/$1443; the channel streams, loops and instrument events
+   referenced there are what compose each complete soundtrack. The port-1
+   table is read at $1092-$10A3 and contains
+   29 little-endian handler addresses at $10A7-$10E0. Functional names are
+   used where gameplay tests proved a role; no unofficial song titles are
+   invented. Controls/no-ops remain visible for a complete driver audit but
+   are marked non-playable. */
+#define MUSIC_ITEM(command,address,label,kind) \
+    {0u,(command),(uint16_t)(0x1397u+((command)*2u)),(address),1u,(label),(kind), \
+     "APUIO0 selector; S-SMP $0A17-$0A24 resolves this sequence pointer.",300u}
+#define SFX_ITEM(command,table,address,label) \
+    {1u,(command),(table),(address),1u,(label),"sound effect", \
+     "APUIO1 command; S-SMP dispatch $1092-$10A3 reads the 29-entry table at $10A7-$10E0.",6u}
+#define CONTROL_ITEM(command,table,address,label,kind) \
+    {1u,(command),(table),(address),0u,(label),(kind), \
+     "APUIO1 command; audited driver control/no-op, shown for completeness and not played.",0u}
+static const TopGearAudioCatalogInfo k_audio_catalog[] = {
+    MUSIC_ITEM(0x01u,0x13ABu,"Music $01 - sequence ARAM $13AB","music sequence"),
+    MUSIC_ITEM(0x02u,0x13B3u,"Music $02 - sequence ARAM $13B3","race music sequence"),
+    MUSIC_ITEM(0x03u,0x13BBu,"Music $03 - sequence ARAM $13BB","race music sequence"),
+    MUSIC_ITEM(0x04u,0x13C3u,"Music $04 - sequence ARAM $13C3","race music sequence"),
+    MUSIC_ITEM(0x05u,0x13CBu,"Music $05 - sequence ARAM $13CB","race music sequence"),
+    MUSIC_ITEM(0x06u,0x13D3u,"Music $06 - sequence ARAM $13D3","menu/title-side music sequence"),
+    MUSIC_ITEM(0x07u,0x13DBu,"Music $07 - sequence ARAM $13DB","menu/title-side music sequence"),
+    CONTROL_ITEM(0x01u,0x10A7u,0x10E1u,"Control $01 - table $10A7 -> entry $10E1","voice-mask control"),
+    CONTROL_ITEM(0x02u,0x10A9u,0x10EEu,"Parameterized effect $02 - table $10A9 -> entry $10EE","voice-4 setup; needs pitch command $03"),
+    CONTROL_ITEM(0x03u,0x10ABu,0x110Cu,"Control $03 - table $10AB -> entry $110C","DSP parameter control"),
+    CONTROL_ITEM(0x04u,0x10ADu,0x1123u,"No-op $04 - table $10AD -> entry $1123","return/no-op"),
+    SFX_ITEM(0x05u,0x10AFu,0x1124u,"SFX $05 - table $10AF -> entry $1124 (turbo)"),
+    CONTROL_ITEM(0x06u,0x10B1u,0x1142u,"Control $06 - table $10B1 -> entry $1142","voice-mask control"),
+    SFX_ITEM(0x07u,0x10B3u,0x114Fu,"SFX $07 - table $10B3 -> entry $114F"),
+    SFX_ITEM(0x08u,0x10B5u,0x1165u,"SFX $08 - table $10B5 -> entry $1165"),
+    SFX_ITEM(0x09u,0x10B7u,0x117Bu,"SFX $09 - table $10B7 -> entry $117B"),
+    SFX_ITEM(0x0Au,0x10B9u,0x1191u,"SFX $0A - table $10B9 -> entry $1191"),
+    SFX_ITEM(0x0Bu,0x10BBu,0x11AFu,"SFX $0B - table $10BB -> entry $11AF (collision/rival)"),
+    CONTROL_ITEM(0x0Cu,0x10BDu,0x11CDu,"No-op $0C - table $10BD -> entry $11CD","return/no-op"),
+    CONTROL_ITEM(0x0Du,0x10BFu,0x11CEu,"Parameterized effect $0D - table $10BF -> entry $11CE","voice-6 setup; needs pitch command $0E"),
+    CONTROL_ITEM(0x0Eu,0x10C1u,0x11ECu,"Control $0E - table $10C1 -> entry $11EC","DSP parameter control"),
+    CONTROL_ITEM(0x0Fu,0x10C3u,0x1203u,"No-op $0F - table $10C3 -> entry $1203","return/no-op"),
+    SFX_ITEM(0x10u,0x10C5u,0x1204u,"SFX $10 - table $10C5 -> entry $1204"),
+    CONTROL_ITEM(0x11u,0x10C7u,0x1222u,"Control $11 - table $10C7 -> entry $1222","voice-mask control"),
+    SFX_ITEM(0x12u,0x10C9u,0x122Fu,"SFX $12 - table $10C9 -> entry $122F"),
+    SFX_ITEM(0x13u,0x10CBu,0x1245u,"SFX $13 - table $10CB -> entry $1245"),
+    SFX_ITEM(0x14u,0x10CDu,0x125Bu,"SFX $14 - table $10CD -> entry $125B"),
+    SFX_ITEM(0x15u,0x10CFu,0x1271u,"SFX $15 - table $10CF -> entry $1271"),
+    SFX_ITEM(0x16u,0x10D1u,0x128Fu,"SFX $16 - table $10D1 -> entry $128F"),
+    CONTROL_ITEM(0x17u,0x10D3u,0x12ADu,"No-op $17 - table $10D3 -> entry $12AD","return/no-op"),
+    CONTROL_ITEM(0x18u,0x10D5u,0x12AEu,"Control $18 - table $10D5 -> entry $12AE","S-SMP reset/IPL transfer"),
+    CONTROL_ITEM(0x19u,0x10D7u,0x12B7u,"Control $19 - table $10D7 -> entry $12B7","DSP/driver control"),
+    SFX_ITEM(0x1Au,0x10D9u,0x12D1u,"SFX $1A - table $10D9 -> entry $12D1"),
+    SFX_ITEM(0x1Bu,0x10DBu,0x12EFu,"SFX $1B - table $10DB -> entry $12EF"),
+    SFX_ITEM(0x1Cu,0x10DDu,0x130Du,"SFX $1C - table $10DD -> entry $130D"),
+    SFX_ITEM(0x1Du,0x10DFu,0x132Bu,"SFX $1D - table $10DF -> entry $132B")
+};
+#undef MUSIC_ITEM
+#undef SFX_ITEM
+#undef CONTROL_ITEM
+
+size_t topgear_recomp_audio_catalog_count(void){
+    return sizeof(k_audio_catalog)/sizeof(k_audio_catalog[0]);
+}
+const TopGearAudioCatalogInfo *topgear_recomp_audio_catalog_item(size_t index){
+    return index<topgear_recomp_audio_catalog_count()?&k_audio_catalog[index]:NULL;
+}
+int topgear_recomp_music_command(TopGearRecomp *i,uint8_t selector,char *error,size_t cap){
+    uint64_t master_clock;
+    if(!i){tg_copy_text(error,cap,"No Top Gear static core is loaded.");return 0;}
+    if(i->failed){tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The static core has stopped.");return 0;}
+    if(selector>7u){
+        tg_copy_text(error,cap,"Music commands accept stop ($00) or the seven proved soundtrack selectors $01-$07.");
+        return 0;
+    }
+    if(!i->static_audio_acquired){tg_copy_text(error,cap,"Full Static audio is not initialized.");return 0;}
+    if(!i->v23_event_mode||!i->v22_semantic_main_mode){
+        tg_copy_text(error,cap,"Advance the ROM until the Version 27 event scheduler has initialized before selecting music.");
+        return 0;
+    }
+    master_clock=i->v23_event_master_clock>i->audio_last_apu_master_clock?
+        i->v23_event_master_clock:i->audio_last_apu_master_clock;
+    i->scpu_to_smp[0]=selector;
+    if(!tg_audio_backend_cpu_write_port(i,master_clock,0u,selector)){
+        tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP rejected the music command.");
+        return 0;
+    }
+    tg_copy_text(error,cap,"");
+    return 1;
+}
+
+typedef struct TgMusicPreviewBreakpoint {
+    uint32_t address;
+    uint8_t reached;
+} TgMusicPreviewBreakpoint;
+
+static int music_preview_breakpoint(void *user,const TopGearHookEvent *event){
+    TgMusicPreviewBreakpoint *breakpoint=(TgMusicPreviewBreakpoint*)user;
+    if(!breakpoint||!event)return 0;
+    if(event->type==TOPGEAR_HOOK_EVENT_INSTRUCTION_BEFORE&&
+       event->address==breakpoint->address){breakpoint->reached=1u;return 1;}
+    return 0;
+}
+
+static int run_to_music_preview_address(TopGearRecomp *i,uint32_t address,
+                                        uint32_t frame_limit,char *error,size_t cap){
+    TgMusicPreviewBreakpoint breakpoint;
+    uint32_t frame;
+    memset(&breakpoint,0,sizeof(breakpoint));breakpoint.address=address;
+    if(!topgear_recomp_set_hook(i,TOPGEAR_HOOK_MASK_INSTRUCTION,
+                                music_preview_breakpoint,&breakpoint)){
+        tg_copy_text(error,cap,"Could not install the exact music-routine breakpoint.");return 0;
+    }
+    for(frame=0u;frame<frame_limit&&!breakpoint.reached&&!i->failed;++frame)
+        (void)topgear_recomp_v27_advance_frame(i,0u,0u,5000000u);
+    topgear_recomp_clear_hook(i);
+    if(i->failed){tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The static core stopped before the music routine.");return 0;}
+    if(!breakpoint.reached){tg_copy_text(error,cap,"The exact music-change routine was not reached within the headless limit.");return 0;}
+    return 1;
+}
+
+int topgear_recomp_music_preview_prepare(TopGearRecomp *i,uint8_t selector,
+                                          char *error,size_t cap){
+    if(!i){tg_copy_text(error,cap,"No Top Gear static core is loaded.");return 0;}
+    if(selector<1u||selector>7u){tg_copy_text(error,cap,"Music previews use selectors $01-$07.");return 0;}
+    if(!topgear_recomp_reset(i,error,cap))return 0;
+    /* Power-on naturally executes command $18, calls the complete uploader at
+       $07:8000, clears APUIO0, and waits before loading selector $01 at
+       $00:8075. Break immediately before its $00:8077 port write and replace
+       only that 8-bit selector; the reset/upload protocol remains unchanged. */
+    if(!run_to_music_preview_address(i,0x008077u,120u,error,cap))return 0;
+    i->cpu.a=(uint16_t)((i->cpu.a&0xFF00u)|selector);
+    if(!run_to_music_preview_address(i,0x00807Au,4u,error,cap))return 0;
+    topgear_recomp_audio_clear(i);
+    tg_copy_text(error,cap,"");return 1;
+}
+
+int topgear_recomp_sound_command(TopGearRecomp *i,uint8_t command,char *error,size_t cap){
+    uint64_t master_clock;
+    if(!i){tg_copy_text(error,cap,"No Top Gear static core is loaded.");return 0;}
+    if(i->failed){tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The static core has stopped.");return 0;}
+    if(command>0x1Du){tg_copy_text(error,cap,"Sound commands accept neutral $00 or the proved APUIO1 dispatch range $01-$1D.");return 0;}
+    if(!i->static_audio_acquired){tg_copy_text(error,cap,"Full Static audio is not initialized.");return 0;}
+    if(!i->v23_event_mode||!i->v22_semantic_main_mode){tg_copy_text(error,cap,"Advance the ROM until the Version 27 event scheduler has initialized before selecting a sound command.");return 0;}
+    master_clock=i->v23_event_master_clock>i->audio_last_apu_master_clock?
+        i->v23_event_master_clock:i->audio_last_apu_master_clock;
+    i->scpu_to_smp[1]=command;
+    if(!tg_audio_backend_cpu_write_port(i,master_clock,1u,command)){
+        tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP rejected the sound command.");return 0;
+    }
+    tg_copy_text(error,cap,"");return 1;
+}
+
+int topgear_recomp_audio_preview_advance(TopGearRecomp *i,uint64_t master_clocks,char *error,size_t cap){
+    uint64_t target;
+    if(!i){tg_copy_text(error,cap,"No Top Gear static core is loaded.");return 0;}
+    if(i->failed){tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The static core has stopped.");return 0;}
+    if(!i->static_audio_acquired){tg_copy_text(error,cap,"Full Static audio is not initialized.");return 0;}
+    if(master_clocks>UINT64_MAX-i->audio_last_apu_master_clock){tg_copy_text(error,cap,"The isolated audio preview clock overflowed.");return 0;}
+    target=i->audio_last_apu_master_clock+master_clocks;
+    if(!tg_audio_backend_sync(i,target)){tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The isolated Full Static audio preview stopped.");return 0;}
+    tg_copy_text(error,cap,"");return 1;
+}
 
 int topgear_recomp_verify_rom(const uint8_t *rom,size_t rom_size,TopGearRomInfo *info,char *error,size_t error_capacity){
     char sha[65];uint16_t sum=0u;size_t k;const uint8_t *header;

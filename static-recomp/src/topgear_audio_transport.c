@@ -1,4 +1,3 @@
-#include "topgear_static_recomp.h"
 #include "topgear_internal.h"
 
 #include <stddef.h>

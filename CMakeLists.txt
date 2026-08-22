@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
-project(TopGearSNESStaticRecomp VERSION 1.0.0 LANGUAGES C CXX)
+project(TopGearSNESStaticRecomp VERSION 1.1.1 LANGUAGES C CXX)
+
+include(CTest)
+set(TOPGEAR_TEST_ROM "" CACHE FILEPATH
+    "Optional exact Top Gear US ROM used only by the CTest ROM smoke test")
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -51,7 +55,7 @@ target_compile_definitions(topgear-launcher PRIVATE
     UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX)
 target_link_libraries(topgear-launcher PRIVATE
     topgear-static-recomp SDL3::SDL3-static
-    user32 gdi32 comdlg32 comctl32)
+    user32 gdi32 comdlg32 comctl32 winmm)
 set_target_properties(topgear-launcher PROPERTIES
     OUTPUT_NAME "Launcher"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/release")

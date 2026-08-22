@@ -8,11 +8,12 @@
 extern "C" {
 #endif
 
-#define TOPGEAR_RECOMP_VERSION_STRING "1.0.0"
+#define TOPGEAR_RECOMP_VERSION_STRING "1.1.1"
 #define TOPGEAR_RECOMP_ROM_SIZE 524288u
 #define TOPGEAR_RECOMP_WRAM_SIZE 131072u
 #define TOPGEAR_RECOMP_ARAM_SIZE 65536u
 #define TOPGEAR_RECOMP_ROM_SHA256 "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788"
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 #define TOPGEAR_RECOMP_V02_PACKET_WRAM_OFFSET 0x2000u
 #define TOPGEAR_RECOMP_V02_PACKET_SIZE 12497u
 #define TOPGEAR_RECOMP_V02_PACKET_SHA256 "c90bccd04c020e93a5609bb0249188357f9f0b61f1ca9a9f522f1dc4f8992b81"
@@ -42,6 +43,7 @@ extern "C" {
 #define TOPGEAR_RECOMP_V06_DSP_PHASE_COUNT 32u
 #define TOPGEAR_RECOMP_V06_COMBINED_PHASE_PROFILE_COUNT 4096u
 #define TOPGEAR_RECOMP_V06_TIMER_STATE_COUNT 8u
+#endif
 #define TOPGEAR_RECOMP_AUDIO_FIFO_FRAMES 4096u
 #define TOPGEAR_RECOMP_HOST_AUDIO_SAMPLE_RATE 32040u
 #define TOPGEAR_RECOMP_AUDIO_CHANNELS 2u
@@ -51,6 +53,7 @@ extern "C" {
 #define TOPGEAR_RECOMP_PRESENTATION_FPS_NUMERATOR 39375000u
 #define TOPGEAR_RECOMP_PRESENTATION_FPS_DENOMINATOR 655171u
 #define TOPGEAR_RECOMP_NTSC_MASTER_CLOCK_HZ 21477272u
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 #define TOPGEAR_RECOMP_V11_HARDWARE_EVENT_COUNT 37483u
 #define TOPGEAR_RECOMP_V12_IPL_CONTEXT_COUNT 15u
 #define TOPGEAR_RECOMP_V13_PHASE_PROFILE_COUNT 128u
@@ -63,8 +66,24 @@ extern "C" {
 #define TOPGEAR_RECOMP_V15_NTSC_SCANLINES 262u
 #define TOPGEAR_RECOMP_V15_VBLANK_START_LINE 225u
 #define TOPGEAR_RECOMP_V16_NMI_HANDLER_CONTEXT_COUNT 53u
+#endif
 
 typedef struct TopGearRecomp TopGearRecomp;
+
+/* Exact S-SMP command catalogue recovered from the uploaded ARAM program.
+   Port 0 selects one of seven music sequences. Port 1 uses the 29-entry
+   dispatch table at $10A7-$10E0 for sound effects and driver controls. */
+typedef struct TopGearAudioCatalogInfo {
+    uint8_t command_port;
+    uint8_t command;
+    uint16_t table_address;
+    uint16_t entry_address;
+    uint8_t playable;
+    const char *display_name;
+    const char *classification;
+    const char *evidence;
+    uint32_t recommended_preview_seconds;
+} TopGearAudioCatalogInfo;
 
 enum TopGearRecompInput {
     TOPGEAR_INPUT_B      = 0x8000u,
@@ -126,6 +145,7 @@ typedef struct TopGearFrontierReceipt {
     char reason[192];
 } TopGearFrontierReceipt;
 
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 typedef struct TopGearV02PacketInfo {
     uint32_t wram_offset,total_bytes;
     uint16_t first_block_bytes,first_block_destination;
@@ -188,6 +208,7 @@ typedef struct TopGearV05PhaseFamilyInfo {
     char aram_sha256[65];
     char dsp_registers_sha256[65];
 } TopGearV05PhaseFamilyInfo;
+#endif
 
 enum TopGearAudioBackend {
     TOPGEAR_AUDIO_BACKEND_STATIC = 0
@@ -226,6 +247,7 @@ typedef struct TopGearStaticAudioStatus {
     char clock_profile[48];
 } TopGearStaticAudioStatus;
 
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 typedef struct TopGearAudioClockInfo {
     uint8_t independent_clock_domain;
     uint8_t physical_rate_variable;
@@ -1712,6 +1734,7 @@ typedef struct TopGearV10JoinInfo {
     uint8_t later_wram_epoch_proved;
     char blocker[224];
 } TopGearV10JoinInfo;
+#endif
 
 enum TopGearHookEventType {
     TOPGEAR_HOOK_EVENT_RESET = 1,
@@ -1762,6 +1785,7 @@ typedef struct TopGearHookEvent {
 
 typedef int (*TopGearHookCallback)(void *user, const TopGearHookEvent *event);
 
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 typedef struct TopGearV06ProtocolInfo {
     uint32_t reset_signature_consumer_address;
     uint32_t second_signature_consumer_address;
@@ -1775,13 +1799,16 @@ typedef struct TopGearV06ProtocolInfo {
     uint8_t reserved[2];
     char blocker[192];
 } TopGearV06ProtocolInfo;
+#endif
 
 enum TopGearRunResult { TOPGEAR_RUN_ERROR=-1, TOPGEAR_RUN_FRONTIER=0, TOPGEAR_RUN_COMPLETE=1 };
 
 const char *topgear_recomp_version_string(void);
 const char *topgear_recomp_video_standard(void);
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 unsigned topgear_recomp_generated_context_count(void);
 unsigned topgear_recomp_generated_smp_context_count(void);
+#endif
 
 int topgear_recomp_verify_rom(const uint8_t*,size_t,TopGearRomInfo*,char*,size_t);
 int topgear_recomp_create(TopGearRecomp**,const uint8_t*,size_t,char*,size_t);
@@ -1795,6 +1822,7 @@ int topgear_recomp_set_hook(TopGearRecomp*,uint32_t,TopGearHookCallback,void*);
 void topgear_recomp_clear_hook(TopGearRecomp*);
 void topgear_recomp_request_stop(TopGearRecomp*);
 
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 /* Execute one fixed generated S-CPU context. No runtime opcode decoder exists. */
 int topgear_recomp_step(TopGearRecomp*);
 /* Execute one fixed generated S-SMP context after the verified IPL launch. */
@@ -1815,6 +1843,7 @@ enum TopGearRunResult topgear_recomp_v23_run_main_core_events(TopGearRecomp*,uin
    per call while preserving CPU/PPU/APU state. */
 enum TopGearRunResult topgear_recomp_v27_advance_frame(TopGearRecomp*,uint16_t p1_mask,uint16_t p2_mask,uint64_t max_instructions);
 uint64_t topgear_recomp_v27_frame_count(const TopGearRecomp*);
+#endif
 int topgear_recomp_advance(TopGearRecomp*,uint16_t p1_mask,uint16_t p2_mask,
                            uint32_t frame_count,TopGearRecompFrameResult*);
 int topgear_recomp_advance_headless(TopGearRecomp*,uint16_t p1_mask,
@@ -1833,9 +1862,11 @@ void topgear_recomp_sram_mark_clean(TopGearRecomp*);
 int topgear_recomp_audio_overflowed(const TopGearRecomp*);
 void topgear_recomp_audio_clear_overflow(TopGearRecomp*);
 
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 enum TopGearRunResult topgear_recomp_v24_run_main_core_seconds(TopGearRecomp*,uint32_t,uint64_t,TopGearV24FrameCallback,void*,TopGearV24DurationReport*);
 int topgear_recomp_v25_begin_coverage(TopGearRecomp*);
 int topgear_recomp_v25_coverage_info(const TopGearRecomp*,TopGearV25CoverageInfo*);
+#endif
 
 void topgear_recomp_cpu_state(const TopGearRecomp*,TopGearCpuState*);
 void topgear_recomp_smp_state(const TopGearRecomp*,TopGearSmpState*);
@@ -1851,6 +1882,7 @@ int topgear_recomp_read_cpu_io_register(const TopGearRecomp*,uint16_t,uint8_t*);
 /* S-CPU-visible APU port, written by the S-SMP. */
 int topgear_recomp_read_apu_port(const TopGearRecomp*,unsigned,uint8_t*);
 int topgear_recomp_read_scpu_to_smp_port(const TopGearRecomp*,unsigned,uint8_t*);
+#ifdef TOPGEAR_ENABLE_RESEARCH_API
 int topgear_recomp_v07_bus_event_info(const TopGearRecomp*,TopGearV07BusEventInfo*);
 int topgear_recomp_v07_ppu_storage_info(const TopGearRecomp*,TopGearV07PpuStorageInfo*);
 int topgear_recomp_v07_ppu_port_write(TopGearRecomp*,uint16_t,uint8_t);
@@ -1872,6 +1904,32 @@ int topgear_recomp_v08_interrupt_input_info(const TopGearRecomp*,TopGearV08Inter
 int topgear_recomp_audio_clock_info(const TopGearRecomp*,TopGearAudioClockInfo*);
 int topgear_recomp_dsp_scaffold_info(const TopGearRecomp*,TopGearDspScaffoldInfo*);
 int topgear_recomp_read_smp_dsp_register(const TopGearRecomp*,uint8_t,uint8_t*);
+#endif
+
+/* Music Box support uses the two command paths implemented by the generated
+   game. Port 0 accepts stop $00 and music selectors $01-$07. Port 1 accepts
+   neutral $00 and the complete dispatch range $01-$1D; catalogue entries identify which are
+   audible effects and which are controls/no-ops that must not be previewed. */
+size_t topgear_recomp_audio_catalog_count(void);
+const TopGearAudioCatalogInfo *topgear_recomp_audio_catalog_item(size_t index);
+int topgear_recomp_music_command(TopGearRecomp*,uint8_t selector,
+                                  char*,size_t);
+int topgear_recomp_sound_command(TopGearRecomp*,uint8_t command,
+                                  char*,size_t);
+
+/* Prepare a Music Box core through the game's exact power-on audio sequence at
+   $00:805A-$00:807A. Unlike a bare port write, this executes the command-$18
+   reset, $07:8000 driver upload, APUIO0 clear/delay, and final selector write.
+   It runs headlessly and never opens or advances the headed game window. */
+int topgear_recomp_music_preview_prepare(TopGearRecomp*,uint8_t selector,
+                                          char*,size_t);
+
+/* Advance only the isolated S-SMP/S-DSP clock. This is intentionally a
+   preview-only operation: callers must bracket it with a snapshot restore.
+   Keeping the S-CPU stopped prevents gameplay from replacing a selected
+   music command before its sequence completes. */
+int topgear_recomp_audio_preview_advance(TopGearRecomp*,uint64_t master_clocks,
+                                          char*,size_t);
 
 /* Host transport is one-way. Reading, discarding, clearing, muting or device
    failure may never alter deterministic SNES execution state. Full Static

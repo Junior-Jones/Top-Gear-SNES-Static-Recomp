@@ -261,7 +261,7 @@ int topgear_diagnostics_write(
             "SMP=PC:%04X A=%02X X=%02X Y=%02X SP=%02X PSW=%02X "
             "Instructions=%llu Cycles=%llu\r\n",
             topgear_recomp_version_string(), topgear_recomp_current_frame(game),
-            (unsigned long long)topgear_recomp_v27_frame_count(game),
+            (unsigned long long)topgear_recomp_current_frame(game),
             (unsigned long long)topgear_recomp_instruction_count(game),
             topgear_recomp_failed(game), topgear_recomp_last_error(game),
             frontier.reached, frontier.address, frontier.reason,

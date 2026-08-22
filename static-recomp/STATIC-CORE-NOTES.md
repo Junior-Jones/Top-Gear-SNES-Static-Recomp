@@ -1,4 +1,4 @@
-# Top Gear static-core field guide (release 1.0.0)
+# Top Gear static-core field guide (release 1.1.1)
 
 This note separates three kinds of knowledge so future work does not turn a screen label or a player guide into an invented variable name:
 
@@ -224,3 +224,39 @@ The manual is preferred for controls, cars, nitro, pits and official driving rul
 The input-only white Sidewinder campaign now completes all four USA races from reset with no WRAM patches.  It finished Las Vegas 1st (20 points), Los Angeles 4th (30 cumulative), New York 2nd (45 cumulative), and the six-lap San Francisco finale 4th (55 cumulative).  The top-ten racer IDs and a full snapshot were retained at each RESULTS page.  The framebuffer road-centre controller uses the original rows 40-70 on Las Vegas, Los Angeles and San Francisco; New York needs the nearer rows 55-90 and a wider 108-148 dead-zone.  The OAM traffic band is enabled only on the first two courses because its roadside-object false positives hurt the latter two.
 
 Continuing for 3,600 frames after San Francisco proved the country transition instead of stopping at the finish line: PLAYER was ranked 2nd, qualified for the next country, received AMATEUR password `MOONBATH`, reached the Rio de Janeiro/Brazil briefing (four laps), and entered that race.  Static audio stayed AOT-only with zero S-SMP failures, DSP failures, or automatic fallback use throughout.
+
+## Release 1.1.1 music command surface
+
+The ROM's complete proved music selector set is `$01-$07`. `$00:817C-$00:81A0`
+derives race selectors `$02-$05` from the low two bits of `$1F06` using
+`(($1F06 & 3) ^ 3) + 2`. Callers `$0F:858D` and `$0F:8563` feed the common
+APUIO routine `$0F:8133` and produce menu/title-side selectors `$06` and `$07`.
+Caller `$0F:8675` reaches `$01`, whose sequence pointer is `$13AB`. S-SMP
+`$0A17-$0A24` resolves all seven pointers from the table based at `$1397`.
+The seven eight-byte descriptors are `$13AB/$13B3/$13BB/$13C3/$13CB/$13D3/
+$13DB`; they select channel-pointer blocks beginning at `$13E3/$13F3/$1403/
+$1413/$1423/$1433/$1443`. Those channel streams contain the pattern, loop and
+instrument events that assemble the soundtrack; a selector is not itself a
+complete PCM track.
+
+APUIO1 is independent of music. Its compare/dispatch path at `$1092-$10A3`
+indexes commands `$01-$1D` through the 29 little-endian entries at
+`$10A7-$10E0`. The public catalogue records the table and handler address for
+every command, including non-audible masks, no-ops, parameter controls and the
+`$12AE` reset/IPL handler. Sixteen handlers are standalone audible effects in
+the initialized title-driver state; `$02/$03` and `$0D/$0E` are paired
+voice-setup/pitch controls and are not falsely presented as standalone sounds.
+
+Music changes require more than a direct APUIO0 write. The power-on path
+`$00:805A-$00:807A` sends command `$18` on APUIO1, calls the complete uploader
+at `$07:8000`, clears APUIO0, waits, and finally writes selector `$01` at
+`$00:8077`. `topgear_recomp_music_preview_prepare` follows that generated ROM
+path headlessly and replaces only the accumulator byte immediately before the
+real `$00:8077` write. This fixed the earlier previews that reused opening-song
+driver state and produced short, incorrect fragments.
+
+`topgear_recomp_audio_preview_advance` then advances only S-SMP/S-DSP time.
+All seven selectors produced different PCM hashes and remained audible through
+300 seconds; all 16 standalone six-second effects produced non-zero Full Static
+PCM. The frontend stores that offline result as a temporary WAV and uses a
+seekable Windows player, so opening Music never opens or advances a game window.
