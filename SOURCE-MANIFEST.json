@@ -37,9 +37,9 @@
       "sha256": "e51d8290b1ba8e4fe4f126e81ac7ccfb577742f42730c208eb73e68e52a0b298"
     },
     {
-      "bytes": 4059,
+      "bytes": 6206,
       "path": "README.txt",
-      "sha256": "eacf22630cee85e9468a1392d8ceaaf3fc041501981790f5415da61d1e4e13b0"
+      "sha256": "c8b0d8dadbc10d0fda4ce698018978dcb900686c7bb166fb1bf54df93079c41d"
     },
     {
       "bytes": 18,
@@ -1287,7 +1287,7 @@
       "sha256": "10dace359045ec3ea486ffa0d60554f76d1b7c56b94881029fb8f5ae446b74f5"
     }
   ],
-  "inventory_sha256": "b71038fa16308a837f81964e266ece1d84b794bf46598f883aca821c50d0dcee",
+  "inventory_sha256": "a4b9a00c7d055fa98839cfb9bd4d29525cce9560644096fc3427df1c27605068",
   "project_version": "1.1.1",
   "schema": "topgear-source-manifest-v1"
 }

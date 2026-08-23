@@ -4,6 +4,48 @@ Release 1.1.1
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.
 
+What "fully static recompilation" means
+----------------------------------------
+
+Top Gear is a fully static, ahead-of-time recompilation. Its executable
+W65C816 game instructions were analysed and translated into fixed native C
+code before the application was built. The production launcher executes this
+generated code directly.
+
+At runtime, the application does not use a general-purpose SNES CPU
+interpreter, runtime opcode decoder, dynamic recompiler, JIT compiler, runtime
+learning system or emulator fallback. Its static CPU authority contains 8,685
+normalised processor contexts across 29 fixed-C shards, together with generated
+ROM re-entry, interrupt and executable-WRAM paths. Unknown execution states
+stop through fail-closed diagnostics instead of being interpreted.
+
+The complete runtime includes:
+
+- Generated W65C816 game-code execution.
+- LoROM mapping, WRAM, open-bus and machine-bus behaviour.
+- Native PPU, CPU-I/O and controller-port handling.
+- Native DMA and HDMA operation.
+- NTSC beam scheduling, refresh, NMI, IRQ and auto-joypad events.
+- Native Mode 1 menus and HUD rendering.
+- Native Mode 7 track rendering, OBJ/OAM cars and display objects.
+- Fail-closed static S-SMP execution and static S-DSP PCM production.
+- Full-machine snapshots, deterministic framebuffers and runtime diagnostics.
+- Password-based game progress, matching the original cartridge's lack of
+  battery-backed SRAM.
+- An accessible native Windows launcher with statically linked SDL
+  presentation, audio and gamepad support.
+
+"Fully static" does not mean that races, graphics, music or sound effects are
+prerecorded. Every frame and audio sample is produced live from player input
+and current machine state. It means that the game's executable instructions
+are compiled ahead of time and no interpreter or fallback emulator executes
+them at runtime.
+
+Historical reference backends and development tools are not selectable
+production paths. If a future static-code coverage gap is found, it must be
+repaired from verified ROM or audio provenance and rebuilt into the static
+authority; it will never be covered by enabling a runtime interpreter.
+
 ROM requirements
 Name: Top Gear
 Region: USA
