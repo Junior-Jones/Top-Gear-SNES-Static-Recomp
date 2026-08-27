@@ -1,5 +1,5 @@
 {
-  "file_count": 258,
+  "file_count": 260,
   "files": [
     {
       "bytes": 19,
@@ -12,9 +12,9 @@
       "sha256": "23978364ad231e99b91787572c47aea8e453c6f78726ad046903b60960cd71e0"
     },
     {
-      "bytes": 3656,
+      "bytes": 4038,
       "path": "CMakeLists.txt",
-      "sha256": "2f10f0204bdb203173055209c64d48d90ba6707b03be71bc8925d7677706066f"
+      "sha256": "f9f5ba1294f715559f631c32700c49a8ec0a5e33bd6fedcf162f627e624336b2"
     },
     {
       "bytes": 1523,
@@ -50,6 +50,11 @@
       "bytes": 18,
       "path": "Rom/Readme.txt",
       "sha256": "cd7c51dd5d5ef0a922f98be270e81002988ab33f454674ad166b90c98178158c"
+    },
+    {
+      "bytes": 710,
+      "path": "THIRD-PARTY-NOTICES.txt",
+      "sha256": "58aa7f15217cd91b15fd2ff404668e90065c5116e7c120de9a616ca21ae8b280"
     },
     {
       "bytes": 36,
@@ -1272,6 +1277,11 @@
       "sha256": "ddd1f7948c5cb606f87bf1583deaaa59b6f7a259d3f198b55776754d92f76a61"
     },
     {
+      "bytes": 877,
+      "path": "third_party/SDL_GameControllerDB-LICENSE.txt",
+      "sha256": "737fece95d2c7e0146fe81caa96788e3921605e874b426c95c51aae80f4f1187"
+    },
+    {
       "bytes": 602815,
       "path": "third_party/gamecontrollerdb.txt",
       "sha256": "6bb4cab168b7e2fa38c3978ae03fde05bdbc051a28953d50534b235f8103151a"
@@ -1292,7 +1302,7 @@
       "sha256": "10dace359045ec3ea486ffa0d60554f76d1b7c56b94881029fb8f5ae446b74f5"
     }
   ],
-  "inventory_sha256": "22b8ea951c3afb1e6414288c955c21435287dde3a17bf3152613103e940f6410",
+  "inventory_sha256": "9cfe2e6f275ef0bcd0d6010b16cecd575aa2fa2c3454fe7067aa8bb291f2efe2",
   "project_version": "1.1.1",
   "schema": "topgear-source-manifest-v1"
 }

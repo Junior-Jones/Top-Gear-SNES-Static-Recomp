@@ -86,4 +86,10 @@ add_custom_command(TARGET topgear-launcher POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
         "${TOPGEAR_SDL_SOURCE_DIR}/LICENSE.txt"
         "$<TARGET_FILE_DIR:topgear-launcher>/SDL-LICENSE.txt"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/third_party/SDL_GameControllerDB-LICENSE.txt"
+        "$<TARGET_FILE_DIR:topgear-launcher>/SDL_GameControllerDB-LICENSE.txt"
+    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/THIRD-PARTY-NOTICES.txt"
+        "$<TARGET_FILE_DIR:topgear-launcher>/THIRD-PARTY-NOTICES.txt"
     VERBATIM)
