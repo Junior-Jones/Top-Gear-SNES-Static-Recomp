@@ -7,9 +7,9 @@
       "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
     },
     {
-      "bytes": 870,
+      "bytes": 963,
       "path": ".github/workflows/windows-ci.yml",
-      "sha256": "97cfcde8c61944dc829734f33c5e46390172d1247cf53d1f923b3507e7c2a81e"
+      "sha256": "23978364ad231e99b91787572c47aea8e453c6f78726ad046903b60960cd71e0"
     },
     {
       "bytes": 3656,
@@ -1292,7 +1292,7 @@
       "sha256": "10dace359045ec3ea486ffa0d60554f76d1b7c56b94881029fb8f5ae446b74f5"
     }
   ],
-  "inventory_sha256": "d8fc17ec99ce3de40a8d722ed4724cf874a3c909f54ff5c01e8c8c504ae28650",
+  "inventory_sha256": "22b8ea951c3afb1e6414288c955c21435287dde3a17bf3152613103e940f6410",
   "project_version": "1.1.1",
   "schema": "topgear-source-manifest-v1"
 }
