@@ -1,4 +1,4 @@
-# Top Gear static-core field guide (release 1.1.1)
+# Top Gear static-core field guide (release 1.2.0)
 
 This note separates three kinds of knowledge so future work does not turn a screen label or a player guide into an invented variable name:
 
@@ -225,7 +225,7 @@ The input-only white Sidewinder campaign now completes all four USA races from r
 
 Continuing for 3,600 frames after San Francisco proved the country transition instead of stopping at the finish line: PLAYER was ranked 2nd, qualified for the next country, received AMATEUR password `MOONBATH`, reached the Rio de Janeiro/Brazil briefing (four laps), and entered that race.  Static audio stayed AOT-only with zero S-SMP failures, DSP failures, or automatic fallback use throughout.
 
-## Release 1.1.1 music command surface
+## Release 1.2.0 static audio command surface
 
 The ROM's complete proved music selector set is `$01-$07`. `$00:817C-$00:81A0`
 derives race selectors `$02-$05` from the low two bits of `$1F06` using
@@ -258,5 +258,6 @@ driver state and produced short, incorrect fragments.
 `topgear_recomp_audio_preview_advance` then advances only S-SMP/S-DSP time.
 All seven selectors produced different PCM hashes and remained audible through
 300 seconds; all 16 standalone six-second effects produced non-zero Full Static
-PCM. The frontend stores that offline result as a temporary WAV and uses a
-seekable Windows player, so opening Music never opens or advances a game window.
+PCM. These helpers remain research/regression surfaces. Release 1.2.0 removes
+the frontend Music Box and WAV recorder; production audio is generated live by
+the running game's Full Static S-SMP/S-DSP path.

@@ -2,7 +2,7 @@ TOP GEAR (SNES) STATIC CORE - CUMULATIVE FINDINGS
 =================================================
 
 Updated: 2026-08-09
-Source: Release 1.1.1 Windows source, exact USA ROM
+Source: Release 1.2.0 Windows source, exact USA ROM
 ROM SHA-256: ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788
 
 PURPOSE AND UPDATE RULE
@@ -693,8 +693,8 @@ the last such entry without a frontier. This covers the lightly used
 post-race/non-finish transition that exposed the defect rather than stopping
 at the formerly failing instruction.
 
-MUSIC COMMAND CATALOGUE AND MUSIC WINDOW (RELEASE 1.1.1)
----------------------------------------------------------
+STATIC AUDIO COMMAND CATALOGUE (RELEASE 1.2.0)
+------------------------------------------------
 
 Music and sound effects are separate command systems. APUIO0 selectors
 `$01-$07` are all music. Race setup at
@@ -720,7 +720,7 @@ each complete soundtrack.
 S-CPU-to-S-SMP port-0 write. It accepts stop `$00` and the seven proved music
 selectors. APUIO1 is a separate 29-command sound-effect/control dispatcher:
 S-SMP `$1092-$10A3` indexes little-endian handler pointers at `$10A7-$10E0`.
-The Music window lists every table address and target entry. Commands `$05`
+The static-core catalogue records every table address and target entry. Commands `$05`
 at `$1124` and `$0B` at `$11AF` are the gameplay-proved turbo and collision/
 rival effects. Sixteen independently playable effect handlers produced static
 PCM in isolated tests. `$02/$03` and `$0D/$0E` are parameterized setup/pitch
@@ -737,11 +737,7 @@ and changes only the accumulator byte immediately before the real write. All
 seven selectors then produced distinct PCM hashes and remained audible for the
 complete 300-second test window with no silent tail.
 
-The simplified Windows Music window lists only the seven sequences and 16
-standalone effects. Play renders five minutes of a looping music sequence or
-six seconds of an effect entirely offline using static S-SMP/S-DSP time. If the
-game exists, a snapshot preserves and restores it; otherwise the selected ROM
-is loaded into a private headless core, so the game window never needs to run.
-Windows MCI plays the completed temporary WAV and supplies Stop plus Left/Right
-five-second seeking on the position slider. Cached WAVs are deleted when
-Launcher.exe closes; no output folder is created in the release.
+These command helpers remain static-core research and regression surfaces. The
+release 1.2.0 Windows frontend deliberately has no Music Box, offline preview,
+temporary WAV player or recorder. Production audio is generated live from the
+running game by the same Full Static S-SMP/S-DSP authority.

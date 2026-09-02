@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#define TOPGEAR_RECOMP_VERSION_STRING "1.1.1"
+#define TOPGEAR_RECOMP_VERSION_STRING "1.2.0"
 #define TOPGEAR_RECOMP_ROM_SIZE 524288u
 #define TOPGEAR_RECOMP_WRAM_SIZE 131072u
 #define TOPGEAR_RECOMP_ARAM_SIZE 65536u
@@ -220,6 +220,10 @@ typedef struct TopGearStaticAudioStatus {
     uint64_t smp_instructions;
     uint64_t aot_validated_instructions;
     uint64_t pcm_frames;
+    uint64_t pcm_known_frames;
+    uint64_t pcm_unknown_frames;
+    uint64_t pcm_hash;
+    uint64_t dsp_pcm_overflows;
     uint64_t fifo_dropped_frames;
     uint64_t sync_calls;
     uint64_t rendezvous_hash;
@@ -1906,10 +1910,11 @@ int topgear_recomp_dsp_scaffold_info(const TopGearRecomp*,TopGearDspScaffoldInfo
 int topgear_recomp_read_smp_dsp_register(const TopGearRecomp*,uint8_t,uint8_t*);
 #endif
 
-/* Music Box support uses the two command paths implemented by the generated
-   game. Port 0 accepts stop $00 and music selectors $01-$07. Port 1 accepts
-   neutral $00 and the complete dispatch range $01-$1D; catalogue entries identify which are
-   audible effects and which are controls/no-ops that must not be previewed. */
+/* Static-audio research/regression helpers use the two command paths implemented
+   by the generated game. They are not used by the release 1.2.0 Windows
+   frontend. Port 0 accepts stop $00 and music selectors $01-$07. Port 1 accepts
+   neutral $00 and the complete dispatch range $01-$1D; catalogue entries
+   identify audible effects and controls/no-ops. */
 size_t topgear_recomp_audio_catalog_count(void);
 const TopGearAudioCatalogInfo *topgear_recomp_audio_catalog_item(size_t index);
 int topgear_recomp_music_command(TopGearRecomp*,uint8_t selector,
@@ -1917,15 +1922,15 @@ int topgear_recomp_music_command(TopGearRecomp*,uint8_t selector,
 int topgear_recomp_sound_command(TopGearRecomp*,uint8_t command,
                                   char*,size_t);
 
-/* Prepare a Music Box core through the game's exact power-on audio sequence at
-   $00:805A-$00:807A. Unlike a bare port write, this executes the command-$18
-   reset, $07:8000 driver upload, APUIO0 clear/delay, and final selector write.
-   It runs headlessly and never opens or advances the headed game window. */
+/* Prepare a static-audio regression core through the game's exact power-on
+   sequence at $00:805A-$00:807A. Unlike a bare port write, this executes the
+   command-$18 reset, $07:8000 driver upload, APUIO0 clear/delay, and final
+   selector write. It runs headlessly and never opens a headed game window. */
 int topgear_recomp_music_preview_prepare(TopGearRecomp*,uint8_t selector,
                                           char*,size_t);
 
 /* Advance only the isolated S-SMP/S-DSP clock. This is intentionally a
-   preview-only operation: callers must bracket it with a snapshot restore.
+   research-only operation: callers must bracket it with a snapshot restore.
    Keeping the S-CPU stopped prevents gameplay from replacing a selected
    music command before its sequence completes. */
 int topgear_recomp_audio_preview_advance(TopGearRecomp*,uint64_t master_clocks,

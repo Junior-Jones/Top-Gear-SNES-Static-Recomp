@@ -335,7 +335,7 @@ case 0x8f: {
     dp = op_readpc();
     break;
   case 2:
-    op_readdp(dp);
+    op_dummy_readdp(dp);
     break;
   case 3:
     op_writedp(dp, rd);
@@ -546,7 +546,7 @@ case 0xc4: {
     dp = op_readpc();
     break;
   case 2:
-    op_readdp(dp);
+    op_dummy_readdp(dp);
     break;
   case 3:
     op_writedp(dp, regs.B.a);
@@ -564,7 +564,7 @@ case 0xc5: {
     dp |= op_readpc() << 8;
     break;
   case 3:
-    op_readaddr(dp);
+    op_dummy_readaddr(dp);
     break;
   case 4:
     op_writeaddr(dp, regs.B.a);
@@ -579,7 +579,7 @@ case 0xc6: {
     op_io();
     break;
   case 2:
-    op_readdp(regs.x);
+    op_dummy_readdp(regs.x);
     break;
   case 3:
     op_writedp(regs.x, regs.B.a);
@@ -617,7 +617,7 @@ case 0xcb: {
     dp = op_readpc();
     break;
   case 2:
-    op_readdp(dp);
+    op_dummy_readdp(dp);
     break;
   case 3:
     op_writedp(dp, regs.B.y);
@@ -635,7 +635,7 @@ case 0xcc: {
     dp |= op_readpc() << 8;
     break;
   case 3:
-    op_readaddr(dp);
+    op_dummy_readaddr(dp);
     break;
   case 4:
     op_writeaddr(dp, regs.B.y);
@@ -680,7 +680,7 @@ case 0xd4: {
     dp += regs.x;
     break;
   case 2:
-    op_readdp(dp);
+    op_dummy_readdp(dp);
     break;
   case 3:
     op_writedp(dp, regs.B.a);
@@ -698,7 +698,7 @@ case 0xd5: {
     dp += regs.x;
     break;
   case 2:
-    op_readaddr(dp);
+    op_dummy_readaddr(dp);
     break;
   case 3:
     op_writeaddr(dp, regs.B.a);
@@ -739,7 +739,7 @@ case 0xd7: {
     dp += regs.B.y;
     break;
   case 4:
-    op_readaddr(dp);
+    op_dummy_readaddr(dp);
     break;
   case 5:
     op_writeaddr(dp, regs.B.a);
@@ -754,7 +754,7 @@ case 0xd8: {
     dp = op_readpc();
     break;
   case 2:
-    op_readdp(dp);
+    op_dummy_readdp(dp);
     break;
   case 3:
     op_writedp(dp, regs.x);
@@ -769,7 +769,7 @@ case 0xda: {
     dp = op_readpc();
     break;
   case 2:
-    op_readdp(dp);
+    op_dummy_readdp(dp);
     break;
   case 3:
     op_writedp(dp,     regs.B.a);

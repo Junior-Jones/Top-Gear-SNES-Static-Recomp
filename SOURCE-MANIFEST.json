@@ -1,5 +1,5 @@
 {
-  "file_count": 260,
+  "file_count": 270,
   "files": [
     {
       "bytes": 19,
@@ -12,9 +12,9 @@
       "sha256": "23978364ad231e99b91787572c47aea8e453c6f78726ad046903b60960cd71e0"
     },
     {
-      "bytes": 4038,
+      "bytes": 7471,
       "path": "CMakeLists.txt",
-      "sha256": "f9f5ba1294f715559f631c32700c49a8ec0a5e33bd6fedcf162f627e624336b2"
+      "sha256": "944615f48dc1b760c2ea386b65ccbd1a34435787e675794c5e3847da28ae87e4"
     },
     {
       "bytes": 1523,
@@ -22,9 +22,9 @@
       "sha256": "d3b028011e11a2dc4c5e7f83757104f3af74fe865829d4763bff8eee609a9749"
     },
     {
-      "bytes": 4746,
+      "bytes": 2718,
       "path": "Docs/Frontend Architecture.txt",
-      "sha256": "b7f325193d1717a43a167c985a7392dde68a2089b9450871d6f1df4db3c870b6"
+      "sha256": "48bce3853ceb341211d3994038beaad06116c047bc5cd119b952d24174a0217a"
     },
     {
       "bytes": 1128,
@@ -32,9 +32,9 @@
       "sha256": "80d6cc1600a333f450d532bfacb23c942920b62c933cc191a6cd1923c45c1436"
     },
     {
-      "bytes": 39147,
+      "bytes": 38829,
       "path": "Docs/Static Findings.txt",
-      "sha256": "bea2e7218f58716d57511419f6aa49a4d57827b994a2b684717b4dd5791d3394"
+      "sha256": "dee25d4dda8468a9088612790f996c2f5f2356aecf626d9b15181767e1d5d505"
     },
     {
       "bytes": 2555,
@@ -42,9 +42,9 @@
       "sha256": "e51d8290b1ba8e4fe4f126e81ac7ccfb577742f42730c208eb73e68e52a0b298"
     },
     {
-      "bytes": 6206,
+      "bytes": 6524,
       "path": "README.txt",
-      "sha256": "c8b0d8dadbc10d0fda4ce698018978dcb900686c7bb166fb1bf54df93079c41d"
+      "sha256": "707e4f65e847f792c66e7cce5924828d8a9d3186a508618b89e4b5240b19d966"
     },
     {
       "bytes": 18,
@@ -57,84 +57,124 @@
       "sha256": "58aa7f15217cd91b15fd2ff404668e90065c5116e7c120de9a616ca21ae8b280"
     },
     {
-      "bytes": 36,
+      "bytes": 1911,
       "path": "VERSION.txt",
-      "sha256": "11ae86371e0fa9ee083adc57c8b628412f99f2929247af3eefa2a6d617a866d6"
+      "sha256": "23757567a9fdf9ceac3f1be78546eabd9656707630b282852c72e4cb4bc32d9a"
     },
     {
-      "bytes": 2272,
+      "bytes": 1406,
+      "path": "frontend/common/topgear_input_latch.c",
+      "sha256": "39842744664ce9f19c1f5fb32e9f5a76b5f70e05edbbef1bb57b0c0e988f166e"
+    },
+    {
+      "bytes": 645,
+      "path": "frontend/common/topgear_input_latch.h",
+      "sha256": "6c685f33cce616ab9b590d6881827764b59a1560f67dbcc935ed6d21874f8749"
+    },
+    {
+      "bytes": 14022,
+      "path": "frontend/headless/topgear_headless.c",
+      "sha256": "3dd85ab3c958d02b209e2bfcead96fe522330c262058678798f5b9ac7b7047cb"
+    },
+    {
+      "bytes": 2397,
       "path": "frontend/windows/Release-README.txt",
-      "sha256": "9695f092d5b09db3d786e19547172e2c6f7dbae12cc81cac4faf9f4ea5d1a460"
+      "sha256": "dc9dd05d997cc9a679e9c11f3564d14a45ea27e80b7edfe0c6dde3db54dc2fcb"
     },
     {
       "bytes": 824,
       "path": "frontend/windows/launcher_version.rc",
-      "sha256": "888efd7702d19b969f803c8cb84c38994f6fe1b770293c5e47d79af3d9fbd521"
+      "sha256": "673054075197c933b30af71dbd4bd7058f8d456c8723f1efb25e33f428f8435c"
     },
     {
-      "bytes": 14293,
-      "path": "frontend/windows/topgear_audio_output_sdl3.c",
-      "sha256": "3a1b45a98aeeea3464656c45de666d3767b9acd41aff21fa1ed196e6d3503011"
+      "bytes": 7698,
+      "path": "frontend/windows/topgear_app_core.c",
+      "sha256": "6fc62fe9d709952b4d0f929ed172f108cfbcd2c09e465f0235317f090e5a4a73"
     },
     {
-      "bytes": 2703,
-      "path": "frontend/windows/topgear_audio_output_sdl3.h",
-      "sha256": "db8a0741af6ec43da60eda77b06009e1d5782e0427825061e421d0d28a6d0fbb"
+      "bytes": 2382,
+      "path": "frontend/windows/topgear_app_core.h",
+      "sha256": "efab208aea5bc6ed8b690263da37c91260fd4d80ddcb2805e859330b52bca6f5"
     },
     {
-      "bytes": 3354,
-      "path": "frontend/windows/topgear_audio_recorder_win32.c",
-      "sha256": "efdd735df3594a013dbfc062a8d7713d5cbfa65b4414c047c1e35740bb2c8c17"
+      "bytes": 155466,
+      "path": "frontend/windows/topgear_app_win32.c",
+      "sha256": "f0fd0c3744ec390dc3c49122fb48199d6b4de4670dce3cd5642dc5656dcde373"
     },
     {
-      "bytes": 860,
-      "path": "frontend/windows/topgear_audio_recorder_win32.h",
-      "sha256": "fab430937da6230a9d61b074ca8b5c2436cc461cfab9b40b2f4f57efda9e3a4b"
+      "bytes": 38610,
+      "path": "frontend/windows/topgear_audio_output_dsound_win32.c",
+      "sha256": "b84dea097b04d53c0f4b41856d0f1c00f5dab36ecf71592c0d9dc393e29310dc"
     },
     {
-      "bytes": 14838,
-      "path": "frontend/windows/topgear_diagnostics_log_win32.c",
-      "sha256": "d5e4524f497d32215bfd09031ad06d7a61664a096fd28bfc898f98fc6f11268e"
+      "bytes": 5145,
+      "path": "frontend/windows/topgear_audio_output_dsound_win32.h",
+      "sha256": "9cfbf922465ae2abb4151605c661867ab22f5f3286a290d0ee553ca03800856a"
     },
     {
-      "bytes": 1238,
-      "path": "frontend/windows/topgear_diagnostics_log_win32.h",
-      "sha256": "fabe5bcc5ef206602a9006fd65428f4716b14168e0c12a75e3ea4482b4054a69"
+      "bytes": 7164,
+      "path": "frontend/windows/topgear_audio_resampler.c",
+      "sha256": "11190a74076842d9f201284c7a4179b050ee5f7914d019f79c6aa125940fb0de"
     },
     {
-      "bytes": 43496,
+      "bytes": 1583,
+      "path": "frontend/windows/topgear_audio_resampler.h",
+      "sha256": "c5b01a298af45e327ad6bc0483a1bd5cd1b3f716d8dfbb18dabe86521379a7a1"
+    },
+    {
+      "bytes": 2842,
+      "path": "frontend/windows/topgear_audio_resampler_test.c",
+      "sha256": "98fe10cfe8994804cef6730034f368a2caa78bafa7dd0ff30df2ce54a835b5fe"
+    },
+    {
+      "bytes": 4824,
+      "path": "frontend/windows/topgear_audio_settings_contract_test.c",
+      "sha256": "aa1339ccc97ed212d5cc333f133ee9b4a37d7535269d4b1c92bf6e8d93e2fdef"
+    },
+    {
+      "bytes": 2492,
+      "path": "frontend/windows/topgear_frontend_settings_contract_test.c",
+      "sha256": "54c9e2f8e61bc668c8043be8a0324eb3226d5a55e842a33ac8569d5b0419c561"
+    },
+    {
+      "bytes": 34200,
       "path": "frontend/windows/topgear_frontend_settings_win32.c",
-      "sha256": "7ecff9216c466a3ff49ae237e95f5a5def8f03a4bfc72eeda5561a174449dfa7"
+      "sha256": "1f47f9089fa5476452e4e40c137193ac2091a6aec55d601f164ae2499908f16b"
     },
     {
-      "bytes": 2743,
+      "bytes": 2252,
       "path": "frontend/windows/topgear_frontend_settings_win32.h",
-      "sha256": "655c74f34b5f73aa2d64c4ef42e2ab251f20c7018a210ce509197e0b9537dc5f"
+      "sha256": "6a227866e398555b509de9ea7000d6524af7594434121e569f3fbf768678026d"
     },
     {
-      "bytes": 170794,
-      "path": "frontend/windows/topgear_launcher_win32.c",
-      "sha256": "de59839af94e8a95f2f9595b7f62bbda3cbd55c78cd1e08041222b5c2f1a8487"
+      "bytes": 2557,
+      "path": "generated/audio/v27-static-smp/TOPGEAR-V27-SMP-AOT-GENERATION.json",
+      "sha256": "c3d5e90d9f80a58b565209df745d6c2f10aa683d9efeb4cf14e614902eaab9f3"
     },
     {
-      "bytes": 9695,
-      "path": "frontend/windows/topgear_video_output_sdl3.c",
-      "sha256": "2df9b365eda3e4bd824aaadb9e389d37f9e654c05fecab734b73048fd7d0a607"
+      "bytes": 9333,
+      "path": "generated/audio/v27-static-smp/TOPGEAR-V27-SMP-AOT-ROUTE.csv",
+      "sha256": "9010e913040246d01939b73d9cc70df71e19f3677fe8c59f2808c82c6e067f65"
     },
     {
-      "bytes": 2034,
-      "path": "frontend/windows/topgear_video_output_sdl3.h",
-      "sha256": "7bcb8e1a11d4f1305a22dc48749f7d317c228c6bfd5e9f65eb51c225c1935fb0"
+      "bytes": 1924,
+      "path": "generated/audio/v27-static-smp/TOPGEAR-V27-SMP-AUTHORITY-SEED.json",
+      "sha256": "e56cbbd4791996c432ba84717a728dd3a65a3ab8f4002c64f330ce36438ce5b5"
     },
     {
-      "bytes": 6093,
+      "bytes": 8192,
+      "path": "generated/audio/v27-static-smp/TOPGEAR-V27-SMP-CODE-BITMAP.bin",
+      "sha256": "d867725f8187172edf31f6724b7d93cf61a0e3da720203430d42b92afcbd46ec"
+    },
+    {
+      "bytes": 8543,
       "path": "static-recomp/CMakeLists.txt",
-      "sha256": "074e05f9c1b2a649ad3d75891a0be5bf47b4ca073e8921eadd68bf8ed99846a1"
+      "sha256": "48f9777aa570621e8cd24ca570fccf1a504405c141984145797411b4341c7c4e"
     },
     {
-      "bytes": 23186,
+      "bytes": 23243,
       "path": "static-recomp/STATIC-CORE-NOTES.md",
-      "sha256": "a2d10c57135642bb30df72a2531ec6c90629eb0563ee42cea76969c5309b69d7"
+      "sha256": "77bbe010c01cd954942168371b510b92700c33606dd5a723c1628f5aa97d6072"
     },
     {
       "bytes": 102313,
@@ -1007,9 +1047,9 @@
       "sha256": "966fe404803af6c12a61f1378d707d73d898a220458506d59f0939c1f71670e1"
     },
     {
-      "bytes": 72680,
+      "bytes": 72829,
       "path": "static-recomp/include/topgear_static_recomp.h",
-      "sha256": "4e86395c9ba7a436400e69cddd70395a05f7fd73624bd9b7ff934050df68c538"
+      "sha256": "0ce5374bb2110d922b1eba9509bcbd04bf4c166546b88a35bc34f1f2ed76558e"
     },
     {
       "bytes": 650,
@@ -1027,9 +1067,9 @@
       "sha256": "2bb6239099c5cefd17fbb33b88d5f1ce93f2488cb6d50324637ee0e6dd7901de"
     },
     {
-      "bytes": 7321,
+      "bytes": 7513,
       "path": "static-recomp/src/topgear_audio_backend.c",
-      "sha256": "a6c64816cb9a7efd3d2d4dee90fbc3cbfe8cd3194b7f4861cb9c5afffc016cb1"
+      "sha256": "a178ce260986831836bf498dd1104a5bab05f205e537ef1011194b1b64c199ff"
     },
     {
       "bytes": 2126,
@@ -1082,9 +1122,9 @@
       "sha256": "ae338ec04e1e0ce1ca833faab6861fec5ae69dcd61130cc18eac26eacb4dabc7"
     },
     {
-      "bytes": 1158,
+      "bytes": 1488,
       "path": "static-recomp/static-audio/topgear-bapu-aot/PROVENANCE.md",
-      "sha256": "cdc26883cf1566e9c922533e9fb9a454d47ee4a3c3d83d242d124ba1f0423f1f"
+      "sha256": "3b207d0ec417d5d8813a3c823a7df36c890d4cbbc9d2b79a57e8370edc747e6c"
     },
     {
       "bytes": 7047,
@@ -1092,49 +1132,14 @@
       "sha256": "70efeee282d82a6e9d26aeed5466d08c632369858371dc6a4644c8dcedc2be78"
     },
     {
-      "bytes": 46019,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/SPC_DSP.cpp",
-      "sha256": "11f2c447b1c9a45713ee62cdcfefad7dded4e5446a21db4a068194cd1224ccb2"
-    },
-    {
-      "bytes": 9684,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/SPC_DSP.h",
-      "sha256": "ee7aa1e570ffbe657aa151da228700c59eec424003931de6184629aabae83f62"
-    },
-    {
-      "bytes": 5205,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_common.h",
-      "sha256": "4bc17a19fe46de2860868d3f88c037aee718b4dedc61450a28de3d1336053dba"
-    },
-    {
-      "bytes": 702,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_config.h",
-      "sha256": "b09d42a2130a9b2beedd9fa460e885d6953852cfcfbc30c19a28cd503b03e8b1"
-    },
-    {
-      "bytes": 6364,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_endian.h",
-      "sha256": "97062e15b46e1347a4fc2e95fd131bcb89c1b8947b28d20a27c1f342a387d637"
-    },
-    {
-      "bytes": 3037,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_source.h",
-      "sha256": "bd6b376d6d9b1bccce3b89e915b1ad9a6fede7d43b273258bfa13c3855fb1a6a"
-    },
-    {
-      "bytes": 14105,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sc_static_sdsp_primitives.inc",
-      "sha256": "e226416e5e8a9a26b081cf4745c1f72e47f49387f9b0784c0189b5e4badfe40d"
-    },
-    {
-      "bytes": 2656,
+      "bytes": 1076,
       "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sdsp.cpp",
-      "sha256": "17a390229a3e675c62d3f5e6a54914e174049e3061315a2688874161df1ddf16"
+      "sha256": "f84282089233b9f1c08eb423cfe023dc14b3e5e01887b306a4964840d5a1d2e1"
     },
     {
-      "bytes": 393,
+      "bytes": 202,
       "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sdsp.hpp",
-      "sha256": "0961d7ddc0626fd7a04fcaeca81626cc2a95f4cfb965a3c7bc47d66b83e0c36d"
+      "sha256": "984320579fad92f772397dd65e16626fafb0f07f9472532651ebaf73ce2f56f8"
     },
     {
       "bytes": 2307,
@@ -1142,14 +1147,14 @@
       "sha256": "d71f5f8a02a79374d4a2c14b973193ce7f6212fcee5205dc87c4a7a9284dbccc"
     },
     {
-      "bytes": 19571,
+      "bytes": 20790,
       "path": "static-recomp/static-audio/topgear-bapu-aot/sc_static_apu.cpp",
-      "sha256": "caa070e0314d8046588c58280201f5f564df3a17f976a70991934a3d7f60b99d"
+      "sha256": "c4741769abc00b0fcbf050da89cf40517dab1d039bfcd67de44cfd6815de3eff"
     },
     {
-      "bytes": 3710,
+      "bytes": 4144,
       "path": "static-recomp/static-audio/topgear-bapu-aot/sc_static_apu.h",
-      "sha256": "9de6519cb0d4f9a4f3726b64a3610b5e9fbfab895ad63dd6cf40407ed664cccc"
+      "sha256": "f6f3f150d65593343b86ea60ba339a525b1a1c491f46027640af3f9f86b7be05"
     },
     {
       "bytes": 2180,
@@ -1157,9 +1162,9 @@
       "sha256": "60d11d0871e9934323b9caae78e0f0270ed4ec083eb1db6cbb39bf5b2126c37c"
     },
     {
-      "bytes": 1781,
+      "bytes": 3013,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core.cpp",
-      "sha256": "0082f2cec444b5728ff88a86263f849a5a64664bb8725266c3521eaf26758111"
+      "sha256": "a1246fec3fb6cd16d106025bbbe0e3abadd748d2733dc9abeb9a0746986d0f79"
     },
     {
       "bytes": 4326,
@@ -1167,9 +1172,9 @@
       "sha256": "7ab0aee29e1ba8144490f4a45986db0ec43c39fb7b39708a071232d89eb898e1"
     },
     {
-      "bytes": 10618,
+      "bytes": 11376,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_mov.cpp",
-      "sha256": "de015670802074a2220e50941d5976ee62f20d5d41116be33a5d07e80b3973d5"
+      "sha256": "52ff34ac00526bc76ef45c726ea8f65da4b4b8c937a29fcd8fddd836cee9e287"
     },
     {
       "bytes": 8469,
@@ -1192,9 +1197,9 @@
       "sha256": "759204fa3a7237c8d76ace29b4a5974066677297ba12772fc1c0be3e712961d5"
     },
     {
-      "bytes": 2483,
+      "bytes": 2679,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/memory.cpp",
-      "sha256": "c879905b948f07a90b07cd582b2054413aaecc82cc894378c6fdca91e24c7b17"
+      "sha256": "bddc874afdd12df76f6ef84d3e978d3590fc0afd21256f3a44e0d3ba403eea67"
     },
     {
       "bytes": 50784,
@@ -1202,24 +1207,24 @@
       "sha256": "ea6a91341ee66777525db85f8f376499c7fa07437280466f03649a310d8f07b4"
     },
     {
-      "bytes": 17879,
+      "bytes": 17945,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_dispatch.inc",
-      "sha256": "841957066dbdb1af48c026b5ec82e3ecfbf84217076a638af5608d913d156f78"
+      "sha256": "4984f9d34a089560baf298c84a1cbdd688c1b991aee957da227a7985e7a69dc8"
     },
     {
-      "bytes": 47387,
+      "bytes": 47504,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_lookup.inc",
-      "sha256": "9928b5dfbefcb7cb154363e26c9da30397b39191ad79e33f9755ec21a5a721dc"
+      "sha256": "aca265c57fe7ed7bc925b3a45b7797873ed74867cae5b909ba9881b3e89ab4d5"
     },
     {
-      "bytes": 1560,
+      "bytes": 1965,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/smp.cpp",
-      "sha256": "aee83cf91ffa6ab8a092df67ae8f400d90fed141ffac54b336bce3c68ddc63de"
+      "sha256": "ccc5efcef086e286b52f55fa6a69e4fcd897f5245ead29423e2162cb29c809dc"
     },
     {
-      "bytes": 3672,
+      "bytes": 3969,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/smp.hpp",
-      "sha256": "579f1ea7f95a81d122ca004f9cb1aa04c863f4f3fc37923cc8b806fec92f58c7"
+      "sha256": "56897dedb564a9b621f634ff3a6a75ca6cc6e2ce3738df05eb32c5286a185712"
     },
     {
       "bytes": 617,
@@ -1227,14 +1232,34 @@
       "sha256": "6263a99d1092e7d8f299e4e9a0985b8a53210020401a5df8b375ccc9692fe980"
     },
     {
-      "bytes": 575,
+      "bytes": 608,
       "path": "static-recomp/static-audio/topgear-bapu-aot/static_snes.hpp",
-      "sha256": "4dc05734b354cd7ac9781224789dba5b07e0388df87cd8d5b16c83648a7fdbb6"
+      "sha256": "ee6290daf98a4290607b31910b0bd17d0ee110d5dd6cc232180cac51a16ab3d7"
     },
     {
       "bytes": 1121,
       "path": "static-recomp/static-audio/topgear-bapu-aot/static_types.hpp",
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
+    },
+    {
+      "bytes": 2830,
+      "path": "static-recomp/static-audio/topgear-project-dsp/gaussian_table_v10_32.inc",
+      "sha256": "54f248a1ba5e01765cb28f2cbb7bdb3d9eb6beb6c47a709695e08d44a3d5c6ca"
+    },
+    {
+      "bytes": 4691,
+      "path": "static-recomp/static-audio/topgear-project-dsp/include/topgear/topgear_dsp.h",
+      "sha256": "84497844a5e3308d2b94157e7e840ed609a0aca692f01c50f3cbb4bff219340a"
+    },
+    {
+      "bytes": 26515,
+      "path": "static-recomp/static-audio/topgear-project-dsp/topgear_dsp.c",
+      "sha256": "a1e75125d19c2708098905a8b664e765e719359ae0a53f0af47ff22fc92cd868"
+    },
+    {
+      "bytes": 1379,
+      "path": "static-recomp/tests/routes/one-player-las-vegas.txt",
+      "sha256": "5d84e936378c81ae6e1dff11c06ce004cc0ed71d64ebd9caa43ec434212006a4"
     },
     {
       "bytes": 513,
@@ -1245,6 +1270,11 @@
       "bytes": 934,
       "path": "static-recomp/tests/test_audio_fifo.c",
       "sha256": "cd7ce2dc625b69922abfcdda9dbdbdb6c54caa07fb77a32fb4e84977aaab2262"
+    },
+    {
+      "bytes": 5981,
+      "path": "static-recomp/tests/test_audio_snapshot_continuation.c",
+      "sha256": "a865435db170604d03074039473541c4a105e9e2ceb61628e8c11562d9b3cce3"
     },
     {
       "bytes": 356,
@@ -1262,6 +1292,11 @@
       "sha256": "f36844ab0b4a89644c520bd9a82483564ba4b449189b40a7f3ed9f1049b23982"
     },
     {
+      "bytes": 10629,
+      "path": "static-recomp/tests/test_project_dsp_phase.c",
+      "sha256": "1d086b3f46d3a134ed9ea8f4838b16850da51ed8c6b94e1e55da1052886f1e40"
+    },
+    {
       "bytes": 2025,
       "path": "static-recomp/tests/test_renderer_instances.c",
       "sha256": "692a2f4619d6f0a7d1f8c4bffae998f0d9c6ac9d21d56860a786fcf29f0fa9fb"
@@ -1277,6 +1312,11 @@
       "sha256": "ddd1f7948c5cb606f87bf1583deaaa59b6f7a259d3f198b55776754d92f76a61"
     },
     {
+      "bytes": 4046,
+      "path": "static-recomp/tests/test_static_audio_authority.py",
+      "sha256": "dd54e00b710434dc24877a41c56221cb14d0e5b969f4f6dfebf5bb3e0b2637d4"
+    },
+    {
       "bytes": 877,
       "path": "third_party/SDL_GameControllerDB-LICENSE.txt",
       "sha256": "737fece95d2c7e0146fe81caa96788e3921605e874b426c95c51aae80f4f1187"
@@ -1287,22 +1327,32 @@
       "sha256": "6bb4cab168b7e2fa38c3978ae03fde05bdbc051a28953d50534b235f8103151a"
     },
     {
-      "bytes": 15268,
+      "bytes": 10676,
       "path": "third_party/topgear-gamepad/topgear_gamepad_input_win32.c",
-      "sha256": "b17219c33d6ed6902f7df275c1654f70d988e7aa1ca7c11f638824053c4367c6"
+      "sha256": "8d0262a763cceba64b6fc0217d4113d8b9d1c944ddfac15dc2815fe8631f9fc0"
     },
     {
-      "bytes": 2517,
+      "bytes": 2050,
       "path": "third_party/topgear-gamepad/topgear_gamepad_input_win32.h",
-      "sha256": "1f57488bebd0007ec1605d611fc77f046cd5f2f8444ec6e0e29be1ee28ff6509"
+      "sha256": "9946c8c0aa6eceaac811bfda3742d0e3469ba38a48bf729173ffabb699bda024"
+    },
+    {
+      "bytes": 6862,
+      "path": "tools/audio/generate_static_smp_aot_v27.py",
+      "sha256": "6a7a799eb8732cec198e78f3f8688d1d73a1def40a1be36c6f57b34343c0ff9f"
+    },
+    {
+      "bytes": 2124,
+      "path": "tools/audio/verify_static_audio_purity.py",
+      "sha256": "e435d098d004eaa6c52f1bb5aa7e5fb653800e1480dc554c904cccf1d6f1f7a6"
     },
     {
       "bytes": 5732,
       "path": "tools/integrity_manifests.py",
-      "sha256": "10dace359045ec3ea486ffa0d60554f76d1b7c56b94881029fb8f5ae446b74f5"
+      "sha256": "51605bc8a16e478811fa6197a6bd463ca66022fbe1708d2461e299e8b1f904f2"
     }
   ],
-  "inventory_sha256": "9cfe2e6f275ef0bcd0d6010b16cecd575aa2fa2c3454fe7067aa8bb291f2efe2",
-  "project_version": "1.1.1",
+  "inventory_sha256": "6ca107a9f6f5ea9edd77568603d780dacb491765844de0b2be862009181957b3",
+  "project_version": "1.2.0",
   "schema": "topgear-source-manifest-v1"
 }

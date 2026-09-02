@@ -3,7 +3,7 @@
     "static-recomp/generated/",
     "static-recomp/static-audio/topgear-bapu-aot/"
   ],
-  "file_count": 205,
+  "file_count": 198,
   "files": [
     {
       "authority": "generated-scpu-or-reentry",
@@ -1051,9 +1051,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 1158,
+      "bytes": 1488,
       "path": "static-recomp/static-audio/topgear-bapu-aot/PROVENANCE.md",
-      "sha256": "cdc26883cf1566e9c922533e9fb9a454d47ee4a3c3d83d242d124ba1f0423f1f"
+      "sha256": "3b207d0ec417d5d8813a3c823a7df36c890d4cbbc9d2b79a57e8370edc747e6c"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1063,57 +1063,15 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 46019,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/SPC_DSP.cpp",
-      "sha256": "11f2c447b1c9a45713ee62cdcfefad7dded4e5446a21db4a068194cd1224ccb2"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 9684,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/SPC_DSP.h",
-      "sha256": "ee7aa1e570ffbe657aa151da228700c59eec424003931de6184629aabae83f62"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 5205,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_common.h",
-      "sha256": "4bc17a19fe46de2860868d3f88c037aee718b4dedc61450a28de3d1336053dba"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 702,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_config.h",
-      "sha256": "b09d42a2130a9b2beedd9fa460e885d6953852cfcfbc30c19a28cd503b03e8b1"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 6364,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_endian.h",
-      "sha256": "97062e15b46e1347a4fc2e95fd131bcb89c1b8947b28d20a27c1f342a387d637"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 3037,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/blargg_source.h",
-      "sha256": "bd6b376d6d9b1bccce3b89e915b1ad9a6fede7d43b273258bfa13c3855fb1a6a"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 14105,
-      "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sc_static_sdsp_primitives.inc",
-      "sha256": "e226416e5e8a9a26b081cf4745c1f72e47f49387f9b0784c0189b5e4badfe40d"
-    },
-    {
-      "authority": "static-smp-sdsp-aot",
-      "bytes": 2656,
+      "bytes": 1076,
       "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sdsp.cpp",
-      "sha256": "17a390229a3e675c62d3f5e6a54914e174049e3061315a2688874161df1ddf16"
+      "sha256": "f84282089233b9f1c08eb423cfe023dc14b3e5e01887b306a4964840d5a1d2e1"
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 393,
+      "bytes": 202,
       "path": "static-recomp/static-audio/topgear-bapu-aot/dsp/sdsp.hpp",
-      "sha256": "0961d7ddc0626fd7a04fcaeca81626cc2a95f4cfb965a3c7bc47d66b83e0c36d"
+      "sha256": "984320579fad92f772397dd65e16626fafb0f07f9472532651ebaf73ce2f56f8"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1123,15 +1081,15 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 19571,
+      "bytes": 20790,
       "path": "static-recomp/static-audio/topgear-bapu-aot/sc_static_apu.cpp",
-      "sha256": "caa070e0314d8046588c58280201f5f564df3a17f976a70991934a3d7f60b99d"
+      "sha256": "c4741769abc00b0fcbf050da89cf40517dab1d039bfcd67de44cfd6815de3eff"
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 3710,
+      "bytes": 4144,
       "path": "static-recomp/static-audio/topgear-bapu-aot/sc_static_apu.h",
-      "sha256": "9de6519cb0d4f9a4f3726b64a3610b5e9fbfab895ad63dd6cf40407ed664cccc"
+      "sha256": "f6f3f150d65593343b86ea60ba339a525b1a1c491f46027640af3f9f86b7be05"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1141,9 +1099,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 1781,
+      "bytes": 3013,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core.cpp",
-      "sha256": "0082f2cec444b5728ff88a86263f849a5a64664bb8725266c3521eaf26758111"
+      "sha256": "a1246fec3fb6cd16d106025bbbe0e3abadd748d2733dc9abeb9a0746986d0f79"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1153,9 +1111,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 10618,
+      "bytes": 11376,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_mov.cpp",
-      "sha256": "de015670802074a2220e50941d5976ee62f20d5d41116be33a5d07e80b3973d5"
+      "sha256": "52ff34ac00526bc76ef45c726ea8f65da4b4b8c937a29fcd8fddd836cee9e287"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1183,9 +1141,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 2483,
+      "bytes": 2679,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/memory.cpp",
-      "sha256": "c879905b948f07a90b07cd582b2054413aaecc82cc894378c6fdca91e24c7b17"
+      "sha256": "bddc874afdd12df76f6ef84d3e978d3590fc0afd21256f3a44e0d3ba403eea67"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1195,27 +1153,27 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 17879,
+      "bytes": 17945,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_dispatch.inc",
-      "sha256": "841957066dbdb1af48c026b5ec82e3ecfbf84217076a638af5608d913d156f78"
+      "sha256": "4984f9d34a089560baf298c84a1cbdd688c1b991aee957da227a7985e7a69dc8"
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 47387,
+      "bytes": 47504,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/sc_smp_aot_lookup.inc",
-      "sha256": "9928b5dfbefcb7cb154363e26c9da30397b39191ad79e33f9755ec21a5a721dc"
+      "sha256": "aca265c57fe7ed7bc925b3a45b7797873ed74867cae5b909ba9881b3e89ab4d5"
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 1560,
+      "bytes": 1965,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/smp.cpp",
-      "sha256": "aee83cf91ffa6ab8a092df67ae8f400d90fed141ffac54b336bce3c68ddc63de"
+      "sha256": "ccc5efcef086e286b52f55fa6a69e4fcd897f5245ead29423e2162cb29c809dc"
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 3672,
+      "bytes": 3969,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/smp.hpp",
-      "sha256": "579f1ea7f95a81d122ca004f9cb1aa04c863f4f3fc37923cc8b806fec92f58c7"
+      "sha256": "56897dedb564a9b621f634ff3a6a75ca6cc6e2ce3738df05eb32c5286a185712"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1225,9 +1183,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 575,
+      "bytes": 608,
       "path": "static-recomp/static-audio/topgear-bapu-aot/static_snes.hpp",
-      "sha256": "4dc05734b354cd7ac9781224789dba5b07e0388df87cd8d5b16c83648a7fdbb6"
+      "sha256": "ee6290daf98a4290607b31910b0bd17d0ee110d5dd6cc232180cac51a16ab3d7"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1236,9 +1194,9 @@
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
     }
   ],
-  "inventory_sha256": "ed8dcb4aa12954ee447a538ab5d252282133297321f857c3dbddfe38aa4172cd",
+  "inventory_sha256": "0a8a169afef6ce0e0732be398206332a7187da051f940c044d518193224c9ec2",
   "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
-  "project_version": "1.1.1",
+  "project_version": "1.2.0",
   "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
   "schema": "topgear-generated-provenance-v1"
 }

@@ -1153,5 +1153,7 @@ bool SMP::sc_aot_prepare(uint16 pc, uint8 actual) {
     default: return sc_aot_fail(1u,pc,0xffu,actual);
   }
   if(actual != expected) return sc_aot_fail(2u,pc,expected,actual);
+  /* Execute the opcode selected by frozen exact-PC authority, not by the fetched byte. */
+  opcode_number=expected;
   ++sc_aot_instructions; return true;
 }

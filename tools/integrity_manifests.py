@@ -80,7 +80,7 @@ def build_source_manifest(root: Path) -> dict[str, object]:
     items = entries(root, source_files(root))
     return {
         "schema": "topgear-source-manifest-v1",
-        "project_version": "1.1.1",
+        "project_version": "1.2.0",
         "file_count": len(items),
         "inventory_sha256": inventory_hash(items),
         "files": items,
@@ -103,7 +103,7 @@ def build_generated_manifest(root: Path) -> dict[str, object]:
         )
     return {
         "schema": "topgear-generated-provenance-v1",
-        "project_version": "1.1.1",
+        "project_version": "1.2.0",
         "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
         "authority_roots": list(GENERATED_ROOTS),
         "policy": (

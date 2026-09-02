@@ -1,83 +1,51 @@
 Top Gear Windows Frontend Architecture
-Release 1.1.1
+Release 1.2.0
+
+Frontend base
+This frontend is the completed Jungle Strike-derived Windows frontend used by
+Civilization, adapted only for Top Gear's identity, exact ROM contract, static
+core API and player-one input map. The former Top Gear launcher, Music Box,
+WAV recorder, SDL video backend and separate diagnostic module are not part of
+the production build.
 
 Rendering
-The static core owns a deterministic 256x224 BGRA frame. The Windows frontend
-copies completed frames into a two-buffer presentation object. SDL3 selects a
-Direct3D renderer on Windows and falls back to its software renderer if a GPU
-renderer cannot be created. VSync and 4:3 correction are user settings. Native
-Win32 menus, buttons and dialogs remain separate from the custom-drawn game
-surface.
-
-The scanline decoder receives its TopGearRecomp instance explicitly through
-every rendering helper. It has no file-global current-core pointer, so private
-Music cores, test cores and the active game core can render concurrently
-without exchanging renderer state.
-
-F8 screenshot capture keeps the Windows chrome but replaces the game rectangle
-with one newly decoded static-core frame. This avoids black and partially stale
-fullscreen captures returned by PrintWindow.
+The static core owns a deterministic 256x224 BGRA framebuffer. Native Win32
+presents completed frames in windowed or full-screen mode with optional integer
+scaling. F8 captures the game framebuffer in windowed mode and the displayed
+screen in full-screen mode. SDL is used for gamepad input, not video output.
 
 Audio
-The static S-SMP/S-DSP core and WAV recorder retain exact 32,040 Hz stereo PCM.
-The frontend queues that native stream to SDL3, which uses the selected Windows
-device and resamples to its output format. Queue depth is kept around the user's
-latency target with a bounded plus/minus 0.25 percent frequency correction.
-This correction affects speaker presentation only, never core state or WAV
-recording. Queue failures, underruns, depth, target and output sample rate are
-available in About diagnostics.
-
-The toolbar Music window shows the seven APUIO0 music sequences and 16
-independently playable APUIO1 effects, each labelled with exact table and ARAM
-addresses. The remaining APUIO1 masks, no-ops, reset and parameter halves stay
-documented in the static-core catalogue but are omitted from the player.
-
-Choosing Play runs the real ROM power-on audio path headlessly: command `$18`,
-the `$07:8000` driver upload, APUIO0 clear/delay, then the selector write at
-`$00:8077`. Only that final selector byte is changed. The S-CPU is then frozen
-while Full Static S-SMP/S-DSP renders a five-minute music loop or six-second
-effect to a temporary WAV. If a game core already exists, a temporary snapshot
-brackets this operation; otherwise a private core is created from the selected
-ROM, so no game window is run. Windows MCI plays the finished WAV and provides
-Play, Stop, and five-second keyboard seeking on the position slider. Invalid or
-silent output, static failures, snapshot failures and concurrent F9 recording
-are rejected. Temporary WAVs are deleted at shutdown.
+The Full Static S-SMP/S-DSP core produces native 32,040 Hz stereo PCM. The
+Jungle Strike/Mesen-derived DirectSound frontend queues that stream and
+resamples only when required by the selected output device. Extra latency is
+optional from 0 to 40 ms and is disabled at zero by default. Output rate,
+resampler mode, safety prebuffer, ring size, drift correction, recovery and
+resume fade remain configurable. These settings affect speaker presentation,
+not static-core state.
 
 Input
-Keyboard gameplay bindings are stored as physical scan-code tokens, with old
-virtual-key INI entries migrated when loaded. Persistent key state is sampled
-inside every emulated SNES frame, including every catch-up frame. A short press
-of B, Y, Select, Start, A, X, L or R is latched until one complete core frame
-consumes it; directions remain held-state only so steering cannot stick.
-Controller state is updated at the host service boundary and sampled for both
-players on each core frame. Each player remembers a preferred SDL GUID across
-launches. Analogue controls use a configurable deadzone and hysteresis.
-Keyboard, gamepad, or combined input can be selected per player. Impossible
-opposing directions are removed unless explicitly allowed. All held and latched
-state is cleared on pause, focus loss, ROM replacement and core failure.
+Keyboard and SDL gamepad bindings are configurable for player one. Persistent
+key state is sampled for each emulated frame, while short presses are latched
+until one complete frame consumes them. Gameplay keys are accepted while the
+active launcher or one of its child controls owns focus; dialogs pause the game
+before accepting text or navigation, so their keys cannot leak into the core.
+Input state clears on pause, focus loss, ROM replacement and core failure.
 
 Timing and diagnostics
-The high-resolution waitable timer remains the primary NTSC clock. A short host
-stall advances up to eight emulated frames, renders only the last frame and
-preserves real-time audio. Longer stalls are resynchronized and counted. A
-600-frame input-history ring records the exact masks supplied to the core for
-debugging and deterministic reproduction. About reports presentation, audio,
-timer and history counters.
+The high-resolution waitable timer is the primary NTSC presentation clock.
+Natural NTSC locking is enabled by default and advances one absolute deadline
+per completed frame. Late host work rebases the deadline rather than producing
+catch-up bursts and audio backlog. The optional title-bar FPS counter is
+disabled by default. Static-core failures create a detailed text report and
+fail closed instead of invoking an emulator fallback.
 
-Portability
-SDL and the Visual C++ runtime are statically linked in Release builds. No SDL
-DLL or VC redistributable is required. Windows system components such as
-Kernel32, User32, GDI32, COMCTL32, OLE32, DXGI and Direct3D are provided by
-Windows 10 and 11.
+Persistence and portability
+Five persistent full-machine snapshot slots are available. Top Gear has no
+battery-backed SRAM, so no battery save is created. Release builds statically
+link SDL and the Visual C++ runtime; Windows supplies Win32 and DirectSound.
 
-Core API and verification
-topgear_static_recomp.h is the stable application surface: lifecycle, frame,
-input, audio, snapshot, hook and status operations. Historical milestone and
-research declarations are isolated in topgear_static_recomp_diagnostics.h.
-
-The published CTest suite checks both header surfaces, concurrent renderer
-instances, hook contracts, audio FIFO behavior, unknown generated-dispatch
-failure, snapshot compatibility and the integrity inventories. An exact-ROM
-cold-boot smoke test is enabled by TOPGEAR_TEST_ROM. SOURCE-MANIFEST.json and
-GENERATED-PROVENANCE.json provide deterministic source and generated-authority
-inventories; SHA256SUMS.txt pins those inventories.
+Verification
+CTest covers the public and diagnostics APIs, generated dispatch, renderer
+instances, input/frontend settings, audio FIFO/output/resampling, snapshots,
+static-audio ownership and purity, integrity manifests, exact-ROM smoke tests,
+deterministic PCM continuation, and scripted 60-, 120- and 180-second routes.

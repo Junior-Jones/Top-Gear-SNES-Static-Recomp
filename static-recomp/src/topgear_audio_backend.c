@@ -123,7 +123,9 @@ int topgear_recomp_static_audio_status(const TopGearRecomp *instance,TopGearStat
     memset(output,0,sizeof(*output));
     output->synchronized_master_clock=source.synchronized_master_clock;
     output->smp_cycles=source.smp_cycles;output->smp_instructions=source.smp_instructions;output->aot_validated_instructions=source.aot_validated_instructions;
-    output->pcm_frames=source.pcm_frames;output->fifo_dropped_frames=instance->audio_fifo_dropped_frames;
+    output->pcm_frames=source.pcm_frames;output->pcm_known_frames=source.pcm_known_frames;
+    output->pcm_unknown_frames=source.pcm_unknown_frames;output->pcm_hash=source.pcm_hash;
+    output->dsp_pcm_overflows=source.pcm_overflows;output->fifo_dropped_frames=instance->audio_fifo_dropped_frames;
     output->sync_calls=source.sync_calls;output->rendezvous_hash=source.rendezvous_hash;output->cpu_port_event_count=source.cpu_port_event_count;output->cpu_port_event_hash=source.cpu_port_event_hash;
     output->sdsp_primitive_steps=source.sdsp_primitive_steps;output->sdsp_brr_steps=source.sdsp_brr_steps;
     output->smp_pc=source.smp_pc;output->aot_fail_pc=source.aot_fail_pc;output->code_write_barriers=source.code_write_barriers;

@@ -2,6 +2,9 @@ class SMP : public Processor {
 public:
   static const uint8 iplrom[64];
   uint8 *apuram;
+  uint8 *aram_known;
+  alwaysinline bool is_aram_known(uint16 addr) const { return (aram_known[addr>>3u]&(uint8)(1u<<(addr&7u)))!=0u; }
+  alwaysinline void mark_aram_known(uint16 addr) { aram_known[addr>>3u]|=(uint8)(1u<<(addr&7u)); }
 
   unsigned port_read(unsigned port);
   void port_write(unsigned port, unsigned data);
@@ -103,6 +106,7 @@ public:
   alwaysinline void op_io();
   alwaysinline void op_io(unsigned clocks);
   debugvirtual alwaysinline uint8 op_read(uint16 addr);
+  debugvirtual alwaysinline uint8 op_dummy_read(uint16 addr);
   debugvirtual alwaysinline void op_write(uint16 addr, uint8 data);
   debugvirtual alwaysinline void op_step();
   alwaysinline void op_writestack(uint8 data);

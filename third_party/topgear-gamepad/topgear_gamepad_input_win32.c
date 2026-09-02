@@ -1,17 +1,14 @@
 #include "topgear_gamepad_input_win32.h"
 
-#include "topgear_static_recomp.h"
+#include "topgear_app_core.h"
 
 #include <SDL3/SDL.h>
 #include <string.h>
 #include <wchar.h>
 
 #define GAMEPAD_REFRESH_FRAMES 60u
-#define GAMEPAD_DEFAULT_DEADZONE_PERCENT 35
-#define GAMEPAD_HYSTERESIS_UNITS 3277
-
-static unsigned g_gamepad_users;
-static SDL_JoystickID g_open_gamepads[2];
+#define GAMEPAD_STICK_PRESS 16384
+#define GAMEPAD_TRIGGER_PRESS 16384
 
 static void utf8_to_wide(const char *text, wchar_t *wide, size_t capacity) {
     int result;
@@ -23,81 +20,30 @@ static void utf8_to_wide(const char *text, wchar_t *wide, size_t capacity) {
     wide[capacity - 1u] = L'\0';
 }
 
-static void wide_to_utf8(const wchar_t *wide, char *text, size_t capacity) {
-    int result;
-    if (!text || capacity == 0u) return;
-    text[0] = '\0';
-    if (!wide || !wide[0]) return;
-    result = WideCharToMultiByte(CP_UTF8, 0, wide, -1, text, (int)capacity,
-                                 NULL, NULL);
-    if (result <= 0) text[0] = '\0';
-    text[capacity - 1u] = '\0';
-}
-
-static void gamepad_guid_string(SDL_JoystickID id, char *text,
-                                size_t capacity) {
-    SDL_GUID guid;
-    if (!text || capacity == 0u) return;
-    text[0] = '\0';
-    guid = SDL_GetGamepadGUIDForID(id);
-    SDL_GUIDToString(guid, text, (int)capacity);
-    text[capacity - 1u] = '\0';
-}
-
 static void close_gamepad(TopGearGamepadInputWin32 *input) {
     if (!input) return;
     if (input->handle) SDL_CloseGamepad(input->handle);
-    if (input->player_index < 2u) g_open_gamepads[input->player_index] = 0;
     input->handle = NULL;
     input->name[0] = L'\0';
-    input->analog_latched = 0u;
 }
 
-static int open_player_gamepad(TopGearGamepadInputWin32 *input) {
+static int open_first_gamepad(TopGearGamepadInputWin32 *input) {
     SDL_JoystickID *gamepads;
     int count = 0;
     int index;
     if (!input || !input->initialized || input->handle) return input && input->handle;
     gamepads = SDL_GetGamepads(&count);
     if (!gamepads) return 0;
-    {
-        int pass;
-        for (pass = 0; pass < 2 && !input->handle; ++pass) {
-            for (index = 0; index < count; ++index) {
-                unsigned other = input->player_index == 0u ? 1u : 0u;
-                char candidate_guid[64];
-                int preferred_match;
-                if (other < 2u && g_open_gamepads[other] == gamepads[index])
-                    continue;
-                gamepad_guid_string(gamepads[index], candidate_guid,
-                                    sizeof(candidate_guid));
-                preferred_match = input->preferred_guid[0] &&
-                    strcmp(input->preferred_guid, candidate_guid) == 0;
-                if ((pass == 0 && !preferred_match) ||
-                    (pass == 1 && input->preferred_guid[0] && preferred_match))
-                    continue;
-                input->handle = SDL_OpenGamepad(gamepads[index]);
-                if (input->handle) {
-                    if (input->player_index < 2u)
-                        g_open_gamepads[input->player_index] = gamepads[index];
-                    strncpy(input->guid, candidate_guid,
-                            sizeof(input->guid) - 1u);
-                    input->guid[sizeof(input->guid) - 1u] = '\0';
-                    if (!input->preferred_guid[0]) {
-                        strncpy(input->preferred_guid, candidate_guid,
-                                sizeof(input->preferred_guid) - 1u);
-                        input->preferred_guid[
-                            sizeof(input->preferred_guid) - 1u] = '\0';
-                    }
-                    utf8_to_wide(SDL_GetGamepadName(input->handle), input->name,
-                                 sizeof(input->name) / sizeof(input->name[0]));
-                    if (!input->name[0])
-                        wcscpy_s(input->name,
-                                 sizeof(input->name) / sizeof(input->name[0]),
-                                 L"Connected gamepad");
-                    break;
-                }
-            }
+    for (index = 0; index < count; ++index) {
+        input->handle = SDL_OpenGamepad(gamepads[index]);
+        if (input->handle) {
+            utf8_to_wide(SDL_GetGamepadName(input->handle), input->name,
+                         sizeof(input->name) / sizeof(input->name[0]));
+            if (!input->name[0])
+                wcscpy_s(input->name,
+                         sizeof(input->name) / sizeof(input->name[0]),
+                         L"Connected gamepad");
+            break;
         }
     }
     SDL_free(gamepads);
@@ -105,20 +51,14 @@ static int open_player_gamepad(TopGearGamepadInputWin32 *input) {
 }
 
 int topgear_gamepad_win32_initialize(TopGearGamepadInputWin32 *input,
-                                     const wchar_t *mapping_path,
-                                     unsigned player_index,
-                                     const wchar_t *preferred_guid) {
+                                     const wchar_t *mapping_path) {
     char utf8_path[MAX_PATH * 4];
     int length;
     if (!input) return 0;
     memset(input, 0, sizeof(*input));
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "0");
-    if (g_gamepad_users == 0u && !SDL_InitSubSystem(SDL_INIT_GAMEPAD)) return 0;
-    ++g_gamepad_users;
+    if (!SDL_InitSubSystem(SDL_INIT_GAMEPAD)) return 0;
     input->initialized = 1;
-    input->player_index = player_index;
-    wide_to_utf8(preferred_guid, input->preferred_guid,
-                 sizeof(input->preferred_guid));
     SDL_SetGamepadEventsEnabled(false);
     if (mapping_path && mapping_path[0]) {
         length = WideCharToMultiByte(CP_UTF8, 0, mapping_path, -1,
@@ -127,7 +67,7 @@ int topgear_gamepad_win32_initialize(TopGearGamepadInputWin32 *input,
         if (length > 0) (void)SDL_AddGamepadMappingsFromFile(utf8_path);
     }
     SDL_UpdateGamepads();
-    input->startup_gamepad_found = open_player_gamepad(input);
+    input->startup_gamepad_found = open_first_gamepad(input);
     input->refresh_countdown = GAMEPAD_REFRESH_FRAMES;
     return 1;
 }
@@ -135,83 +75,51 @@ int topgear_gamepad_win32_initialize(TopGearGamepadInputWin32 *input,
 void topgear_gamepad_win32_shutdown(TopGearGamepadInputWin32 *input) {
     if (!input) return;
     close_gamepad(input);
-    if (input->initialized && g_gamepad_users > 0u) {
-        --g_gamepad_users;
-        if (g_gamepad_users == 0u) SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
-    }
+    if (input->initialized) SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
     memset(input, 0, sizeof(*input));
 }
 
-static int analog_pressed(TopGearGamepadInputWin32 *input, int control,
-                          int value, int deadzone_percent) {
-    uint32_t bit = 1u << (unsigned)control;
-    int threshold;
-    int release_threshold;
-    int pressed;
-    if (deadzone_percent < 10) deadzone_percent = 10;
-    if (deadzone_percent > 90) deadzone_percent = 90;
-    threshold = (32767 * deadzone_percent) / 100;
-    release_threshold = threshold - GAMEPAD_HYSTERESIS_UNITS;
-    if (release_threshold < 1024) release_threshold = 1024;
-    pressed = (input->analog_latched & bit) != 0u ?
-        value > release_threshold : value > threshold;
-    if (pressed) input->analog_latched |= bit;
-    else input->analog_latched &= ~bit;
-    return pressed;
-}
-
-static int control_pressed(TopGearGamepadInputWin32 *input, int control,
-                           int deadzone_percent) {
+static int control_pressed(SDL_Gamepad *gamepad, int control) {
     Sint16 axis;
-    SDL_Gamepad *gamepad = input ? input->handle : NULL;
     if (!gamepad) return 0;
     switch (control) {
-        case TG_GAMEPAD_DPAD_UP: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_UP);
-        case TG_GAMEPAD_DPAD_DOWN: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_DOWN);
-        case TG_GAMEPAD_DPAD_LEFT: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_LEFT);
-        case TG_GAMEPAD_DPAD_RIGHT: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
-        case TG_GAMEPAD_LEFT_STICK_UP:
+        case SC_GAMEPAD_DPAD_UP: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_UP);
+        case SC_GAMEPAD_DPAD_DOWN: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_DOWN);
+        case SC_GAMEPAD_DPAD_LEFT: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_LEFT);
+        case SC_GAMEPAD_DPAD_RIGHT: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
+        case SC_GAMEPAD_LEFT_STICK_UP:
             axis = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTY);
-            return analog_pressed(input, control, -(int)axis,
-                                  deadzone_percent);
-        case TG_GAMEPAD_LEFT_STICK_DOWN:
+            return axis < -GAMEPAD_STICK_PRESS;
+        case SC_GAMEPAD_LEFT_STICK_DOWN:
             axis = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTY);
-            return analog_pressed(input, control, (int)axis,
-                                  deadzone_percent);
-        case TG_GAMEPAD_LEFT_STICK_LEFT:
+            return axis > GAMEPAD_STICK_PRESS;
+        case SC_GAMEPAD_LEFT_STICK_LEFT:
             axis = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTX);
-            return analog_pressed(input, control, -(int)axis,
-                                  deadzone_percent);
-        case TG_GAMEPAD_LEFT_STICK_RIGHT:
+            return axis < -GAMEPAD_STICK_PRESS;
+        case SC_GAMEPAD_LEFT_STICK_RIGHT:
             axis = SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFTX);
-            return analog_pressed(input, control, (int)axis,
-                                  deadzone_percent);
-        case TG_GAMEPAD_FACE_SOUTH: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_SOUTH);
-        case TG_GAMEPAD_FACE_EAST: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_EAST);
-        case TG_GAMEPAD_FACE_WEST: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_WEST);
-        case TG_GAMEPAD_FACE_NORTH: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_NORTH);
-        case TG_GAMEPAD_LEFT_SHOULDER: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
-        case TG_GAMEPAD_RIGHT_SHOULDER: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
-        case TG_GAMEPAD_LEFT_TRIGGER:
-            return analog_pressed(input, control,
-                SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFT_TRIGGER),
-                deadzone_percent);
-        case TG_GAMEPAD_RIGHT_TRIGGER:
-            return analog_pressed(input, control,
-                SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER),
-                deadzone_percent);
-        case TG_GAMEPAD_START: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_START);
-        case TG_GAMEPAD_BACK: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_BACK);
-        case TG_GAMEPAD_LEFT_STICK_BUTTON: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_LEFT_STICK);
-        case TG_GAMEPAD_RIGHT_STICK_BUTTON: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_RIGHT_STICK);
+            return axis > GAMEPAD_STICK_PRESS;
+        case SC_GAMEPAD_FACE_SOUTH: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_SOUTH);
+        case SC_GAMEPAD_FACE_EAST: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_EAST);
+        case SC_GAMEPAD_FACE_WEST: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_WEST);
+        case SC_GAMEPAD_FACE_NORTH: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_NORTH);
+        case SC_GAMEPAD_LEFT_SHOULDER: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
+        case SC_GAMEPAD_RIGHT_SHOULDER: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
+        case SC_GAMEPAD_LEFT_TRIGGER:
+            return SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_LEFT_TRIGGER) > GAMEPAD_TRIGGER_PRESS;
+        case SC_GAMEPAD_RIGHT_TRIGGER:
+            return SDL_GetGamepadAxis(gamepad, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) > GAMEPAD_TRIGGER_PRESS;
+        case SC_GAMEPAD_START: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_START);
+        case SC_GAMEPAD_BACK: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_BACK);
+        case SC_GAMEPAD_LEFT_STICK_BUTTON: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_LEFT_STICK);
+        case SC_GAMEPAD_RIGHT_STICK_BUTTON: return SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_RIGHT_STICK);
         default: return 0;
     }
 }
 
 uint16_t topgear_gamepad_win32_poll(
     TopGearGamepadInputWin32 *input,
-    const int bindings[TOPGEAR_GAMEPAD_BINDING_COUNT],
-    int deadzone_percent) {
+    const int bindings[TOPGEAR_GAMEPAD_BINDING_COUNT]) {
     static const uint16_t masks[TOPGEAR_GAMEPAD_BINDING_COUNT] = {
         TOPGEAR_INPUT_UP, TOPGEAR_INPUT_DOWN, TOPGEAR_INPUT_LEFT,
         TOPGEAR_INPUT_RIGHT, TOPGEAR_INPUT_B, TOPGEAR_INPUT_A,
@@ -221,30 +129,19 @@ uint16_t topgear_gamepad_win32_poll(
     uint16_t result = 0u;
     int index;
     if (!input || !input->initialized || !bindings) return 0u;
-    if (!input->handle) return 0u;
-    for (index = 0; index < TOPGEAR_GAMEPAD_BINDING_COUNT; ++index)
-        if (control_pressed(input, bindings[index], deadzone_percent))
-            result |= masks[index];
-    return result;
-}
-
-void topgear_gamepad_win32_begin_frame(TopGearGamepadInputWin32 *inputs,
-                                       size_t input_count) {
-    size_t index;
     SDL_UpdateGamepads();
-    for (index = 0u; inputs && index < input_count; ++index) {
-        TopGearGamepadInputWin32 *input = &inputs[index];
-        if (!input->initialized) continue;
-        if (input->handle && !SDL_GamepadConnected(input->handle))
-            close_gamepad(input);
-        if (!input->handle) {
-            if (input->refresh_countdown > 0u) --input->refresh_countdown;
-            if (input->refresh_countdown == 0u) {
-                (void)open_player_gamepad(input);
-                input->refresh_countdown = GAMEPAD_REFRESH_FRAMES;
-            }
+    if (input->handle && !SDL_GamepadConnected(input->handle)) close_gamepad(input);
+    if (!input->handle) {
+        if (input->refresh_countdown > 0u) --input->refresh_countdown;
+        if (input->refresh_countdown == 0u) {
+            (void)open_first_gamepad(input);
+            input->refresh_countdown = GAMEPAD_REFRESH_FRAMES;
         }
     }
+    if (!input->handle) return 0u;
+    for (index = 0; index < TOPGEAR_GAMEPAD_BINDING_COUNT; ++index)
+        if (control_pressed(input->handle, bindings[index])) result |= masks[index];
+    return result;
 }
 
 int topgear_gamepad_win32_connected(const TopGearGamepadInputWin32 *input) {
@@ -256,29 +153,21 @@ const wchar_t *topgear_gamepad_win32_name(const TopGearGamepadInputWin32 *input)
     return input->name[0] ? input->name : L"Connected gamepad";
 }
 
-void topgear_gamepad_win32_guid(const TopGearGamepadInputWin32 *input,
-                                wchar_t *guid, size_t capacity) {
-    if (!guid || capacity == 0u) return;
-    guid[0] = L'\0';
-    if (input)
-        utf8_to_wide(input->preferred_guid, guid, capacity);
-}
-
 void topgear_gamepad_win32_default_bindings(
     int bindings[TOPGEAR_GAMEPAD_BINDING_COUNT]) {
     if (!bindings) return;
-    bindings[0] = TG_GAMEPAD_DPAD_UP;
-    bindings[1] = TG_GAMEPAD_DPAD_DOWN;
-    bindings[2] = TG_GAMEPAD_DPAD_LEFT;
-    bindings[3] = TG_GAMEPAD_DPAD_RIGHT;
-    bindings[4] = TG_GAMEPAD_FACE_SOUTH;
-    bindings[5] = TG_GAMEPAD_FACE_EAST;
-    bindings[6] = TG_GAMEPAD_FACE_WEST;
-    bindings[7] = TG_GAMEPAD_FACE_NORTH;
-    bindings[8] = TG_GAMEPAD_LEFT_SHOULDER;
-    bindings[9] = TG_GAMEPAD_RIGHT_SHOULDER;
-    bindings[10] = TG_GAMEPAD_START;
-    bindings[11] = TG_GAMEPAD_BACK;
+    bindings[0] = SC_GAMEPAD_DPAD_UP;
+    bindings[1] = SC_GAMEPAD_DPAD_DOWN;
+    bindings[2] = SC_GAMEPAD_DPAD_LEFT;
+    bindings[3] = SC_GAMEPAD_DPAD_RIGHT;
+    bindings[4] = SC_GAMEPAD_FACE_SOUTH;
+    bindings[5] = SC_GAMEPAD_FACE_EAST;
+    bindings[6] = SC_GAMEPAD_FACE_WEST;
+    bindings[7] = SC_GAMEPAD_FACE_NORTH;
+    bindings[8] = SC_GAMEPAD_LEFT_SHOULDER;
+    bindings[9] = SC_GAMEPAD_RIGHT_SHOULDER;
+    bindings[10] = SC_GAMEPAD_START;
+    bindings[11] = SC_GAMEPAD_BACK;
 }
 
 const wchar_t *topgear_gamepad_win32_control_name(int control) {
@@ -291,7 +180,7 @@ const wchar_t *topgear_gamepad_win32_control_name(int control) {
         L"Left trigger", L"Right trigger", L"Start / Menu", L"Back / View",
         L"Left stick button", L"Right stick button"
     };
-    if (control < TG_GAMEPAD_DPAD_UP || control > TG_GAMEPAD_CONTROL_LAST)
+    if (control < SC_GAMEPAD_DPAD_UP || control > SC_GAMEPAD_CONTROL_LAST)
         return L"Unknown gamepad control";
     return names[control];
 }
@@ -301,12 +190,11 @@ int topgear_gamepad_win32_capture_control(TopGearGamepadInputWin32 *input) {
     if (!input || !input->initialized) return 0;
     SDL_UpdateGamepads();
     if (input->handle && !SDL_GamepadConnected(input->handle)) close_gamepad(input);
-    if (!input->handle) (void)open_player_gamepad(input);
+    if (!input->handle) (void)open_first_gamepad(input);
     if (!input->handle) return 0;
-    for (control = TG_GAMEPAD_DPAD_UP;
-         control <= TG_GAMEPAD_CONTROL_LAST; ++control)
-        if (control_pressed(input, control,
-                            GAMEPAD_DEFAULT_DEADZONE_PERCENT)) return control;
+    for (control = SC_GAMEPAD_DPAD_UP;
+         control <= SC_GAMEPAD_CONTROL_LAST; ++control)
+        if (control_pressed(input->handle, control)) return control;
     return 0;
 }
 
@@ -334,10 +222,10 @@ void topgear_gamepad_win32_control_display_name(
     base = topgear_gamepad_win32_control_name(control);
     if (input && topgear_gamepad_win32_connected(input)) {
         switch (control) {
-            case TG_GAMEPAD_FACE_SOUTH: button = SDL_GAMEPAD_BUTTON_SOUTH; break;
-            case TG_GAMEPAD_FACE_EAST: button = SDL_GAMEPAD_BUTTON_EAST; break;
-            case TG_GAMEPAD_FACE_WEST: button = SDL_GAMEPAD_BUTTON_WEST; break;
-            case TG_GAMEPAD_FACE_NORTH: button = SDL_GAMEPAD_BUTTON_NORTH; break;
+            case SC_GAMEPAD_FACE_SOUTH: button = SDL_GAMEPAD_BUTTON_SOUTH; break;
+            case SC_GAMEPAD_FACE_EAST: button = SDL_GAMEPAD_BUTTON_EAST; break;
+            case SC_GAMEPAD_FACE_WEST: button = SDL_GAMEPAD_BUTTON_WEST; break;
+            case SC_GAMEPAD_FACE_NORTH: button = SDL_GAMEPAD_BUTTON_NORTH; break;
             default: break;
         }
         if (button != SDL_GAMEPAD_BUTTON_INVALID)

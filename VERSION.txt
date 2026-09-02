@@ -1,1 +1,40 @@
-Top Gear (SNES) Static Recomp 1.1.1
+Top Gear (SNES) Static Recomp 1.2.0
+
+Frontend and integration features
+---------------------------------
+
+- Completed Jungle Strike/Civilization-derived native Windows frontend adapted
+  for Top Gear's exact ROM, static-core API and player-one input contract.
+- Native Win32 windowed and full-screen presentation with optional integer
+  scaling, natural NTSC frame pacing and an optional title-bar FPS counter.
+- Windowed F8 game-frame capture and full displayed-screen capture while in
+  full-screen mode.
+- Five persistent full-machine snapshot slots with keyboard shortcuts 1 and 2
+  for the selected slot.
+- Configurable keyboard and SDL gamepad bindings. Short keyboard presses are
+  latched until one complete emulated frame consumes them.
+- Accessible Welcome, Settings, Controls, Audio Settings, snapshot and static-
+  failure windows with deterministic focus restoration.
+- Portable x64 release using the static Visual C++ runtime and statically linked
+  SDL gamepad support.
+
+Audio
+-----
+
+- The static core executes the project-owned Full Static S-SMP and 32-phase
+  S-DSP authority and produces native 32,040 Hz stereo PCM with no interpreter,
+  runtime DSP library or emulator fallback.
+- The Jungle Strike/Mesen-derived DirectSound frontend presents that PCM to the
+  selected Windows device. It resamples speaker output only when required.
+- Configurable output device/rate, volume, Hermite/linear/nearest resampling,
+  optional 0-40 ms extra latency, safety prebuffer, ring buffering, drift
+  correction, stale-audio recovery and resume fade.
+- Extra latency is disabled at zero by default.
+
+Validation
+----------
+
+- Exact-ROM cold boot and deterministic audio snapshot continuation.
+- Scripted 60-, 120- and 180-second gameplay/audio routes.
+- Static S-SMP/S-DSP ownership, purity, generated dispatch, snapshots, renderer
+  instances, input/settings, audio FIFO/resampling and integrity checks.

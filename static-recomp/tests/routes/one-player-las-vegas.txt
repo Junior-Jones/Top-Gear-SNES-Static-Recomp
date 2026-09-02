@@ -1,0 +1,60 @@
+0 NONE NONE boot
+26000 START NONE title-start
+28000 NONE NONE release
+33000 A NONE select-player
+34000 NONE NONE release-a
+38000 DOWN NONE down1
+38250 NONE NONE rel1
+38500 DOWN NONE down2
+38750 NONE NONE rel2
+39000 DOWN NONE down3
+39250 NONE NONE rel3
+39500 DOWN NONE down4
+39750 NONE NONE rel4
+40000 RIGHT NONE right1
+40250 NONE NONE rr1
+40500 RIGHT NONE right2
+40750 NONE NONE rr2
+41000 RIGHT NONE right3
+41250 NONE NONE rr3
+41500 RIGHT NONE right4
+41750 NONE NONE rr4
+42500 A NONE confirm-end
+43250 NONE NONE release-confirm
+47000 NONE NONE capture-after
+
+48500 A NONE select-manual
+49500 NONE NONE release-manual
+53000 NONE NONE capture-controller
+
+54500 A NONE select-control-A
+55500 NONE NONE release-control
+59000 NONE NONE capture-next
+
+60500 A NONE select-car
+61500 NONE NONE release-car
+65000 NONE NONE capture-next
+
+67000 DOWN NONE menu-down1
+67250 NONE NONE r1
+67500 DOWN NONE menu-down2
+67750 NONE NONE r2
+68000 DOWN NONE menu-down3
+68250 NONE NONE r3
+68500 DOWN NONE menu-down4
+68750 NONE NONE r4
+69500 A NONE play-game
+70500 NONE NONE release-play
+75000 NONE NONE capture-race-setup
+
+94000 NONE NONE capture-race
+
+94000 X NONE accelerate
+95000 X+R NONE gear-up-2
+95300 X NONE continue-accel
+98000 X+R NONE gear-up-3
+98300 X NONE continue-accel
+101000 X+RIGHT NONE steer-right
+102500 X NONE straight
+105000 NONE NONE release-driving
+105500 NONE NONE capture-driven

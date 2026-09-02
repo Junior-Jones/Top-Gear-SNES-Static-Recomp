@@ -3,6 +3,7 @@
 # were removed from the core; future AOT gaps are repaired from ROM/ARAM
 # provenance and regenerated static authority.
 set(TOPGEAR_STATIC_AUDIO_SOURCES
+    static-audio/topgear-project-dsp/topgear_dsp.c
     static-audio/topgear-bapu-aot/smp/smp.cpp
     static-audio/topgear-bapu-aot/dsp/sdsp.cpp
     static-audio/topgear-bapu-aot/sc_static_apu.cpp)
@@ -43,6 +44,7 @@ target_include_directories(topgear-static-recomp
         "${CMAKE_CURRENT_SOURCE_DIR}/static-audio/topgear-bapu-aot"
         "${CMAKE_CURRENT_SOURCE_DIR}/static-audio/topgear-bapu-aot/smp"
         "${CMAKE_CURRENT_SOURCE_DIR}/static-audio/topgear-bapu-aot/dsp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/static-audio/topgear-project-dsp/include"
         "${CMAKE_CURRENT_SOURCE_DIR}/generated"
         "${CMAKE_CURRENT_SOURCE_DIR}/generated/v22"
         "${CMAKE_CURRENT_SOURCE_DIR}/generated/v22_reentry")
@@ -63,7 +65,7 @@ set_source_files_properties(
     static-audio/topgear-bapu-aot/smp/smp.cpp
     static-audio/topgear-bapu-aot/dsp/sdsp.cpp
     static-audio/topgear-bapu-aot/sc_static_apu.cpp
-    PROPERTIES COMPILE_DEFINITIONS "SC_STATIC_SDSP_PRIMITIVES;SCStaticSPC_DSP_CUSTOM_RUN=1")
+    PROPERTIES COMPILE_DEFINITIONS "SC_STATIC_SDSP_PRIMITIVES")
 set_source_files_properties(
     static-audio/topgear-bapu-aot/smp/smp.cpp
     static-audio/topgear-bapu-aot/dsp/sdsp.cpp
@@ -102,12 +104,39 @@ if(BUILD_TESTING)
     topgear_add_core_test(topgear-generated-dispatch test_generated_dispatch.c TRUE)
     topgear_add_core_test(topgear-snapshot-contract test_snapshot_contract.c TRUE)
 
+    add_executable(topgear-project-dsp-phase
+        tests/test_project_dsp_phase.c)
+    target_include_directories(topgear-project-dsp-phase PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/static-audio/topgear-project-dsp/include")
+    target_link_libraries(topgear-project-dsp-phase PRIVATE
+        topgear-static-recomp)
+    if(MSVC)
+        target_compile_options(topgear-project-dsp-phase PRIVATE /W4 /WX)
+    else()
+        target_compile_options(topgear-project-dsp-phase PRIVATE
+            -Wall -Wextra -Wpedantic -Werror)
+    endif()
+    add_test(NAME topgear-project-dsp-phase COMMAND topgear-project-dsp-phase)
+
     find_package(Python3 COMPONENTS Interpreter QUIET)
     if(Python3_Interpreter_FOUND)
+        get_filename_component(TOPGEAR_COMPILER_BIN_DIR
+            "${CMAKE_CXX_COMPILER}" DIRECTORY)
+        set(TOPGEAR_DUMPBIN "${TOPGEAR_COMPILER_BIN_DIR}/dumpbin.exe")
         add_test(NAME topgear-integrity-manifests
             COMMAND "${Python3_EXECUTABLE}" -B
                     "${CMAKE_SOURCE_DIR}/tools/integrity_manifests.py"
                     --root "${CMAKE_SOURCE_DIR}")
+        add_test(NAME topgear-static-audio-purity
+            COMMAND "${Python3_EXECUTABLE}" -B
+                    "${CMAKE_SOURCE_DIR}/tools/audio/verify_static_audio_purity.py"
+                    --root "${CMAKE_SOURCE_DIR}"
+                    --library "$<TARGET_FILE:topgear-static-recomp>"
+                    --dumpbin "${TOPGEAR_DUMPBIN}")
+        add_test(NAME topgear-static-audio-authority
+            COMMAND "${Python3_EXECUTABLE}" -B
+                    "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_static_audio_authority.py"
+                    "${CMAKE_SOURCE_DIR}")
     endif()
 
     if(TOPGEAR_TEST_ROM)
@@ -121,5 +150,24 @@ if(BUILD_TESTING)
         endif()
         add_test(NAME topgear-rom-smoke
             COMMAND topgear-rom-smoke "${TOPGEAR_TEST_ROM}")
+
+        add_executable(topgear-audio-snapshot-continuation
+            tests/test_audio_snapshot_continuation.c)
+        target_compile_definitions(topgear-audio-snapshot-continuation PRIVATE
+            TOPGEAR_ENABLE_RESEARCH_API=1)
+        target_link_libraries(topgear-audio-snapshot-continuation PRIVATE
+            topgear-static-recomp)
+        if(MSVC)
+            target_compile_definitions(topgear-audio-snapshot-continuation PRIVATE
+                _CRT_SECURE_NO_WARNINGS)
+            target_compile_options(topgear-audio-snapshot-continuation PRIVATE /W4 /WX)
+        else()
+            target_compile_options(topgear-audio-snapshot-continuation PRIVATE
+                -Wall -Wextra -Wpedantic -Werror)
+        endif()
+        add_test(NAME topgear-audio-snapshot-continuation
+            COMMAND topgear-audio-snapshot-continuation
+                    "${TOPGEAR_TEST_ROM}"
+                    "${CMAKE_CURRENT_BINARY_DIR}/topgear-audio-continuation.tgs")
     endif()
 endif()
