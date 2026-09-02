@@ -62,14 +62,14 @@
       "sha256": "23757567a9fdf9ceac3f1be78546eabd9656707630b282852c72e4cb4bc32d9a"
     },
     {
-      "bytes": 1406,
+      "bytes": 1363,
       "path": "frontend/common/topgear_input_latch.c",
-      "sha256": "39842744664ce9f19c1f5fb32e9f5a76b5f70e05edbbef1bb57b0c0e988f166e"
+      "sha256": "13474ee89efec14c079abb554efd266bc6addf989b8e55969a5e191159887b66"
     },
     {
-      "bytes": 645,
+      "bytes": 627,
       "path": "frontend/common/topgear_input_latch.h",
-      "sha256": "6c685f33cce616ab9b590d6881827764b59a1560f67dbcc935ed6d21874f8749"
+      "sha256": "7192528f988f86067e27cc6ad86f58c0460cca7fdabbb44e72c9aebf883fdc6e"
     },
     {
       "bytes": 14022,
@@ -1162,9 +1162,9 @@
       "sha256": "60d11d0871e9934323b9caae78e0f0270ed4ec083eb1db6cbb39bf5b2126c37c"
     },
     {
-      "bytes": 3013,
+      "bytes": 2939,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core.cpp",
-      "sha256": "a1246fec3fb6cd16d106025bbbe0e3abadd748d2733dc9abeb9a0746986d0f79"
+      "sha256": "9f0fcffff69587e04381c002edef094138d1924d9fd777297546aeb8d2e322a4"
     },
     {
       "bytes": 4326,
@@ -1172,9 +1172,9 @@
       "sha256": "7ab0aee29e1ba8144490f4a45986db0ec43c39fb7b39708a071232d89eb898e1"
     },
     {
-      "bytes": 11376,
+      "bytes": 10696,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_mov.cpp",
-      "sha256": "52ff34ac00526bc76ef45c726ea8f65da4b4b8c937a29fcd8fddd836cee9e287"
+      "sha256": "e645cca354ffbe972afb37a005ad45647df2978d5140769ff705b48a3fdc43a2"
     },
     {
       "bytes": 8469,
@@ -1197,9 +1197,9 @@
       "sha256": "759204fa3a7237c8d76ace29b4a5974066677297ba12772fc1c0be3e712961d5"
     },
     {
-      "bytes": 2679,
+      "bytes": 2550,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/memory.cpp",
-      "sha256": "bddc874afdd12df76f6ef84d3e978d3590fc0afd21256f3a44e0d3ba403eea67"
+      "sha256": "bc217dad0215f9556dc165e8770b647d95e38f887fde501589f9310da3e92e8c"
     },
     {
       "bytes": 50784,
@@ -1327,14 +1327,14 @@
       "sha256": "6bb4cab168b7e2fa38c3978ae03fde05bdbc051a28953d50534b235f8103151a"
     },
     {
-      "bytes": 10676,
+      "bytes": 10437,
       "path": "third_party/topgear-gamepad/topgear_gamepad_input_win32.c",
-      "sha256": "8d0262a763cceba64b6fc0217d4113d8b9d1c944ddfac15dc2815fe8631f9fc0"
+      "sha256": "189416681eb63824b4fe2b24e9d9ebc427a32855d525ddbc1927566207526c87"
     },
     {
-      "bytes": 2050,
+      "bytes": 1990,
       "path": "third_party/topgear-gamepad/topgear_gamepad_input_win32.h",
-      "sha256": "9946c8c0aa6eceaac811bfda3742d0e3469ba38a48bf729173ffabb699bda024"
+      "sha256": "e734c35d5ee363ccc32a3da78e09bf96c2cdf24d11bb403ff2ec991ca6599b7e"
     },
     {
       "bytes": 6862,
@@ -1352,7 +1352,7 @@
       "sha256": "51605bc8a16e478811fa6197a6bd463ca66022fbe1708d2461e299e8b1f904f2"
     }
   ],
-  "inventory_sha256": "6ca107a9f6f5ea9edd77568603d780dacb491765844de0b2be862009181957b3",
+  "inventory_sha256": "72b6383cdb88b703d516e210ce690b32add80f3277dce7ad76381facbf3c8224",
   "project_version": "1.2.0",
   "schema": "topgear-source-manifest-v1"
 }

@@ -1099,9 +1099,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 3013,
+      "bytes": 2939,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core.cpp",
-      "sha256": "a1246fec3fb6cd16d106025bbbe0e3abadd748d2733dc9abeb9a0746986d0f79"
+      "sha256": "9f0fcffff69587e04381c002edef094138d1924d9fd777297546aeb8d2e322a4"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1111,9 +1111,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 11376,
+      "bytes": 10696,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/core/oppseudo_mov.cpp",
-      "sha256": "52ff34ac00526bc76ef45c726ea8f65da4b4b8c937a29fcd8fddd836cee9e287"
+      "sha256": "e645cca354ffbe972afb37a005ad45647df2978d5140769ff705b48a3fdc43a2"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1141,9 +1141,9 @@
     },
     {
       "authority": "static-smp-sdsp-aot",
-      "bytes": 2679,
+      "bytes": 2550,
       "path": "static-recomp/static-audio/topgear-bapu-aot/smp/memory.cpp",
-      "sha256": "bddc874afdd12df76f6ef84d3e978d3590fc0afd21256f3a44e0d3ba403eea67"
+      "sha256": "bc217dad0215f9556dc165e8770b647d95e38f887fde501589f9310da3e92e8c"
     },
     {
       "authority": "static-smp-sdsp-aot",
@@ -1194,7 +1194,7 @@
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
     }
   ],
-  "inventory_sha256": "0a8a169afef6ce0e0732be398206332a7187da051f940c044d518193224c9ec2",
+  "inventory_sha256": "fc455e290a1d7b07cfa35c1cb63dffe55e6402c8c7b8d9fd863eada7d82dad5d",
   "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
   "project_version": "1.2.0",
   "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
