@@ -247,17 +247,84 @@ every command, including non-audible masks, no-ops, parameter controls and the
 the initialized title-driver state; `$02/$03` and `$0D/$0E` are paired
 voice-setup/pitch controls and are not falsely presented as standalone sounds.
 
-Music changes require more than a direct APUIO0 write. The power-on path
-`$00:805A-$00:807A` sends command `$18` on APUIO1, calls the complete uploader
-at `$07:8000`, clears APUIO0, waits, and finally writes selector `$01` at
-`$00:8077`. `topgear_recomp_music_preview_prepare` follows that generated ROM
-path headlessly and replaces only the accumulator byte immediately before the
-real `$00:8077` write. This fixed the earlier previews that reused opening-song
-driver state and produced short, incorrect fragments.
+Music changes require two coupled values, not only a direct APUIO0 write.  The
+power-on path `$00:805A-$00:807A` sends command `$18` on APUIO1, loads A=0 and
+calls `$07:8000`, then clears APUIO0, waits, loads selector `$01`, and writes it
+at `$00:8077`.  Other song changes supply `selector-1` to `$07:8000` before the
+final APUIO0 selector.  `$07:8000` indexes the seven-word offset table at
+`$07:8164` and walks a song-specific resource chain based at `$07:8172`; those
+chains populate the high ARAM BRR/sample/instrument state beginning near `$8900`.
 
-`topgear_recomp_audio_preview_advance` then advances only S-SMP/S-DSP time.
-All seven selectors produced different PCM hashes and remained audible through
-300 seconds; all 16 standalone six-second effects produced non-zero Full Static
-PCM. These helpers remain research/regression surfaces. Release 1.2.0 removes
-the frontend Music Box and WAV recorder; production audio is generated live by
-the running game's Full Static S-SMP/S-DSP path.
+The first reset-based preview repair still changed only the final `$00:8077`
+selector, so Title was complete but `$02-$07` retained Title upload resources
+and played incomplete arrangements.  The corrected
+`topgear_recomp_music_preview_prepare` now breaks before `$00:8064`, supplies
+`selector-1` to the real `$07:8000` uploader, then breaks before `$00:8077` and
+supplies the final selector.  `topgear_recomp_audio_preview_advance` then
+advances only S-SMP/S-DSP time.
+
+`test_music_upload_chains.c` prevents regression by hashing ARAM `$8900-$FFFF`
+after preparation and requiring seven distinct deterministic song-resource
+states.  The corrected Las Vegas and Hiroshima resource states also match the
+saved live four-race campaign states.  These helpers remain research/regression
+surfaces; production audio is generated live by the running game's same Full
+Static S-SMP/S-DSP authority.
+
+## Release 1.2.0 race sound-effect / engine research
+
+Race sound effects use a compact APUIO1 command surface on top of the same Full
+Static S-SMP/S-DSP authority as music.  Player 1 engine setup is command `$02`
+(voice 4) and engine pitch update is `$03`.  During race NMI the S-CPU reads the
+signed engine-driving value at WRAM `$1E5E`, clamps a negative value to zero,
+adds `$0400`, writes the resulting 16-bit pitch to `$2142/$2143`, and then sends
+`$03`.  Player 2 mirrors this at `$1E60/$1E64` with `$0D/$0E` on voice 6.
+Therefore speed and manual gear changes do not select different engine samples;
+they alter the gameplay value which continuously retunes the existing engine
+voice.  The captured manual route proves this directly: before the first shift
+the pitch reaches about `$11F6` and drops to about `$0EAC` in second gear; the
+next shift falls from about `$1230` to `$0CA2` in third before rising again.
+
+The proved Player-1 discrete race commands are boost `$05`, finish-line `$07`,
+tire/skid `$0A`, and collision `$0B`.  The four-race live trace contains the real
+A-button boost transition at global frame 7337 and APUIO1 `$05`.  Finish is
+source-proved by `$05:E7B6-$05:E7DD`: reaching the required lap count sets
+`$1EF5` bit `$04`, which NMI consumes to issue `$07`.  Tire/skid is edge-detected
+from `$1E67` and collision consumes `$1EF5` bit `$80`.  Player-2 mirrors are
+boost `$10`, finish `$12`, tire/skid `$15`, and collision `$16`.
+
+The S-SMP command bodies and live DSP trace separate the effect voices correctly:
+boost uses DSP voice 5 / SRCN `$12` / pitch `$0400`, tire-skid uses voice 5 /
+SRCN `$10` / pitch `$0800`, collision uses voice 5 / SRCN `$14`, while finish
+uses DSP voice 4 / SRCN `$13` / pitch `$0400`.  The underlying proved BRR streams
+for boost, skid and finish are self-terminating: boost starts at ARAM `$BF10`
+and reaches END block `$C55B` (header `$01`), skid starts `$B580` and ends at
+`$BB68` (header `$C5`), and finish starts `$C570` and ends at `$D20F` (header
+`$99`).  In all three cases the BRR END bit is set and LOOP bit is clear.
+
+A second protocol detail is essential for isolated playback: APUIO1 is a
+level-sensitive command latch.  The S-SMP dispatcher reads a stable port-1 byte,
+echoes it back as acknowledgement, and dispatches it; it does not suppress an
+unchanged non-zero value as an already-consumed event.  Therefore leaving `$05`,
+`$0A`, or `$07` asserted makes the driver key-on the same effect repeatedly.
+`topgear_recomp_sound_command_pulse` now holds a discrete command only until the
+S-SMP acknowledgement, immediately restores neutral `$00`, verifies the neutral
+acknowledgement, and then lets the BRR sample terminate naturally.  The corrected
+single-occurrence active durations are about 0.349 s for boost, 0.166 s for skid,
+and 0.714 s for finish.  The race-audio regression requires at least 100 ms of
+natural silence after each pulsed effect, so the former repeated-command bug is
+fail-closed.
+
+Driver commands `$08/$09` are left/right pan variants using the same SRCN `$13`
+family as the centered `$07`; `$13/$14` mirror those variants for Player 2.
+Commands `$1A-$1D` use SRCN `$16` with two envelope variants, but no normal
+four-race gameplay trigger has been proved for them. They remain named only as
+unmapped driver effects instead of receiving guessed game-event labels.
+
+`frontend/headless/topgear_sfx_recorder.c` is the Linux audio-research surface.
+It loads the complete Las Vegas race resource chain, stops music, and can record
+an isolated proved effect, a fixed engine pitch, or the full set.  Its automatic
+and manual engine demonstrations replay pitch timelines captured from the real
+game rather than synthesizing arbitrary sweeps. `test_sfx_race_audio.c` prevents
+regression with fixed deterministic PCM hashes for boost, finish, skid,
+collision, engine `$0400`, and engine `$1200`, while still requiring zero Full
+Static AOT/DSP failures.

@@ -21,6 +21,13 @@ extern "C" {
 #define TOPGEAR_APP_PRESENTATION_FPS_DENOMINATOR 655171u
 
 typedef struct TopGearApp TopGearApp;
+int topgear_app_player_settings_load(TopGearApp*,const char *utf8_path);
+/* Poll/queue a durable background save. Call each frame; destroy drains the
+   worker and saves the latest edit. Zero reports a write/start failure. */
+int topgear_app_player_settings_save(TopGearApp*,const char *utf8_path);
+int topgear_app_profile_read(TopGearApp*,unsigned,TopGearPlayerProfile*);
+int topgear_app_profile_write(TopGearApp*,unsigned,const TopGearPlayerProfile*,
+                              const char *utf8_path);
 typedef void (*TopGearAppAudioProgressCallback)(TopGearApp *, void *);
 
 typedef struct TopGearAppFrameResult {
@@ -54,6 +61,12 @@ int topgear_app_sram_copy(const TopGearApp *, void *, size_t);
 int topgear_app_sram_load(TopGearApp *, const void *, size_t, char *, size_t);
 int topgear_app_sram_dirty(const TopGearApp *);
 void topgear_app_sram_mark_clean(TopGearApp *);
+int topgear_app_leaderboard(const TopGearApp *, unsigned, int, int, unsigned, TopGearTimeTrialRun *);
+size_t topgear_app_time_trial_data_size(void);
+int topgear_app_time_trial_data_export(const TopGearApp *, void *, size_t);
+int topgear_app_time_trial_data_import(TopGearApp *, const void *, size_t, char *, size_t);
+int topgear_app_time_trial_data_dirty(const TopGearApp *);
+void topgear_app_time_trial_data_mark_clean(TopGearApp *);
 int topgear_app_write_diagnostic_log(const TopGearApp *, const char *,
                                      const char *, char *, size_t);
 

@@ -2393,9 +2393,9 @@ int tg_v22_reentry_group_0060_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0001826Fu: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x8270u;
@@ -2403,9 +2403,9 @@ int tg_v22_reentry_group_0060_step(struct TopGearRecomp *instance){
   return 1;
  case 0x00018297u: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x8298u;
@@ -2786,9 +2786,9 @@ int tg_v22_reentry_group_0060_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000183DAu: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x83DBu;
@@ -2891,9 +2891,9 @@ int tg_v22_reentry_group_0060_step(struct TopGearRecomp *instance){
   return 1;
  case 0x00018308u: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x8309u;
@@ -2901,9 +2901,9 @@ int tg_v22_reentry_group_0060_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0001833Au: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x833Bu;

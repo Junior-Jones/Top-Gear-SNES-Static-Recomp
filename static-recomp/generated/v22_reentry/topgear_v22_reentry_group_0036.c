@@ -518,6 +518,7 @@ int tg_v22_reentry_group_0036_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000DABEu: /* 8D 1E 01 STA $011E */
   if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x011Eu), instance->cpu.a)) return 0;
+  /* Timing is captured at the canonical $05:E823 lap crossing. */
   instance->cpu.pc = 0xDAC1u;
   instance->instruction_count++;
   return 1;

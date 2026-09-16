@@ -1,8 +1,10 @@
 Top Gear (SNES) Static Recompilation - Windows Source
-Release 1.2.0
+Release 2.0.0 - Top Gear Definitive Edition
 
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.
+
+See VERSION.txt for the complete cumulative change list and Docs/CAREER-2.0.0.md for the new Career rules.
 
 What "fully static recompilation" means
 ----------------------------------------
@@ -114,10 +116,11 @@ Frontend architecture
   of generating catch-up bursts that can build an audio backlog. The optional
   title-bar FPS counter is disabled by default. Audio Settings exposes the last
   live output diagnostics captured before its dialog pauses the game.
-- A clean release contains only the Rom folder. Snapshots, Screenshots, Audio
-  and Logs are created lazily immediately before their first output file.
-  Top Gear uses passwords and has no battery-backed SRAM, so this app never
-  creates a Saves folder. Full-machine snapshots (.scsnap) remain available.
+- A clean release contains Rom and Data. Data stores the separate
+  Career/Rally and Time Trial profiles, Time Trial records, game options and
+  music playlist state. Frontend settings remain beside Launcher.exe.
+  Snapshots, Screenshots, Audio and Logs are created only when first used.
+  Full-machine snapshots (.scsnap) remain available.
 
 Documentation
 Docs\Static Findings.txt is the maintained guide to the commentary and known

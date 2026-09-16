@@ -1244,6 +1244,7 @@ int tg_v22_reentry_group_03E6_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F986Cu: /* 85 5A STA $5A */
+    if((uint16_t)(instance->wram[((instance->cpu.d+0x5au)&0xffffu)]|((uint16_t)instance->wram[(((instance->cpu.d+0x5au)&0xffffu))+1u]<<8u))!=instance->cpu.a)tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x986Eu;
   instance->instruction_count++;
@@ -1316,6 +1317,7 @@ int tg_v22_reentry_group_03E6_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F98A1u: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x98A3u)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;
@@ -1905,6 +1907,8 @@ int tg_v22_reentry_group_03E6_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F995Fu: /* 85 5A STA $5A */
+    /* INC/DEC has already committed the value; this normalized store is reached only for accepted Left/Right. */
+    tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x9961u;
   instance->instruction_count++;
@@ -2162,6 +2166,7 @@ int tg_v22_reentry_group_03E6_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F99ECu: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x99EEu)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;
@@ -2876,6 +2881,7 @@ int tg_v22_reentry_group_03E6_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9A7Bu: /* 85 5A STA $5A */
+    if((uint16_t)(instance->wram[((instance->cpu.d+0x5au)&0xffffu)]|((uint16_t)instance->wram[(((instance->cpu.d+0x5au)&0xffffu))+1u]<<8u))!=instance->cpu.a)tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x9A7Du;
   instance->instruction_count++;
@@ -2952,6 +2958,7 @@ int tg_v22_reentry_group_03E6_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9ACDu: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x9ACFu)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;

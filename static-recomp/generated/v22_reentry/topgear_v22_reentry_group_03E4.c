@@ -431,9 +431,9 @@ int tg_v22_reentry_group_03E4_has(uint32_t key){switch(key){
  case 0x000F9101u:return 1;
  default:return 0;}}
 int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
- uint32_t key,address=0u,base24=0u;uint16_t word=0u;uint8_t byte=0u;
+ uint32_t key,address=0u,base24=0u;uint16_t word=0u,mod_selection=0u;uint8_t byte=0u;int mod_action=0;
  if(!instance)return 0;
- (void)address;(void)base24;(void)word;(void)byte;
+ (void)address;(void)base24;(void)word;(void)byte;(void)mod_selection;(void)mod_action;
  key=tg_generated_context_key(instance);switch(key){
  case 0x000F904Bu: /* A9 8F 00 LDA #$008F */
   word = 0x008Fu;
@@ -823,6 +823,8 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F91A0u: /* 64 5A STZ $5A */
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), 0u)) return 0;
+  if (!tg_mod_insert_audio_main_menu_enter(instance)) return 0;
+  if (!tg_mod_menu_remodel_main_menu_enter(instance)) return 0;
   instance->cpu.pc = 0x91A2u;
   instance->instruction_count++;
   return 1;
@@ -846,6 +848,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F91B0u: /* B9 17 A7 LDA $A717,Y */
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA717u + instance->cpu.y)), &word)) return 0;
+  word=tg_mod_menu_remodel_selector_coord(instance,(uint16_t)(instance->cpu.y>>1u),word);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x91B3u;
@@ -863,6 +866,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F91B5u: /* B9 21 A7 LDA $A721,Y */
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA721u + instance->cpu.y)), &word)) return 0;
+  word=tg_mod_menu_remodel_selector_width(instance,(uint16_t)(instance->cpu.y>>1u),word);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x91B8u;
@@ -938,6 +942,8 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F91D6u: /* A5 0A LDA $0A */
+  /* Restore custom text after the original frame/DMA wait. */
+  tg_mod_menu_remodel_draw_if_dirty(instance);
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x0Au) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -945,6 +951,10 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F91D8u: /* 29 F0 FF AND #$FFF0 */
+  mod_action=tg_mod_menu_remodel_handle_input(instance,(uint16_t)instance->cpu.a,&mod_selection);
+  if(mod_action==3){instance->cpu.pc=0x926Du;instance->instruction_count++;return 1;}
+    if(mod_action==1){instance->cpu.pc=0x91D0u;instance->instruction_count++;return 1;}
+  if(mod_action==2){tg_set_acc16(instance,mod_selection);tg_set_nz16(instance,mod_selection);instance->cpu.pc=0x91FCu;instance->instruction_count++;return 1;}
   word = 0xFFF0u;
   word = (uint16_t)((instance->cpu.a) & word);
   tg_set_acc16(instance, word);
@@ -1070,6 +1080,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F91FCu: /* 85 5A STA $5A */
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
+  if(!instance->mod_menu_remodel_active)tg_mod_insert_audio_menu_selection(instance,(uint16_t)instance->cpu.a);
   instance->cpu.pc = 0x91FEu;
   instance->instruction_count++;
   return 1;
@@ -1085,6 +1096,8 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F922Fu: /* A5 0A LDA $0A */
+        /* The timed briefing must keep polling even with initial Start held. */
+        if(instance->mod_menu_remodel_active&&instance->mod_menu_remodel_page==13u){instance->cpu.pc=0x91D0u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x0Au) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -1146,6 +1159,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F924Cu: /* 8D 04 1F STA $1F04 */
+    if((uint16_t)(instance->wram[0x1F04u]|((uint16_t)instance->wram[(0x1F04u)+1u]<<8u))!=instance->cpu.a)tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1F04u), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x924Fu;
   instance->instruction_count++;
@@ -1167,6 +1181,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F9200u: /* B9 17 A7 LDA $A717,Y */
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA717u + instance->cpu.y)), &word)) return 0;
+  word=tg_mod_menu_remodel_selector_coord(instance,(uint16_t)(instance->cpu.y>>1u),word);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x9203u;
@@ -1198,6 +1213,8 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9239u: /* 80 95 BRA $0F:91D0 */
+  /* Original selector/value redraw queued the stock OPTIONS map. */
+  if (instance->mod_menu_remodel_active) instance->mod_menu_remodel_dirty = 1u;
   instance->cpu.pc = 0x91D0u;
   instance->instruction_count++;
   return 1;
@@ -1210,6 +1227,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F9205u: /* B9 21 A7 LDA $A721,Y */
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA721u + instance->cpu.y)), &word)) return 0;
+  word=tg_mod_menu_remodel_selector_width(instance,(uint16_t)(instance->cpu.y>>1u),word);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x9208u;
@@ -1389,6 +1407,9 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9294u: /* 60 RTS */
+        /* Results entered Options by JMP, not JSR. Resume the native next-race
+           path instead of popping a nonexistent menu return address. */
+        if(instance->mod_menu_post_race_context){instance->mod_menu_post_race_context=0u;instance->cpu.pc=0x818Eu;instance->instruction_count++;return 1;}
   if (!tg_pull16(instance, &word)) return 0;
   instance->cpu.pc = (uint16_t)(word + 1u);
   instance->instruction_count++;
@@ -1484,6 +1505,10 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F92B5u: /* A9 07 00 LDA #$0007 */
+        if(instance->mod_career_password_open==1u){
+            (void)tg_bus_store16(instance,(instance->cpu.d+0x5Au)&0xFFFFu,instance->mod_career_password_country);
+            instance->cpu.pc=0x933Bu;instance->instruction_count++;return 1;
+        }
   word = 0x0007u;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -1915,6 +1940,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F930Au: /* 85 5A STA $5A */
+    tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x930Cu;
   instance->instruction_count++;
@@ -2248,6 +2274,11 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F93DCu: /* AD 10 1F LDA $1F10 */
+        if(instance->mod_career_password_open==1u||instance->mod_career_password_open==3u){
+            tg_mod_career_password_submit(instance);
+            if(!tg_pull16(instance,&word))return 0;
+            instance->cpu.pc=(uint16_t)(word+1u);instance->instruction_count++;return 1;
+        }
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1F10u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -2469,6 +2500,7 @@ int tg_v22_reentry_group_03E4_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9390u: /* 4C B5 92 JMP $92B5 */
+        if(instance->mod_career_password_open==2u){instance->mod_career_password_open=0u;instance->cpu.pc=0x918Bu;instance->instruction_count++;return 1;}
   instance->cpu.pc = 0x92B5u;
   instance->instruction_count++;
   return 1;

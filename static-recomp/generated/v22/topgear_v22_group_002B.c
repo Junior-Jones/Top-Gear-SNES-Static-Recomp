@@ -691,6 +691,8 @@ int tg_v22_group_002B(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x0000ACF6u: /* 69 80 00 ADC #$0080 */
+        /* Solo Time Trial: pole grid, no rival collision or display entries. */
+        if(instance->mod_time_trial_active&&instance->cpu.x!=(uint16_t)(instance->wram[0x204]|(instance->wram[0x205]<<8))){instance->cpu.pc=0xAC62u;instance->instruction_count++;return 1;}
         word = 0x0080u;
         tg_adc16(instance, word);
         instance->cpu.pc = 0xACF9u;

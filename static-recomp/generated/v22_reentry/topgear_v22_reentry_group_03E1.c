@@ -431,6 +431,8 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
  (void)address;(void)base24;(void)word;(void)byte;
  key=tg_generated_context_key(instance);switch(key){
  case 0x000F8400u: /* A9 00 00 LDA #$0000 */
+  /* The live timing panel must not cover the native results transition. */
+  if(instance->mod_time_trial_active)instance->mod_time_trial_font_valid=0u;
   word = 0x0000u;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -486,6 +488,8 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F8416u: /* 20 4B 90 JSR $904B */
+        /* Native result video setup has re-enabled the NMI frame clock. */
+        if(tg_mod_attempt_pre_results(instance)){instance->cpu.pc=0x84CBu;instance->instruction_count++;return 1;}
   if (!tg_push16(instance, 0x8418u)) return 0;
   instance->cpu.pc = 0x904Bu;
   instance->instruction_count++;
@@ -1235,7 +1239,22 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F84A7u: /* B0 22 BCS $0F:84CB */
-  instance->cpu.pc = tg_flag(instance, TG_P_C) ? 0x84CBu : 0x84A9u;
+  if (instance->mod_time_trial_active) {
+            /* Time Trial never uses Career qualification. */
+            instance->cpu.pc = 0x84A9u;
+        } else if (instance->mod_rally_active) {
+   /* Rally requires every active human to meet the tightening per-race
+      cutoff; one-player COMPUTER (racer ID 1) is not a human qualifier. */
+   if (tg_mod_rally_qualification_passes(instance)) {
+    instance->cpu.pc = 0x84A9u;
+   } else {
+    tg_mod_rally_qualification_failed(instance);
+    instance->cpu.pc = 0x84CBu;
+   }
+  } else {
+   if(tg_mod_career_qualification_passes(instance))instance->cpu.pc=0x84A9u;
+            else{tg_mod_attempt_fail(instance);instance->cpu.pc=0x84CBu;}
+  }
   instance->instruction_count++;
   return 1;
  case 0x000F84A9u: /* 20 E7 86 JSR $86E7 */
@@ -1414,6 +1433,29 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F84ACu: /* 20 33 87 JSR $8733 */
+  {
+            if (tg_mod_time_trial_post_results(instance)) {
+                instance->mod_menu_post_race_context=1u;
+                instance->cpu.pc = 0x918Bu;
+                instance->instruction_count++;
+                return 1;
+            }
+   int rally_progress = tg_mod_rally_post_results(instance);
+   if (rally_progress == 1) {
+    word = UINT16_C(0x0001);
+    tg_set_acc16(instance, word);
+    tg_set_nz16(instance, word);
+    tg_set_flag(instance, TG_P_C, 0);
+    instance->cpu.pc = 0x84AFu;
+    instance->instruction_count++;
+    return 1;
+   }
+   if (rally_progress == 2) {
+    instance->cpu.pc = 0x918Bu;
+    instance->instruction_count++;
+    return 1;
+   }
+  }
   if (!tg_push16(instance, 0x84AEu)) return 0;
   instance->cpu.pc = 0x8733u;
   instance->instruction_count++;
@@ -1497,6 +1539,10 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F8750u: /* A2 12 00 LDX #$0012 */
+        if(!instance->mod_time_trial_active&&!instance->mod_rally_active){
+            tg_set_flag(instance,TG_P_C,!tg_mod_career_country_passes(instance));
+            instance->cpu.pc=0x877Au;instance->instruction_count++;return 1;
+        }
   word = 0x0012u;
   tg_set_index16(instance, &instance->cpu.x, word);
   tg_set_nz16(instance, word);
@@ -1567,7 +1613,7 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F8759u: /* A0 02 00 LDY #$0002 */
-  word = 0x0002u;
+word = 0x0002u;
   tg_set_index16(instance, &instance->cpu.y, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x875Cu;
@@ -2333,12 +2379,9 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F85F2u: /* AD 06 1F LDA $1F06 */
-  if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1F06u), &word)) return 0;
-  tg_set_acc16(instance, word);
-  tg_set_nz16(instance, word);
-  instance->cpu.pc = 0x85F5u;
-  instance->instruction_count++;
-  return 1;
+        /* Preserve the surrounding presentation; replace only its password. */
+        instance->cpu.pc=tg_mod_career_password_stage(instance)?0x8626u:0x863Bu;
+        instance->instruction_count++;return 1;
  case 0x000F8576u: /* 20 3E 9F JSR $9F3E */
   if (!tg_push16(instance, 0x8578u)) return 0;
   instance->cpu.pc = 0x9F3Eu;
@@ -2350,7 +2393,7 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->cpu.pc = 0x86ADu;
   instance->instruction_count++;
   return 1;
- case 0x000F85F5u: /* 29 1C 00 AND #$001C */
+    case 0x000F85F5u: /* 29 1C 00 AND #$001C */
   word = 0x001Cu;
   word = (uint16_t)((instance->cpu.a) & word);
   tg_set_acc16(instance, word);
@@ -2572,7 +2615,7 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F862Au: /* A9 10 1C LDA #$1C10 */
-  word = 0x1C10u;
+  word = 0x0110u;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x862Du;
@@ -2654,7 +2697,9 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F8635u: /* A2 82 B4 LDX #$B482 */
-  word = 0xB482u;
+  /* PASSWORD label shares the visible top margin with its code. */
+        {static const char label[8]={80,65,83,83,87,79,82,68};unsigned n;for(n=0;n<8u;n++)instance->wram[0x68u+n]=(uint8_t)label[n];instance->wram[0x66u]=7u;instance->wram[0x67u]=1u;}
+        word = 0x0066u;
   tg_set_index16(instance, &instance->cpu.x, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x8638u;
@@ -2741,6 +2786,7 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F864Du: /* 20 AC 9E JSR $9EAC */
+        if(instance->mod_continue_screen==1u){instance->mod_continue_screen=2u;instance->mod_continue_released=0u;instance->mod_continue_previous=0u;}
   if (!tg_push16(instance, 0x864Fu)) return 0;
   instance->cpu.pc = 0x9EACu;
   instance->instruction_count++;
@@ -2800,7 +2846,8 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   return 1;
  case 0x000F8669u: /* 68 PLA */
   if (!tg_pull16(instance, &word)) return 0;
-  tg_set_acc16(instance, word);
+  {unsigned destination=tg_mod_continue_complete(instance);if(destination){tg_set_acc16(instance,0u);tg_set_nz16(instance,0u);instance->cpu.pc=(uint16_t)destination;instance->instruction_count++;return 1;}}
+        tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x866Au;
   instance->instruction_count++;
@@ -2853,6 +2900,10 @@ int tg_v22_reentry_group_03E1_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F867Du: /* AD 06 1F LDA $1F06 */
+        if(!instance->mod_time_trial_active&&!instance->mod_rally_active&&!tg_mod_rally_hide_failure_password(instance)){
+            word=(uint16_t)tg_mod_career_retry_course(instance);tg_set_acc16(instance,word);tg_set_nz16(instance,word);
+            instance->cpu.pc=0x8680u;instance->instruction_count++;return 1;
+        }
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1F06u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

@@ -933,6 +933,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F96A1u: /* 85 5A STA $5A */
+    tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x96A3u;
   instance->instruction_count++;
@@ -1038,6 +1039,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F96D5u: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x96D7u)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;
@@ -1062,6 +1064,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F976Bu: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x976Du)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;
@@ -1133,6 +1136,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9744u: /* 85 5A STA $5A */
+    tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x5Au) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x9746u;
   instance->instruction_count++;
@@ -1214,6 +1218,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F943Du: /* A5 81 LDA $81 */
+        if(instance->mod_career_password_open==1u&&(instance->wram[0x0Bu]&0x80u)){instance->mod_career_password_open=3u;instance->cpu.pc=0x9546u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x81u) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -1690,6 +1695,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9500u: /* 85 48 STA $48 */
+    if((uint16_t)(instance->wram[((instance->cpu.d+0x48u)&0xffffu)]|((uint16_t)instance->wram[(((instance->cpu.d+0x48u)&0xffffu))+1u]<<8u))!=instance->cpu.a)tg_mod_insert_audio_navigation(instance);
   if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x48u) & 0xFFFFu), instance->cpu.a)) return 0;
   instance->cpu.pc = 0x9502u;
   instance->instruction_count++;
@@ -2016,6 +2022,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   return 1;
  /* Commit ASCII to the eight-byte DP $0068-$006F entry buffer at index $005E. */
  case 0x040F9583u: /* 99 68 00 STA $0068,Y */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0x0068u + instance->cpu.y)), tg_acc8(instance))) return 0;
   instance->cpu.pc = 0x9586u;
   instance->instruction_count++;
@@ -2106,6 +2113,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F97C7u: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x97C9u)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;
@@ -2691,6 +2699,7 @@ int tg_v22_reentry_group_03E5_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9638u: /* 20 C5 9D JSR $9DC5 */
+  tg_mod_insert_audio_accept(instance);
   if (!tg_push16(instance, 0x963Au)) return 0;
   instance->cpu.pc = 0x9DC5u;
   instance->instruction_count++;

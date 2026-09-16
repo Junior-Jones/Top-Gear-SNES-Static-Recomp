@@ -403,6 +403,10 @@ int tg_dma_io_write(TopGearRecomp *i, uint16_t a, uint8_t v) {
         i->vtime_target = (uint16_t)((i->vtime_target & 0x0FFu) | ((uint16_t)(v & 1u) << 8));
         break;
     case 0x420Cu:
+        /* Native live-race raster setup enables channels 0-6 together.
+           Observe the shared bus so ROM and copied-WRAM execution agree. */
+        if(v==0x7Fu&&i->mod_audio_menu_context&&!i->mod_menu_remodel_active)
+            tg_mod_audio_gameplay_start(i);
         i->hdma_enable_mask = v;
         tg_v16_note_hdma_enable(i,v);
         break;

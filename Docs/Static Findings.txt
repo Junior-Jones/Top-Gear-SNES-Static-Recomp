@@ -727,17 +727,57 @@ PCM in isolated tests. `$02/$03` and `$0D/$0E` are parameterized setup/pitch
 pairs; voice-mask controls, return-only entries, and the `$18` IPL reset are
 documented but deliberately not played.
 
-The first Music implementation still made an invalid shortcut: it wrote a new
-APUIO0 selector into the already-running opening-song driver state. Top Gear's
-real change protocol is the power-on path `$00:805A-$00:807A`: command `$18`
-on APUIO1, the complete `$07:8000` driver upload, APUIO0 clear, a delay, then
-the selector write at `$00:8077`. The new
-`topgear_recomp_music_preview_prepare` follows that generated path headlessly
-and changes only the accumulator byte immediately before the real write. All
-seven selectors then produced distinct PCM hashes and remained audible for the
-complete 300-second test window with no silent tail.
+The first Music implementation made an invalid shortcut by writing a new
+APUIO0 selector into the already-running opening-song driver state.  A later
+reset-based repair still missed one important part of the real protocol: it ran
+`$07:8000` with the cold-boot A=0 upload index for every track and changed only
+the final selector at `$00:8077`.  That made Title correct but left `$02-$07`
+using Title BRR/sample/instrument resources, producing incomplete arrangements.
+
+The real protocol couples `selector-1` with `selector`.  `$07:8000` uses the
+first value to index `$07:8164` and choose one of seven resource chains rooted at
+`$07:8172`; only after that song-specific upload completes does the S-CPU write
+the final APUIO0 selector.  Corrected `topgear_recomp_music_preview_prepare`
+now replaces both values at the exact generated boundaries `$00:8064` and
+`$00:8077`.  A ROM regression requires seven deterministic and distinct high-
+ARAM (`$8900-$FFFF`) resource hashes, and the corrected race-song states are
+validated against the saved live four-race campaign snapshots.
 
 These command helpers remain static-core research and regression surfaces. The
 release 1.2.0 Windows frontend deliberately has no Music Box, offline preview,
 temporary WAV player or recorder. Production audio is generated live from the
 running game by the same Full Static S-SMP/S-DSP authority.
+
+RACE SOUND-EFFECT / ENGINE AUDIT (2026-09-04)
+------------------------------------------------
+
+The Linux audio explorer now has a race-SFX recorder in addition to the corrected
+seven-song recorder. The recorder first performs the real Las Vegas race upload
+chain, then stops music before isolating effects. Player 1 engine is one sampled
+voice, not a set of separate RPM samples: command $02 starts DSP voice 4 and
+command $03 retunes it from APUIO2/APUIO3. Race NMI computes that pitch as
+max(signed WRAM $1E5E, 0) + $0400. Live manual-route traces show the pitch falling
+at each gear change before rising again, proving the gearbox modifies the value
+that drives pitch rather than switching samples.
+
+Proved Player-1 race effects are boost $05, finish-line $07, tire/skid $0A and
+collision $0B. Boost was captured from the real A-button input in the four-race
+route; finish is bound to the lap-complete bit written by $05:E7B6-$05:E7DD;
+skid and collision are bound to their NMI WRAM event sources and live traces.
+Boost and skid use DSP voice 5; finish uses DSP voice 4. Player-2 mirrors are
+$10/$12/$15/$16. $08/$09 and $13/$14 are panning variants of the finish sample
+family. Driver effects $1A-$1D remain unmapped because no normal four-race
+gameplay trigger has been proved.
+
+The boost, skid and finish BRR sources are self-terminating, with END=1 and
+LOOP=0. The earlier multi-second isolated recordings repeated because APUIO1 was
+left asserted after the S-SMP acknowledgement, causing the level-sensitive
+dispatcher to accept and key-on the same event again. The corrected one-shot
+helper clears APUIO1 to $00 immediately after acknowledgement, verifies neutral
+acknowledgement, and lets one BRR traversal end naturally. Active durations are
+about 0.349 s for boost, 0.166 s for skid and 0.714 s for finish.
+
+The deterministic race-SFX regression hashes boost, finish, skid, collision and
+two engine pitches independently, requires zero Full Static AOT/DSP failures,
+and requires a natural silent tail after the corrected discrete effects. The
+automatic and manual engine WAVs replay captured live pitch timelines.

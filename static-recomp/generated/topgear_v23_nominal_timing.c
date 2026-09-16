@@ -2,9 +2,30 @@
 #include "topgear_internal.h"
 #include "topgear_v23_nominal_timing.h"
 
-unsigned tg_v23_nominal_timing_context_count(void){return 24899u;}
+unsigned tg_v23_nominal_timing_context_count(void){return 24919u;}
 unsigned tg_v23_nominal_processor_cycles(const struct TopGearRecomp *instance){
  uint32_t key;if(!instance)return 0u;key=tg_generated_context_key(instance);switch(key){
+ case 0x0000B511u: return 2u;
+ case 0x0000B514u: return 4u;
+ case 0x0000B517u: return 3u;
+ case 0x0400B519u: return 4u;
+ case 0x0400B51Cu: return 2u;
+ case 0x0400B51Eu: return 4u;
+ case 0x0400B521u: return 3u;
+ case 0x0400B523u: return 4u;
+ case 0x0400B526u: return 3u;
+ case 0x0400B528u: return 4u;
+ case 0x0400B52Bu: return 2u;
+ case 0x0400B52Du: return 4u;
+ case 0x0400B530u: return 2u;
+ case 0x0400B532u: return 4u;
+ case 0x0400B535u: return 3u;
+ case 0x0000B537u: return 2u;
+ case 0x0000B53Au: return 3u;
+ case 0x0000B53Cu: return 2u;
+ case 0x0000B53Fu: return 4u;
+ case 0x0000B542u: return 3u;
+
  case 0x0000800Eu: return 2u;
  case 0x00008012u: return 2u;
  case 0x000080ABu: return 2u;

@@ -877,6 +877,7 @@ int tg_v22_reentry_group_002F_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000BF40u: /* 8D 56 1E STA $1E56 */
   if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1E56u), instance->cpu.a)) return 0;
+  tg_mod_time_trial_capture_required_laps(instance,instance->cpu.a);
   instance->cpu.pc = 0xBF43u;
   instance->instruction_count++;
   return 1;

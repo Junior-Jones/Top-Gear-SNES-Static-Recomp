@@ -1052,6 +1052,7 @@ int tg_v22_group_0020(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x00008186u: /* 22 00 80 07 JSL $078000 */
+        if(!tg_mod_music_race_prepare(instance))return 0;
         if (!tg_push8(instance, instance->cpu.pbr)) return 0;
         if (!tg_push16(instance, 0x8189u)) return 0;
         instance->cpu.pbr = 0x07u;
@@ -1133,6 +1134,7 @@ int tg_v22_group_0020(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x040081A0u: /* 8D 40 21 STA $2140 */
+        if(instance->mod_music_native_selector)tg_set_acc8(instance,instance->mod_music_native_selector);
         if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2140u), tg_acc8(instance))) return 0;
         instance->cpu.pc = 0x81A3u;
         instance->instruction_count++;
@@ -1186,6 +1188,8 @@ int tg_v22_group_0020(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x040081B3u: /* 8D 41 21 STA $2141 */
+        /* The hidden CPU camera must not start its second engine in all solo modes. */
+        if((instance->mod_time_trial_active||(!instance->wram[0x1F04u]&&!instance->wram[0x1F05u])))tg_set_acc8(instance,0u);
         if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2141u), tg_acc8(instance))) return 0;
         instance->cpu.pc = 0x81B6u;
         instance->instruction_count++;

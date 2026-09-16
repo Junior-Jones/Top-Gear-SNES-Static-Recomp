@@ -1556,6 +1556,8 @@ int tg_v22_reentry_group_017A_step(struct TopGearRecomp *instance){
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1E76u), &word)) return 0;
   word = (uint16_t)(word + 1u);
   if (!tg_bus_write16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1E76u), word)) return 0;
+  /* Canonical lap crossing includes finish paths that skip the HUD. */
+  tg_mod_time_trial_note_lap(instance,word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xE826u;
   instance->instruction_count++;

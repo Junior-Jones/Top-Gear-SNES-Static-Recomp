@@ -5,6 +5,7 @@
 #include <cstring>
 namespace SC_STATIC_SNES { CPU cpu; }
 namespace {
+SCStaticCpuPortObserver g_cpu_observer=nullptr;
 constexpr uint64_t kFnvOffset=UINT64_C(1469598103934665603);
 constexpr uint64_t kFnvPrime=UINT64_C(1099511628211);
 SCStaticAudioSink g_sink=nullptr;
@@ -21,6 +22,17 @@ uint64_t g_sdsp_brr_steps=0,g_sdsp_brr_hash=kFnvOffset;
 uint8_t g_sdsp_static_failed=0,g_sdsp_fail_reason=0,g_sdsp_fail_phase=0;
 bool g_program_started=false;
 int g_acquired=0;
+topgear_dsp g_cue;
+uint8_t g_cue_aram[65536],g_cue_known[8192];
+void ensure_cue_lane(){
+  if(SC_STATIC_SNES::dsp.core.cue_lane)return;
+  std::memset(g_cue_aram,0,sizeof(g_cue_aram));
+  std::memset(g_cue_known,0xff,sizeof(g_cue_known));
+  topgear_dsp_power_on(&g_cue,g_cue_aram,g_cue_known);
+  topgear_dsp_write_register(&g_cue,0x6c,0x20);
+  topgear_dsp_write_register(&g_cue,0x5d,0x8a);
+  topgear_dsp_attach_cue_lane(&SC_STATIC_SNES::dsp.core,&g_cue);
+}
 struct ApuSnapshotHeader {
   char magic[8]; uint32_t version,smp_size,aram_size,dsp_capacity;
   uint8_t cpu_registers[4]; uint32_t dsp_frequency; int32_t dsp_clock;
@@ -145,6 +157,7 @@ int sync_impl(uint64_t master,char *error,size_t cap){
   g_master=master;record_rendezvous(master,target,master_delta);copy_error(error,cap,"");return 1;
 }
 }
+extern "C" void sc_static_apu_set_cpu_port_observer(SCStaticCpuPortObserver observer){g_cpu_observer=observer;}
 extern "C" int sc_static_apu_acquire(char *error,size_t cap){
   if(g_acquired){copy_error(error,cap,"Only one Full Static S-SMP AOT instance is supported.");return 0;}
   g_acquired=1;sc_static_apu_reset();copy_error(error,cap,"");return 1;
@@ -152,6 +165,7 @@ extern "C" int sc_static_apu_acquire(char *error,size_t cap){
 extern "C" void sc_static_apu_release(void){g_acquired=0;g_sink=nullptr;g_sink_context=nullptr;std::memset(&g_trace,0,sizeof(g_trace));}
 extern "C" void sc_static_apu_reset(void){
   SC_STATIC_SNES::cpu.reset();SC_STATIC_SNES::smp.power();SC_STATIC_SNES::dsp.power();
+  std::memset(&g_cue,0,sizeof(g_cue));std::memset(g_cue_aram,0,sizeof(g_cue_aram));std::memset(g_cue_known,0,sizeof(g_cue_known));
   g_master=g_cycles=g_pcm_frames=0;g_phase_remainder=0;
   g_max_sync_master_delta=0;g_first_sync_master_delta=0;
   g_max_followup_sync_master_delta=0;
@@ -189,7 +203,7 @@ extern "C" void sc_static_sdsp_report_failure(uint32_t reason,uint8_t phase){
 extern "C" int sc_static_apu_sync_to_master(uint64_t m,char *e,size_t c){return sync_impl(m,e,c);}
 extern "C" int sc_static_apu_cpu_write_port(uint64_t m,unsigned p,uint8_t v,char *e,size_t c){
   if(p>=4u){copy_error(e,c,"Invalid static APUIO port.");return 0;}if(!sync_impl(m,e,c))return 0;
-  SC_STATIC_SNES::cpu.port_write((uint8)p,v);record_cpu_port(1u,m,p,v);return 1;
+  SC_STATIC_SNES::cpu.port_write((uint8)p,v);record_cpu_port(1u,m,p,v);if(g_cpu_observer)g_cpu_observer(m,p,v);return 1;
 }
 extern "C" uint8_t sc_static_apu_cpu_read_port(uint64_t m,unsigned p,int *ok,char *e,size_t c){
   if(ok) *ok=0;
@@ -235,6 +249,29 @@ extern "C" int sc_static_apu_read_aram(uint32_t offset,void *output,size_t bytes
   return 1;
 }
 
+extern "C" int sc_static_apu_read_cue_aram(uint32_t offset,void *output,size_t bytes){
+  if(!g_acquired||!output||!SC_STATIC_SNES::dsp.core.cue_lane||offset>65536u||bytes>65536u-offset)return 0;
+  std::memcpy(output,g_cue_aram+offset,bytes);return 1;
+}
+
+extern "C" int sc_static_apu_mod_write_aram(uint32_t offset,const void *input,size_t bytes){
+  const uint8_t *source=(const uint8_t*)input;
+  if(!g_acquired||(!input&&bytes)||offset>65536u||bytes>65536u-offset)return 0;
+  SC_STATIC_SNES::dsp.synchronize();ensure_cue_lane();
+  std::memcpy(g_cue_aram+offset,source,bytes);
+  return 1;
+}
+
+extern "C" int sc_static_apu_mod_write_dsp_register(uint8_t address,uint8_t value){
+  if(!g_acquired||address>=128u)return 0;
+  /* This is the cue API, not permission to modify the music engine. */
+  if(!((address>=0x70u&&address<=0x77u)||address==0x4cu||address==0x5cu||address==0x4du))return 0;
+  SC_STATIC_SNES::dsp.synchronize();ensure_cue_lane();
+  if(address==0x4du)value=0u;
+  if(address==0x4cu||address==0x5cu)value&=0x80u;
+  return topgear_dsp_write_register(&g_cue,address,value)==TOPGEAR_DSP_STOP_NONE;
+}
+
 extern "C" int sc_static_apu_read_dsp_register(uint8_t address,uint8_t *value){
   if(!g_acquired||!value||address>=128u)return 0;
   /* Read the live S-DSP register file.  The former dual-backend runtime kept a
@@ -254,11 +291,11 @@ extern "C" size_t sc_static_apu_pcm_read(int16_t *out,uint8_t *known,size_t capa
 }
 extern "C" uint64_t sc_static_apu_pcm_overflow_count(void){return g_acquired?SC_STATIC_SNES::dsp.core.pcm_overflows:0u;}
 
-extern "C" size_t sc_static_apu_snapshot_size(void){return sizeof(ApuSnapshotHeader)+sizeof(SC_STATIC_SNES::SMP)+65536u+8192u+sizeof(topgear_dsp);}
+extern "C" size_t sc_static_apu_snapshot_size(void){return sizeof(ApuSnapshotHeader)+sizeof(SC_STATIC_SNES::SMP)+65536u+8192u+2u*sizeof(topgear_dsp)+65536u+8192u;}
 extern "C" int sc_static_apu_snapshot_save(void *data,size_t capacity){
   ApuSnapshotHeader h{};unsigned char *out=(unsigned char*)data;topgear_dsp dsp_state;
   if(!g_acquired||!data||capacity<sc_static_apu_snapshot_size())return 0;
-  std::memcpy(h.magic,"TGAPU003",8u);h.version=3u;h.smp_size=(uint32_t)sizeof(SC_STATIC_SNES::SMP);h.aram_size=65536u;h.dsp_capacity=(uint32_t)sizeof(topgear_dsp);
+  std::memcpy(h.magic,"TGAPU009",8u);h.version=9u;h.smp_size=(uint32_t)sizeof(SC_STATIC_SNES::SMP);h.aram_size=65536u;h.dsp_capacity=(uint32_t)sizeof(topgear_dsp);
   std::memcpy(h.cpu_registers,SC_STATIC_SNES::cpu.registers,4u);h.dsp_frequency=SC_STATIC_SNES::dsp.frequency;h.dsp_clock=SC_STATIC_SNES::dsp.clock;
   h.master=g_master;h.cycles=g_cycles;h.pcm_frames=g_pcm_frames;h.sync_calls=g_sync_calls;h.rendezvous_hash=g_rendezvous_hash;
   h.cpu_port_event_count=g_cpu_port_event_count;h.cpu_port_event_hash=g_cpu_port_event_hash;h.phase_remainder=g_phase_remainder;
@@ -269,19 +306,27 @@ extern "C" int sc_static_apu_snapshot_save(void *data,size_t capacity){
   std::memcpy(out,&h,sizeof(h));out+=sizeof(h);std::memcpy(out,&SC_STATIC_SNES::smp,sizeof(SC_STATIC_SNES::smp));out+=sizeof(SC_STATIC_SNES::smp);
   std::memcpy(out,SC_STATIC_SNES::smp.apuram,65536u);out+=65536u;
   std::memcpy(out,SC_STATIC_SNES::smp.aram_known,8192u);out+=8192u;
-  dsp_state=SC_STATIC_SNES::dsp.core;dsp_state.aram=nullptr;dsp_state.aram_known=nullptr;
-  std::memcpy(out,&dsp_state,sizeof(dsp_state));return 1;
+  dsp_state=SC_STATIC_SNES::dsp.core;dsp_state.aram=nullptr;dsp_state.aram_known=nullptr;dsp_state.cue_lane=nullptr;
+  std::memcpy(out,&dsp_state,sizeof(dsp_state));out+=sizeof(dsp_state);
+  dsp_state=g_cue;dsp_state.aram=nullptr;dsp_state.aram_known=nullptr;dsp_state.cue_lane=nullptr;
+  std::memcpy(out,&dsp_state,sizeof(dsp_state));out+=sizeof(dsp_state);
+  std::memcpy(out,g_cue_aram,65536u);out+=65536u;
+  std::memcpy(out,g_cue_known,8192u);return 1;
 }
 extern "C" int sc_static_apu_snapshot_load(const void *data,size_t size,char *error,size_t error_capacity){
   ApuSnapshotHeader h;const unsigned char *in=(const unsigned char*)data;uint8 *apuram,*aram_known;
   if(!g_acquired||!data||size!=sc_static_apu_snapshot_size()){copy_error(error,error_capacity,"Static audio snapshot size is invalid.");return 0;}
   std::memcpy(&h,in,sizeof(h));in+=sizeof(h);
-  if(std::memcmp(h.magic,"TGAPU003",8u)!=0||h.version!=3u||h.smp_size!=sizeof(SC_STATIC_SNES::SMP)||h.aram_size!=65536u||h.dsp_capacity!=sizeof(topgear_dsp)){copy_error(error,error_capacity,"Static audio snapshot is from another build.");return 0;}
+  if(std::memcmp(h.magic,"TGAPU009",8u)!=0||h.version!=9u||h.smp_size!=sizeof(SC_STATIC_SNES::SMP)||h.aram_size!=65536u||h.dsp_capacity!=sizeof(topgear_dsp)){copy_error(error,error_capacity,"Static audio snapshot is from another build.");return 0;}
   apuram=SC_STATIC_SNES::smp.apuram;aram_known=SC_STATIC_SNES::smp.aram_known;
   std::memcpy(&SC_STATIC_SNES::smp,in,sizeof(SC_STATIC_SNES::smp));SC_STATIC_SNES::smp.apuram=apuram;SC_STATIC_SNES::smp.aram_known=aram_known;in+=sizeof(SC_STATIC_SNES::smp);
   std::memcpy(apuram,in,65536u);in+=65536u;std::memcpy(aram_known,in,8192u);in+=8192u;
   std::memcpy(SC_STATIC_SNES::cpu.registers,h.cpu_registers,4u);SC_STATIC_SNES::dsp.frequency=h.dsp_frequency;SC_STATIC_SNES::dsp.clock=h.dsp_clock;
   std::memcpy(&SC_STATIC_SNES::dsp.core,in,sizeof(SC_STATIC_SNES::dsp.core));SC_STATIC_SNES::dsp.core.aram=apuram;SC_STATIC_SNES::dsp.core.aram_known=aram_known;
+  in+=sizeof(topgear_dsp);std::memcpy(&g_cue,in,sizeof(g_cue));in+=sizeof(g_cue);
+  std::memcpy(g_cue_aram,in,65536u);in+=65536u;std::memcpy(g_cue_known,in,8192u);
+  g_cue.aram=g_cue_aram;g_cue.aram_known=g_cue_known;g_cue.cue_lane=nullptr;
+  SC_STATIC_SNES::dsp.core.cue_lane=SC_STATIC_SNES::dsp.core.virtual_voice7?&g_cue:nullptr;
   g_master=h.master;g_cycles=h.cycles;g_pcm_frames=h.pcm_frames;g_sync_calls=h.sync_calls;g_rendezvous_hash=h.rendezvous_hash;
   g_cpu_port_event_count=h.cpu_port_event_count;g_cpu_port_event_hash=h.cpu_port_event_hash;g_phase_remainder=h.phase_remainder;
   g_max_sync_master_delta=h.max_sync_master_delta;g_first_sync_master_delta=h.first_sync_master_delta;g_max_followup_sync_master_delta=h.max_followup_sync_master_delta;
@@ -290,3 +335,11 @@ extern "C" int sc_static_apu_snapshot_load(const void *data,size_t size,char *er
   g_sdsp_static_failed=h.sdsp_static_failed;g_sdsp_fail_reason=h.sdsp_fail_reason;g_sdsp_fail_phase=h.sdsp_fail_phase;g_program_started=h.program_started!=0u;
   copy_error(error,error_capacity,"");return 1;
 }
+
+extern "C" void sc_static_apu_music_volume(unsigned percent){
+  if(g_acquired)topgear_dsp_music_gain(&SC_STATIC_SNES::dsp.core,percent);
+}
+
+extern "C" void sc_static_apu_native_effects(unsigned mask){if(g_acquired)SC_STATIC_SNES::dsp.core.native_effects_mask=(uint8_t)mask;}
+
+extern "C" int sc_static_apu_cue_endx(uint8_t *value){if(!g_acquired||!value||!SC_STATIC_SNES::dsp.core.cue_lane)return 0;*value=g_cue.regs[0x7c];return 1;}

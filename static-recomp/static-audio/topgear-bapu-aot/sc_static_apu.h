@@ -71,6 +71,8 @@ typedef struct SCStaticApuStatus {
     uint64_t cpu_port_event_hash;
 } SCStaticApuStatus;
 
+typedef void (*SCStaticCpuPortObserver)(uint64_t,unsigned,uint8_t);
+void sc_static_apu_set_cpu_port_observer(SCStaticCpuPortObserver observer);
 int sc_static_apu_acquire(char *error,size_t error_capacity);
 void sc_static_apu_release(void);
 void sc_static_apu_reset(void);
@@ -88,6 +90,14 @@ int sc_static_apu_cpu_write_port(uint64_t master_clock,unsigned port,uint8_t val
 uint8_t sc_static_apu_cpu_read_port(uint64_t master_clock,unsigned port,int *ok,char *error,size_t error_capacity);
 int sc_static_apu_status(SCStaticApuStatus *status);
 int sc_static_apu_read_aram(uint32_t offset,void *output,size_t bytes);
+/* Accessibility-mod resource injection.  Writes only non-code ARAM and marks
+   the bytes known to the fail-closed S-SMP/S-DSP authority. */
+int sc_static_apu_read_cue_aram(uint32_t offset,void *output,size_t bytes);
+int sc_static_apu_mod_write_aram(uint32_t offset,const void *input,size_t bytes);
+int sc_static_apu_cue_endx(uint8_t *value);
+void sc_static_apu_music_volume(unsigned percent);
+void sc_static_apu_native_effects(unsigned mask);
+int sc_static_apu_mod_write_dsp_register(uint8_t address,uint8_t value);
 int sc_static_apu_read_dsp_register(uint8_t address,uint8_t *value);
 size_t sc_static_apu_pcm_available(void);
 size_t sc_static_apu_pcm_read(int16_t *interleaved_stereo,uint8_t *frame_known,

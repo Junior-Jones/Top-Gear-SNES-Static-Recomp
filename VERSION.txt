@@ -1,40 +1,78 @@
-Top Gear (SNES) Static Recomp 1.2.0
+Top Gear Definitive Edition 2.0.0
+Windows 10/11 x64 - Launcher.exe
 
-Frontend and integration features
----------------------------------
+New Features:
 
-- Completed Jungle Strike/Civilization-derived native Windows frontend adapted
-  for Top Gear's exact ROM, static-core API and player-one input contract.
-- Native Win32 windowed and full-screen presentation with optional integer
-  scaling, natural NTSC frame pacing and an optional title-bar FPS counter.
-- Windowed F8 game-frame capture and full displayed-screen capture while in
-  full-screen mode.
-- Five persistent full-machine snapshot slots with keyboard shortcuts 1 and 2
-  for the selected slot.
-- Configurable keyboard and SDL gamepad bindings. Short keyboard presses are
-  latched until one complete emulated frame consumes them.
-- Accessible Welcome, Settings, Controls, Audio Settings, snapshot and static-
-  failure windows with deterministic focus restoration.
-- Portable x64 release using the static Visual C++ runtime and statically linked
-  SDL gamepad support.
+* Career
+* Rally
+* Time Trial
+* Settings
 
-Audio
------
+Career:
+* In one-player mode, the bottom half of the screen shows the top five racers instead of the CPU player's view. It shows the leader's last lap time and the other cars' gaps to the leader. Dashes appear until timing information is available.
+* Both players' current car, gearbox and controls are shown in the setup menu.
+* Finish in the top 10 on tracks 1-16 and the top 5 on tracks 17-32 to continue.
+* At the end of track 8, you must be seventh or higher in the standings. After track 16, you must be sixth or higher; after track 24, fifth or higher.
+* These rules apply to all three difficulty levels. In two-player mode, both players must qualify.
+* Each eight-track section has its own points tally.
+* Amateur offers three password checkpoints; Professional offers one. Championship has none.
+* The country menu shows only the password destinations available for your difficulty. Original game passwords no longer work.
+* Using a password puts Player 1 fifth in the standings. Press any button to continue to the next race.
+* You have three continues for failed races. Yes uses one continue and retries the same track; No returns to the main menu. Retrying restores your points from before that race.
+* Continues do not reset after winning a race. Failing a standings requirement ends the attempt without a continue.
 
-- The static core executes the project-owned Full Static S-SMP and 32-phase
-  S-DSP authority and produces native 32,040 Hz stereo PCM with no interpreter,
-  runtime DSP library or emulator fallback.
-- The Jungle Strike/Mesen-derived DirectSound frontend presents that PCM to the
-  selected Windows device. It resamples speaker output only when required.
-- Configurable output device/rate, volume, Hermite/linear/nearest resampling,
-  optional 0-40 ms extra latency, safety prebuffer, ring buffering, drift
-  correction, stale-audio recovery and resume fade.
-- Extra latency is disabled at zero by default.
+Rally:
 
-Validation
-----------
+* This new mode is an eight-track event, with one randomly selected track from each country.
+* The Selected Tracks screen shows the race order before the event begins. It stays for up to five seconds before moving to the first pre-race screen.
+* Supports one or two players, with both players' current setups shown in the menu.
+* Track 1 requires a top-eight finish, track 2 top seven, track 3 top six, track 4 top five, track 5 top four, track 6 top three and track 7 top two.
+* Track 8 has no finishing-position requirement. Its points are added to the final standings, and the highest total from all eight races wins.
+* In two-player mode, both players must qualify for tracks 1-7.
+* There are no continues or passwords. Failing to qualify ends the event.
+* One-player Rally uses the same bottom-screen top-five display as Career.
+* Each event plays eight different gameplay music tracks.
 
-- Exact-ROM cold boot and deterministic audio snapshot continuation.
-- Scripted 60-, 120- and 180-second gameplay/audio routes.
-- Static S-SMP/S-DSP ownership, purity, generated dispatch, snapshots, renderer
-  instances, input/settings, audio FIFO/resampling and integrity checks.
+Time Trial:
+
+* A new one-player mode covering all 32 tracks.
+* Only your car is visible on the track, starting from pole position, with no opponent collisions.
+* The bottom half of the screen shows lap and sector times instead of the CPU player's view.
+* Each lap has three sectors. Results show your fastest time for each sector across the run.
+* The full results screen has five options: Leaderboard, Retry, Tracks, Cars and Main Menu. Retry repeats the same track and can be used as many times as you wish.
+* Leaderboard opens the track's Overall Top 5. Finish returns to the Time Trial menu with the same track selected.
+* Tracks opens the country and track picker. Cars opens a four-car list with the current car highlighted. Main Menu returns directly to the Career, Rally, Time Trial and Settings screen.
+* The leaderboard saves times by track, car and gearbox, with overall and car-specific views.
+* Empty leaderboard entries use zero-time placeholders. The supplied Data/time-trial.dat is an empty valid store; placeholders are never treated as completed runs.
+* Each new run, including Retry, selects gameplay music from a saved random playlist.
+
+Settings:
+
+* Moved the Speed option from the main menu into Settings. Kilometres per hour is the default; miles per hour is also available.
+* Mute turns music off without muting sound effects.
+* Career Music offers Complete, Random and Classic.
+* Complete plays all 11 race music tracks in order: Top Gear, Top Gear 2, then Top Gear 3000.
+* Random plays all 11 race music tracks in a shuffled order before starting a new playlist. Progress is saved, and the same song will not play twice in a row.
+* Classic uses the original Top Gear music assigned to each track.
+* Title, qualifying, results and ending music do not play during races.
+* Music Player lets you listen to all 20 music tracks. Highlight it to play, use Left/Right to change tracks and press A to stop or resume.
+
+General:
+
+* Within Career, Rally and Time Trial, added two menu shortcuts.
+* R Button cycles through all 4 cars
+* L Button cycles between Manual and Automatic
+* The main menu now has four items: Career, Rally, Time Trial and Settings. The Options heading is removed, with Definitive Edition displayed at the bottom.
+* Time Trial has its own separate setup.
+* Added music from Top Gear 2 and Top Gear 3000. Press R on the title screen or menus outside the three mode setup pages to cycle through the three games' title tracks.
+
+Frontend:
+
+* Profile remains available while the ROM is running and saves your name, car, gearbox and control scheme directly to the Data folder. When a game is loaded, Save asks whether to reset it now. Choose Yes to return to the title sequence and apply the setup immediately, or No to keep playing and apply it after the next reset. New Career/Rally and Time Trial profiles start as PLAYER 1 with the original Cannibal, Manual and Type A setup. The two modes retain separate saved profiles.
+* Leaderboard shows saved Time Trial results. Filter by track, car and gearbox to view total times and the three best sector times. Empty rows show 0:00:000 and 00.0 placeholders.
+* Controls lets you choose Keyboard or Gamepad and change button assignments. USB and Bluetooth controllers use the bundled controller mappings.
+* Audio lets you choose the output device, volume and playback settings.
+* Settings includes display size, fullscreen and startup options.
+* The Welcome window lists Escape, the 1 and 2 snapshot-slot shortcuts, then F1-F8.
+* Player setups, Time Trial results and music playlist progress are saved in the Data folder.
+* This release starts with the documented PLAYER 1 defaults and an empty valid Time Trial file containing no completed runs.

@@ -18,7 +18,7 @@ typedef uint32_t topgear_dsp_stop_reason;
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define TOPGEAR_DSP_VOICES 8u
+#define TOPGEAR_DSP_VOICES 9u
 #define TOPGEAR_DSP_REG_COUNT 128u
 #define TOPGEAR_DSP_PHASES 32u
 #define TOPGEAR_DSP_PCM_FIFO_FRAMES 8192u
@@ -53,6 +53,15 @@ typedef struct topgear_dsp {
     uint8_t reg_known[TOPGEAR_DSP_REG_COUNT / 8u];
     topgear_dsp_voice voices[TOPGEAR_DSP_VOICES];
 
+    /* Hardware registers remain eight-voice. Music register lane 7 uses state
+       slot 8 while the separately clocked, single cue lane owns slot 7.
+       cue_lane is a live binding, explicitly rebound by snapshot loading. */
+    struct topgear_dsp *cue_lane;
+    uint8_t virtual_voice7;
+    uint8_t cue_only;
+    uint16_t music_gain_q15;
+    uint8_t native_effects_mask;
+    int32_t native_effects_output[2];
     uint8_t phase;
     uint16_t counter;
     uint16_t noise_lfsr;
@@ -123,6 +132,9 @@ typedef struct topgear_dsp {
     topgear_dsp_stop_reason last_stop;
 } topgear_dsp;
 
+void topgear_dsp_virtualize_voice7(topgear_dsp *dsp, int enabled);
+void topgear_dsp_attach_cue_lane(topgear_dsp *dsp, topgear_dsp *cue);
+void topgear_dsp_music_gain(topgear_dsp *dsp, unsigned percent);
 void topgear_dsp_power_on(topgear_dsp *dsp, uint8_t *aram, uint8_t *aram_known);
 topgear_dsp_stop_reason topgear_dsp_write_register(topgear_dsp *dsp, uint8_t reg, uint8_t value);
 topgear_dsp_stop_reason topgear_dsp_read_register(topgear_dsp *dsp, uint8_t reg, uint8_t *value);

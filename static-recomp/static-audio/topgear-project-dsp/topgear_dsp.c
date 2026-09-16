@@ -189,7 +189,8 @@ static void process_envelope(topgear_dsp *d, topgear_dsp_voice *v, unsigned inde
 static void voice_update_output(topgear_dsp *d, unsigned index, int right) {
     uint8_t base = (uint8_t)(index << 4u);
     int32_t x = (d->voice_output * (int8_t)reg_read(d, (uint8_t)(base + (right ? 1u : 0u)))) >> 7;
-    d->out_samples[right] = clamp16(d->out_samples[right] + x);
+    if(d->native_effects_mask & (1u<<index))d->native_effects_output[right]=clamp16(d->native_effects_output[right]+x);
+    else d->out_samples[right] = clamp16(d->out_samples[right] + x);
     if (d->echo_on_latch & (uint8_t)(1u << index)) d->echo_out[right] = clamp16(d->echo_out[right] + x);
 }
 
@@ -199,7 +200,7 @@ static void voice_step1(topgear_dsp *d, unsigned index) {
     d->source_number = reg_read(d, (uint8_t)(base + 4u));
 }
 static void voice_step2(topgear_dsp *d, unsigned index) {
-    topgear_dsp_voice *v = &d->voices[index];
+    topgear_dsp_voice *v = &d->voices[(index==7u && d->virtual_voice7)?8u:index];
     uint8_t base = (uint8_t)(index << 4u), k0 = 0u, k1 = 0u;
     uint16_t a = d->sample_address;
     uint8_t lo, hi;
@@ -215,12 +216,12 @@ static void voice_step3a(topgear_dsp *d, unsigned index) {
     d->pitch |= (uint16_t)((reg_read(d, (uint8_t)((index << 4u) + 3u)) & 0x3fu) << 8u);
 }
 static void voice_step3b(topgear_dsp *d, unsigned index) {
-    topgear_dsp_voice *v = &d->voices[index];
+    topgear_dsp_voice *v = &d->voices[(index==7u && d->virtual_voice7)?8u:index];
     d->brr_header = aram_read_optional(d, v->brr_address, &d->brr_header_known);
     d->brr_data = aram_read_optional(d, (uint16_t)(v->brr_address + v->brr_offset), &d->brr_data_known);
 }
 static topgear_dsp_stop_reason voice_step3c(topgear_dsp *d, unsigned index) {
-    topgear_dsp_voice *v = &d->voices[index];
+    topgear_dsp_voice *v = &d->voices[(index==7u && d->virtual_voice7)?8u:index];
     uint8_t bit = (uint8_t)(1u << index);
     int32_t out;
     if ((d->pmon_latch & bit) && index != 0u)
@@ -267,7 +268,7 @@ static topgear_dsp_stop_reason voice_step3(topgear_dsp *d, unsigned index) {
     return s;
 }
 static topgear_dsp_stop_reason voice_step4(topgear_dsp *d, unsigned index) {
-    topgear_dsp_voice *v = &d->voices[index];
+    topgear_dsp_voice *v = &d->voices[(index==7u && d->virtual_voice7)?8u:index];
     d->looped = 0u;
     if (v->interpolation_position >= 0x4000u && v->active) {
         topgear_dsp_stop_reason s = decode_brr_group(d, v);
@@ -287,7 +288,7 @@ static topgear_dsp_stop_reason voice_step4(topgear_dsp *d, unsigned index) {
     return TOPGEAR_DSP_STOP_NONE;
 }
 static void voice_step5(topgear_dsp *d, unsigned index) {
-    topgear_dsp_voice *v = &d->voices[index];
+    topgear_dsp_voice *v = &d->voices[(index==7u && d->virtual_voice7)?8u:index];
     uint8_t bit = (uint8_t)(1u << index);
     uint8_t x;
     voice_update_output(d, index, 1);
@@ -298,7 +299,7 @@ static void voice_step5(topgear_dsp *d, unsigned index) {
 static void voice_step6(topgear_dsp *d) { d->out_reg_buffer = (uint8_t)((uint32_t)d->voice_output >> 8u); }
 static void voice_step7(topgear_dsp *d, unsigned index) {
     reg_internal_write(d, 0x7cu, d->voice_end_buffer);
-    d->env_reg_buffer = d->voices[index].env_out;
+    d->env_reg_buffer = d->voices[(index==7u && d->virtual_voice7)?8u:index].env_out;
 }
 static void voice_step8(topgear_dsp *d, unsigned index) { reg_internal_write(d, (uint8_t)((index << 4u) + 9u), d->out_reg_buffer); }
 static void voice_step9(topgear_dsp *d, unsigned index) { reg_internal_write(d, (uint8_t)((index << 4u) + 8u), d->env_reg_buffer); }
@@ -361,7 +362,8 @@ static topgear_dsp_stop_reason echo_step26(topgear_dsp *d) {
     int8_t mv=(int8_t)reg_read(d,0x0cu),ev=(int8_t)reg_read(d,0x2cu),efb=(int8_t)reg_read(d,0x0du);
     uint8_t dry_known=(uint8_t)(mv==0 || d->out_samples_known[0]);
     uint8_t echo_known=(uint8_t)(ev==0 || kl);
-    d->out_samples[0]=clamp16(((d->out_samples[0]*mv)>>7)+((d->echo_in[0]*ev)>>7));
+    d->out_samples[0]=clamp16((((d->out_samples[0]*d->music_gain_q15/32768)*mv)>>7)+(((d->echo_in[0]*ev)>>7)*d->music_gain_q15/32768));
+    d->out_samples[0]=clamp16(d->out_samples[0]+((d->native_effects_output[0]*mv)>>7));d->native_effects_output[0]=0;
     d->out_samples_known[0]=(uint8_t)(dry_known&&echo_known);
     d->echo_out[0]=even16(d->echo_out[0]+((d->echo_in[0]*efb)>>7));
     d->echo_out[1]=even16(d->echo_out[1]+((d->echo_in[1]*efb)>>7));
@@ -375,10 +377,18 @@ static topgear_dsp_stop_reason echo_step27(topgear_dsp *d) {
     int8_t mv=(int8_t)reg_read(d,0x1cu),ev=(int8_t)reg_read(d,0x3cu);
     uint8_t dry_known=(uint8_t)(mv==0 || d->out_samples_known[1]);
     uint8_t echo_known=(uint8_t)(ev==0 || kr);
-    d->out_samples[1]=clamp16(((d->out_samples[1]*mv)>>7)+((d->echo_in[1]*ev)>>7));
+    d->out_samples[1]=clamp16((((d->out_samples[1]*d->music_gain_q15/32768)*mv)>>7)+(((d->echo_in[1]*ev)>>7)*d->music_gain_q15/32768));
+    d->out_samples[1]=clamp16(d->out_samples[1]+((d->native_effects_output[1]*mv)>>7));d->native_effects_output[1]=0;
     d->out_samples_known[1]=(uint8_t)(dry_known&&echo_known);
     if(reg_read(d,0x6cu)&0x40u){l=r=0;pcm_known=1u;}else{l=clamp16(d->out_samples[0]);r=clamp16(d->out_samples[1]);pcm_known=(uint8_t)(d->out_samples_known[0]&&d->out_samples_known[1]);}
     d->out_samples[0]=0;d->out_samples[1]=0;d->out_samples_known[0]=1u;d->out_samples_known[1]=1u;
+    if(d->cue_lane){
+        int16_t cue[2];uint8_t known;
+        if(topgear_dsp_pcm_read_with_knownness(d->cue_lane,cue,&known,1u)!=1u)
+            return TOPGEAR_DSP_STOP_PHASE_INVARIANT;
+        l=clamp16((int32_t)l+cue[0]);r=clamp16((int32_t)r+cue[1]);
+        pcm_known=(uint8_t)(pcm_known&&known);
+    }
     return push_pcm(d,l,r,pcm_known);
 }
 static void echo_step28(topgear_dsp *d) { d->echo_enabled_latch=(uint8_t)((d->echo_enabled_latch&0xf0u)|((reg_read(d,0x6cu)&0x20u)?0u:1u)); }
@@ -403,7 +413,7 @@ static topgear_dsp_stop_reason echo_step30(topgear_dsp *d) {
 }
 
 void topgear_dsp_power_on(topgear_dsp *d,uint8_t *aram,uint8_t *known) {
-    unsigned i;if(!d)return;memset(d,0,sizeof(*d));d->aram=aram;d->aram_known=known;d->noise_lfsr=0x4000u;d->every_other_sample=1u;d->pcm_fnv1a64=UINT64_C(14695981039346656037);d->out_samples_known[0]=d->out_samples_known[1]=1u;d->echo_out_known[0]=d->echo_out_known[1]=1u;for(i=0;i<128u;i++)reg_mark(d,(uint8_t)i);d->regs[0x6c]=0xe0u;d->new_key_on=d->regs[0x4c];d->dir_latch=d->regs[0x5d];d->esa_latch=d->regs[0x6d];
+    unsigned i;if(!d)return;memset(d,0,sizeof(*d));d->music_gain_q15=32768u;d->aram=aram;d->aram_known=known;d->noise_lfsr=0x4000u;d->every_other_sample=1u;d->pcm_fnv1a64=UINT64_C(14695981039346656037);d->out_samples_known[0]=d->out_samples_known[1]=1u;d->echo_out_known[0]=d->echo_out_known[1]=1u;for(i=0;i<128u;i++)reg_mark(d,(uint8_t)i);d->regs[0x6c]=0xe0u;d->new_key_on=d->regs[0x4c];d->dir_latch=d->regs[0x5d];d->esa_latch=d->regs[0x6d];
 }
 
 topgear_dsp_stop_reason topgear_dsp_write_register(topgear_dsp *d,uint8_t r,uint8_t v) {
@@ -418,12 +428,56 @@ topgear_dsp_stop_reason topgear_dsp_read_register(topgear_dsp *d,uint8_t r,uint8
     r&=0x7fu;if(!topgear_dsp_register_known(d,r)){d->last_stop=TOPGEAR_DSP_STOP_REGISTER_UNKNOWN;return d->last_stop;}*v=d->regs[r];d->register_reads++;return TOPGEAR_DSP_STOP_NONE;
 }
 
+/* A cue context reuses the exact BRR/envelope/interpolation primitives,
+   but only executes voice 7. Its private ARAM cannot corrupt music resources.
+   Its phase schedule is the authentic voice-7 schedule, not a host PCM player. */
+static topgear_dsp_stop_reason cue_phase(topgear_dsp *d){
+    topgear_dsp_stop_reason s=TOPGEAR_DSP_STOP_NONE;
+    switch(d->phase){
+    case 14: d->source_number=reg_read(d,0x74u);voice_step1(d,7);break;
+    case 18: voice_step2(d,7);break;
+    case 19: s=voice_step3(d,7);break;
+    case 20: s=voice_step4(d,7);break;
+    case 21: voice_step5(d,7);break;
+    case 22: voice_step6(d);break;
+    case 23: voice_step7(d,7);break;
+    case 24: voice_step8(d,7);break;
+    case 25: voice_step9(d,7);break;
+    case 26: s=echo_step26(d);break;
+    case 27: s=echo_step27(d);break;
+    case 28: d->dir_latch=reg_read(d,0x5du);break;
+    case 29: d->every_other_sample^=1u;if(d->every_other_sample)d->new_key_on&=(uint8_t)~d->key_on;break;
+    case 30: if(d->every_other_sample){d->key_on=d->new_key_on;d->key_off=reg_read(d,0x5cu);}update_counter(d);break;
+    }
+    return s;
+}
+void topgear_dsp_virtualize_voice7(topgear_dsp *d,int enabled){
+    uint8_t value=enabled?1u:0u;if(!d||d->virtual_voice7==value)return;
+    d->voices[value?8u:7u]=d->voices[value?7u:8u];
+    memset(&d->voices[value?7u:8u],0,sizeof(d->voices[0]));
+    d->virtual_voice7=value;
+}
+void topgear_dsp_attach_cue_lane(topgear_dsp *d,topgear_dsp *cue){
+    if(!d||d==cue)return;
+    d->cue_lane=cue;topgear_dsp_virtualize_voice7(d,cue!=NULL);
+    if(cue){cue->cue_only=1u;cue->phase=d->phase;cue->counter=d->counter;
+        cue->every_other_sample=d->every_other_sample;}
+}
+void topgear_dsp_music_gain(topgear_dsp *d,unsigned percent){
+    if(d)d->music_gain_q15=(uint16_t)((percent>100u?100u:percent)*32768u/100u);
+}
 topgear_dsp_stop_reason topgear_dsp_step_phase(topgear_dsp *d) {
     topgear_dsp_stop_reason s=TOPGEAR_DSP_STOP_NONE;uint8_t p;
     if(!d) return TOPGEAR_DSP_STOP_INVALID_ARGUMENT;
     if(d->last_stop!=TOPGEAR_DSP_STOP_NONE) return d->last_stop;
     p=d->phase;
-    switch(p){
+    if(d->cue_lane){
+        d->cue_lane->regs[0x0c]=d->regs[0x0c];
+        d->cue_lane->regs[0x1c]=d->regs[0x1c];
+        s=topgear_dsp_step_phase(d->cue_lane);
+        if(s!=TOPGEAR_DSP_STOP_NONE){d->last_stop=s;return s;}
+    }
+    if(d->cue_only)s=cue_phase(d);else switch(p){
         case 0: voice_step5(d,0);voice_step2(d,1);break;
         case 1: voice_step6(d);s=voice_step3(d,1);break;
         case 2: voice_step7(d,0);if((s=voice_step4(d,1))==TOPGEAR_DSP_STOP_NONE)voice_step1(d,3);break;

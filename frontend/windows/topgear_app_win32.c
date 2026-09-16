@@ -10,8 +10,11 @@
 #include "topgear_frontend_settings_win32.h"
 #include "topgear_app_core.h"
 #include "topgear_input_latch.h"
+#include "topgear_player_settings_file.h"
+#include "topgear_time_trial_store.h"
 
 #include <stdint.h>
+#include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +25,7 @@
 #define SNAPSHOT_CLASS_NAME L"TopGearStaticRecompSnapshotWindow"
 #define INFO_CLASS_NAME L"TopGearStaticRecompInformationWindow"
 #define GETTING_STARTED_CLASS_NAME L"TopGearGettingStartedWindow"
-#define APP_TITLE L"Top Gear (SNES)"
+#define APP_TITLE L"Launcher"
 #define LAUNCHER_TITLE L"Launcher"
 #define WM_APP_LOAD_COMPLETE (WM_APP + 1u)
 #define WM_APP_STARTUP_CONTINUE (WM_APP + 2u)
@@ -41,6 +44,8 @@
 #define ID_PAUSE_PLAY 1003
 #define ID_KEYS 1004
 #define ID_AUDIO_SETTINGS 1005
+#define ID_PROFILE 1090
+#define ID_LEADERBOARD 1091
 #define ID_ROM_PATH 1006
 #define ID_STATUS 1007
 #define ID_EXIT 1010
@@ -159,6 +164,8 @@ static HWND g_pause_play_button;
 static HWND g_reset_button;
 static HWND g_keys_button;
 static HWND g_audio_button;
+static HWND g_profile_button;
+static HWND g_leaderboard_button;
 static HWND g_settings_button;
 static HWND g_fullscreen_checkbox;
 static HWND g_auto_run_checkbox;
@@ -187,6 +194,9 @@ static TopGearGamepadInputWin32 g_gamepad;
 static wchar_t g_executable_directory[PATH_CAPACITY];
 static wchar_t g_rom_directory[PATH_CAPACITY];
 static wchar_t g_saves_directory[PATH_CAPACITY];
+static wchar_t g_data_directory[PATH_CAPACITY];
+static wchar_t g_time_trial_data_path[PATH_CAPACITY];
+static char g_player_settings_path[PATH_CAPACITY * 4];
 static wchar_t g_sram_path[PATH_CAPACITY];
 static uint32_t g_sram_last_flush_frame;
 static wchar_t g_settings_ini_path[PATH_CAPACITY];
@@ -280,6 +290,8 @@ static void service_host_timer(void);
 static int flush_battery_sram_win32(int force, wchar_t *saved_path,
                                       size_t saved_capacity);
 static void maybe_flush_battery_sram_win32(void);
+static int flush_time_trial_data_win32(int force);
+static int load_time_trial_data_win32(TopGearApp *game);
 static void utf8_to_wide(const char *input, wchar_t *output, size_t capacity);
 static void set_control_font(HWND control);
 static void show_snapshot_window(int save_mode);
@@ -486,6 +498,98 @@ static void maybe_flush_battery_sram_win32(void) {
     frame = topgear_app_current_frame(g_game);
     if (frame - g_sram_last_flush_frame >= SRAM_FLUSH_INTERVAL_FRAMES)
         (void)flush_battery_sram_win32(0, NULL, 0u);
+}
+
+static int load_time_trial_data_win32(TopGearApp *game) {
+    FILE *file;
+    void *bytes;
+    size_t size,count;
+    long length;
+    int trailing;
+    char error[256];
+    if (!game || !g_time_trial_data_path[0]) return 1;
+    file = _wfopen(g_time_trial_data_path, L"rb");
+    if (!file) {
+        DWORD attributes=GetFileAttributesW(g_time_trial_data_path),reason=GetLastError();
+        /* Access/sharing errors are not an empty leaderboard. */
+        return attributes==INVALID_FILE_ATTRIBUTES &&
+               (reason==ERROR_FILE_NOT_FOUND||reason==ERROR_PATH_NOT_FOUND);
+    }
+    /* Read the actual file length so the host-side Time Trial store can
+       recognize TGTT v6 and migrate TGTT v5 and safely reset semantically incomplete
+       TGTT v1/v2 prototype history without assigning invented car metadata. */
+    if (fseek(file, 0, SEEK_END) != 0 || (length = ftell(file)) <= 0 ||
+        length > 1024L * 1024L || fseek(file, 0, SEEK_SET) != 0) {
+        (void)fclose(file);
+        return 0;
+    }
+    size = (size_t)length;
+    bytes = malloc(size);
+    if (!bytes) { (void)fclose(file); return 0; }
+    count = fread(bytes, 1u, size, file);
+    trailing = fgetc(file);
+    if (ferror(file) || fclose(file) != 0 || count != size || trailing != EOF) {
+        free(bytes); return 0;
+    }
+    memset(error, 0, sizeof(error));
+    if (!topgear_app_time_trial_data_import(game, bytes, size, error, sizeof(error))) {
+        free(bytes); return 0;
+    }
+    if(size>=8u&&((const unsigned char*)bytes)[4]==5u&&((const unsigned char*)bytes)[5]==0u){
+        wchar_t backup[PATH_CAPACITY+64];
+        _snwprintf_s(backup,ARRAY_COUNT(backup),_TRUNCATE,L"%s.v5-%lu-%llu.bak",g_time_trial_data_path,(unsigned long)GetCurrentProcessId(),(unsigned long long)GetTickCount64());
+        if(!CopyFileW(g_time_trial_data_path,backup,TRUE)){free(bytes);return 0;}
+    }
+    free(bytes);
+    return 1;
+}
+
+static int flush_player_settings_win32(void) {
+    if(!g_game||!g_player_settings_path[0])return 1;
+    return ensure_directory_tree(g_data_directory)&&
+        topgear_app_player_settings_save(g_game,g_player_settings_path);
+}
+
+static int flush_time_trial_data_win32(int force) {
+    void *bytes;
+    size_t size;
+    wchar_t temporary[PATH_CAPACITY];
+    FILE *file;
+    int written;
+    if (!g_game || !g_time_trial_data_path[0]) return 1;
+    if (!force && !topgear_app_time_trial_data_dirty(g_game)) return 1;
+    if (!ensure_directory_tree(g_data_directory)) return 0;
+    size = topgear_app_time_trial_data_size();
+    bytes = malloc(size);
+    if (!bytes) return 0;
+    if (!topgear_app_time_trial_data_export(g_game, bytes, size)) { free(bytes); return 0; }
+    written = _snwprintf(temporary, ARRAY_COUNT(temporary), L"%s.tmp-%lu",
+                         g_time_trial_data_path, (unsigned long)GetCurrentProcessId());
+    if (written < 0 || (size_t)written >= ARRAY_COUNT(temporary)) { free(bytes); return 0; }
+    file = _wfopen(temporary, L"wb");
+    if (!file) { free(bytes); return 0; }
+    {
+        int failed = 0;
+        if (fwrite(bytes, 1u, size, file) != size) failed = 1;
+        if (!failed && fflush(file) != 0) failed = 1;
+        /* fflush only reaches the CRT/OS boundary. _commit requests that the
+           temporary TGTT-v5 bytes reach the storage device before the atomic
+           replacement, matching the POSIX headless acceptance path's fsync. */
+        if (!failed && _commit(_fileno(file)) != 0) failed = 1;
+        if (fclose(file) != 0) failed = 1;
+        if (failed ||
+            !MoveFileExW(temporary, g_time_trial_data_path,
+                         MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+            (void)DeleteFileW(temporary);
+            free(bytes);
+            return 0;
+        }
+    }
+    free(bytes);
+    /* This is the only point that acknowledges the completed-run handoff to
+       the static core.  A failed durable save leaves the RESULTS page locked. */
+    topgear_app_time_trial_data_mark_clean(g_game);
+    return 1;
 }
 
 
@@ -722,6 +826,8 @@ static void set_toolbar_visible(int visible) {
     ShowWindow(g_reset_button, command);
     ShowWindow(g_keys_button, command);
     ShowWindow(g_audio_button, command);
+    ShowWindow(g_profile_button, command);
+    ShowWindow(g_leaderboard_button, command);
     ShowWindow(g_settings_button, command);
     ShowWindow(g_fullscreen_checkbox, command);
     ShowWindow(g_auto_run_checkbox, command);
@@ -819,6 +925,8 @@ static void update_controls(void) {
     EnableWindow(g_reset_button, !loading && g_game != NULL);
     EnableWindow(g_keys_button, TRUE);
     EnableWindow(g_audio_button, !loading);
+    EnableWindow(g_profile_button, !loading);
+    EnableWindow(g_leaderboard_button, !loading);
     EnableWindow(g_settings_button, !loading);
     EnableWindow(g_fullscreen_checkbox, !loading);
     EnableWindow(g_auto_run_checkbox, !loading);
@@ -839,6 +947,9 @@ static void update_controls(void) {
                    (!loading && g_game ? MF_ENABLED : MF_GRAYED));
     EnableMenuItem(g_menu, ID_AUDIO_SETTINGS,
                    MF_BYCOMMAND | (!loading ? MF_ENABLED : MF_GRAYED));
+    EnableMenuItem(g_menu, ID_PROFILE,
+                   MF_BYCOMMAND |
+                   (!loading ? MF_ENABLED : MF_GRAYED));
     CheckMenuItem(g_menu, ID_FULLSCREEN, MF_BYCOMMAND |
                   (SendMessageW(g_fullscreen_checkbox, BM_GETCHECK, 0, 0) ==
                    BST_CHECKED ? MF_CHECKED : MF_UNCHECKED));
@@ -1348,11 +1459,11 @@ static const wchar_t g_welcome_text[] =
     L"Welcome to Top Gear (SNES) Static Recompilation\r\n\r\n"
     L"Frontend shortcuts\r\n"
     L"Escape - Switch between the game and Launcher\r\n"
+    L"1 - Save the current snapshot slot\r\n"
+    L"2 - Load the current snapshot slot\r\n"
     L"F1 - Welcome and shortcut guide\r\n"
     L"F2 - Open the Save Snapshot window\r\n"
     L"F3 - Open the Load Snapshot window\r\n"
-    L"1 - Save the current snapshot slot\r\n"
-    L"2 - Load the current snapshot slot\r\n"
     L"F4 - Settings\r\n"
     L"F5 - Controls\r\n"
     L"F6 - Audio settings\r\n"
@@ -2282,6 +2393,12 @@ static int advance_one_frame(void) {
     topgear_audio_output_pump(&g_audio_output, g_game);
     report_audio_diagnostic_events();
     maybe_flush_battery_sram_win32();
+    if(!flush_player_settings_win32())
+        set_status(L"Player or music settings could not be saved. The last committed Data files have been preserved; check the file and folder permissions.");
+    if (!flush_time_trial_data_win32(0) &&
+        topgear_app_time_trial_data_dirty(g_game)) {
+        set_status(L"Time Trial Data save failed. The completed result is not committed; the Results page will remain locked while saving is retried.");
+    }
     if (topgear_app_audio_overflowed(g_game)) {
         topgear_app_audio_clear_overflow(g_game);
     }
@@ -2381,10 +2498,12 @@ static void layout_controls(HWND window) {
     MoveWindow(g_pause_play_button, 106, 8, 72, 30, TRUE);
     MoveWindow(g_reset_button, 184, 8, 66, 30, TRUE);
     MoveWindow(g_audio_button, 256, 8, 66, 30, TRUE);
-    MoveWindow(g_settings_button, 328, 8, 82, 30, TRUE);
-    MoveWindow(g_keys_button, 416, 8, 62, 30, TRUE);
-    MoveWindow(g_fullscreen_checkbox, 488, 10, 112, 26, TRUE);
-    MoveWindow(g_auto_run_checkbox, 610, 10,
+    MoveWindow(g_profile_button,328,8,72,30,TRUE);
+    MoveWindow(g_leaderboard_button,406,8,104,30,TRUE);
+    MoveWindow(g_settings_button, 516, 8, 82, 30, TRUE);
+    MoveWindow(g_keys_button, 604, 8, 62, 30, TRUE);
+    MoveWindow(g_fullscreen_checkbox, 676, 10, 112, 26, TRUE);
+    MoveWindow(g_auto_run_checkbox, 798, 10,
                width > 820 ? 88 : 82, 26, TRUE);
     MoveWindow(g_status, 12, 48, width - 24, 24, TRUE);
 }
@@ -2947,6 +3066,115 @@ static LRESULT CALLBACK audio_dialog_proc(HWND window, UINT message,
     return DefWindowProcW(window, message, wparam, lparam);
 }
 
+typedef struct ProfileDialog {HWND bank,name,car,automatic,manual,controls,description;unsigned selected_bank;int reset_requested;} ProfileDialog;
+static const wchar_t *const profile_controls[4]={
+ L"Accelerate: X\r\nBrake: Y\r\nShift up: R; shift down: L\r\nNitro: A\r\nSteer: D-pad Left / Right",
+ L"Accelerate: B\r\nBrake: X\r\nShift up: A; shift down: Y\r\nNitro: Start\r\nSteer: D-pad Right / Left (reversed)",
+ L"Accelerate: X\r\nBrake: B\r\nShift up: A; shift down: Y\r\nNitro: Start\r\nSteer: D-pad Left / Right",
+ L"Accelerate: B\r\nBrake: Y\r\nShift up: R; shift down: L\r\nNitro: A\r\nSteer: D-pad Left / Right"
+};
+static HWND profile_control(HWND w,const wchar_t *klass,const wchar_t *label,DWORD style,int x,int y,int width,int height,int id){
+ HWND c=CreateWindowExW(!wcscmp(klass,L"EDIT")?WS_EX_CLIENTEDGE:0,klass,label,WS_CHILD|WS_VISIBLE|style,x,y,width,height,w,(HMENU)(INT_PTR)id,g_instance,NULL);set_control_font(c);return c;
+}
+static int profile_load(ProfileDialog *d){
+ TopGearPlayerProfile p;wchar_t name[9];unsigned n;
+ if(!(g_game?topgear_app_profile_read(g_game,d->selected_bank,&p):
+             topgear_player_profile_file_read(g_player_settings_path,d->selected_bank,&p)))return 0;
+ for(n=0;n<8;n++)name[n]=(wchar_t)(unsigned char)p.name[n];
+ name[8]=0;
+ for(n=8;n>0&&name[n-1]==L' ';n--)name[n-1]=0;
+ SetWindowTextW(d->name,name);SendMessageW(d->car,CB_SETCURSEL,p.car,0);
+ SendMessageW(d->automatic,BM_SETCHECK,p.manual?BST_UNCHECKED:BST_CHECKED,0);
+ SendMessageW(d->manual,BM_SETCHECK,p.manual?BST_CHECKED:BST_UNCHECKED,0);
+ SendMessageW(d->controls,CB_SETCURSEL,p.controls,0);SetWindowTextW(d->description,profile_controls[p.controls&3]);
+ return 1;
+}
+static int profile_reset_prompt_default(HWND w){
+ return MessageBoxW(w,L"To apply these changes, the game must be reset.\r\n\r\nReset now?",L"Profile",MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON1)==IDYES;
+}
+static int (*profile_reset_prompt)(HWND)=profile_reset_prompt_default;
+static int profile_save(HWND w,ProfileDialog *d){
+ TopGearPlayerProfile p={0},verified={0};wchar_t name[9],status[224];char expected_name[8];unsigned n;
+ GetWindowTextW(d->name,name,9);
+ for(n=0;n<8&&name[n];n++){
+  if(name[n]>=L'a'&&name[n]<=L'z')name[n]-=L'a'-L'A';
+  if(!((name[n]>=L'A'&&name[n]<=L'Z')||(name[n]>=L'0'&&name[n]<=L'9')||name[n]==L' ')){
+   MessageBoxW(w,L"Use letters, numbers, or spaces.",L"Profile",MB_OK);SetFocus(d->name);return 0;
+  }
+  p.name[n]=(char)name[n];
+ }
+ p.car=(uint8_t)SendMessageW(d->car,CB_GETCURSEL,0,0);
+ p.controls=(uint8_t)SendMessageW(d->controls,CB_GETCURSEL,0,0);
+ p.manual=(uint8_t)(SendMessageW(d->manual,BM_GETCHECK,0,0)==BST_CHECKED);
+ memset(expected_name,' ',sizeof(expected_name));memcpy(expected_name,p.name,n);
+ if(!ensure_directory_tree(g_data_directory)||
+    !(g_game?topgear_app_profile_write(g_game,d->selected_bank,&p,g_player_settings_path):
+             topgear_player_profile_file_write(g_player_settings_path,d->selected_bank,&p))||
+    !topgear_player_profile_file_read(g_player_settings_path,d->selected_bank,&verified)||
+    memcmp(verified.name,expected_name,sizeof(expected_name))||verified.car!=p.car||
+    verified.controls!=p.controls||verified.manual!=p.manual){
+  MessageBoxW(w,L"The saved profile could not be verified. Check the Data folder and retry.",L"Profile",MB_OK|MB_ICONERROR);return 0;
+ }
+ d->reset_requested=g_game&&profile_reset_prompt(w);
+ _snwprintf_s(status,ARRAY_COUNT(status),_TRUNCATE,
+              d->reset_requested?L"%s profile saved with %s gearbox. Resetting the game now.":
+              g_game?L"%s profile saved with %s gearbox. It will be used after the next game reset.":
+                     L"%s profile saved with %s gearbox. It will be loaded when the ROM starts.",
+              d->selected_bank?L"Time Trial":L"Career and Rally",p.manual?L"Manual":L"Automatic");
+ set_status(status);DestroyWindow(w);return 1;
+}
+static LRESULT CALLBACK profile_proc(HWND w,UINT msg,WPARAM wp,LPARAM lp){
+ ProfileDialog *d=(ProfileDialog*)GetWindowLongPtrW(w,GWLP_USERDATA);
+ if(msg==WM_CREATE){
+  unsigned n;static const wchar_t *const cars[4]={L"Cannibal (red)",L"Sidewinder (white)",L"Razor (purple)",L"Weasel (blue)"};
+  d=(ProfileDialog*)((CREATESTRUCTW*)lp)->lpCreateParams;SetWindowLongPtrW(w,GWLP_USERDATA,(LONG_PTR)d);
+  profile_control(w,L"STATIC",L"&Mode:",0,16,16,130,22,0);
+  d->bank=profile_control(w,L"COMBOBOX",L"",WS_TABSTOP|CBS_DROPDOWNLIST,155,12,300,180,4100);
+  SendMessageW(d->bank,CB_ADDSTRING,0,(LPARAM)L"Career and Rally");SendMessageW(d->bank,CB_ADDSTRING,0,(LPARAM)L"Time Trial");SendMessageW(d->bank,CB_SETCURSEL,0,0);
+  profile_control(w,L"STATIC",L"&Name (8 characters):",0,16,55,138,22,0);
+  d->name=profile_control(w,L"EDIT",L"",WS_TABSTOP|ES_AUTOHSCROLL|ES_UPPERCASE,155,50,300,26,4101);SendMessageW(d->name,EM_SETLIMITTEXT,8,0);
+  profile_control(w,L"STATIC",L"&Car:",0,16,96,130,22,0);
+  d->car=profile_control(w,L"COMBOBOX",L"",WS_TABSTOP|CBS_DROPDOWNLIST,155,90,300,180,4102);
+  for(n=0;n<4;n++)SendMessageW(d->car,CB_ADDSTRING,0,(LPARAM)cars[n]);
+  profile_control(w,L"STATIC",L"Gearbox:",0,16,136,130,22,0);
+  d->automatic=profile_control(w,L"BUTTON",L"&Automatic",WS_TABSTOP|WS_GROUP|BS_AUTORADIOBUTTON,155,130,140,26,4103);
+  d->manual=profile_control(w,L"BUTTON",L"&Manual",BS_AUTORADIOBUTTON,310,130,140,26,4104);
+  profile_control(w,L"STATIC",L"C&ontrols:",0,16,176,130,22,0);
+  d->controls=profile_control(w,L"COMBOBOX",L"",WS_TABSTOP|WS_GROUP|CBS_DROPDOWNLIST,155,170,300,180,4105);
+  for(n=0;n<4;n++){wchar_t label[16];swprintf(label,16,L"Type %c",L'A'+n);SendMessageW(d->controls,CB_ADDSTRING,0,(LPARAM)label);}
+  profile_control(w,L"STATIC",L"SNES button assignments:",0,16,210,430,22,0);
+  /* Read-only, accessible to a screen reader, deliberately outside Tab order. */
+  d->description=profile_control(w,L"EDIT",L"",ES_READONLY|ES_MULTILINE,16,237,440,120,4106);
+  profile_control(w,L"BUTTON",L"&Save",WS_TABSTOP|WS_GROUP|BS_DEFPUSHBUTTON,198,380,96,30,IDOK);
+  profile_control(w,L"BUTTON",L"Cancel",WS_TABSTOP|BS_PUSHBUTTON,306,380,96,30,IDCANCEL);
+  profile_load(d);return 0;
+ }
+ if(msg==WM_COMMAND&&d){
+  unsigned id=LOWORD(wp);
+  if(id==4100&&HIWORD(wp)==CBN_SELCHANGE){d->selected_bank=(unsigned)SendMessageW(d->bank,CB_GETCURSEL,0,0);profile_load(d);return 0;}
+  if(id==4105&&HIWORD(wp)==CBN_SELCHANGE){SetWindowTextW(d->description,profile_controls[(unsigned)SendMessageW(d->controls,CB_GETCURSEL,0,0)&3u]);return 0;}
+  if(id==IDOK){(void)profile_save(w,d);return 0;}
+  if(id==IDCANCEL){DestroyWindow(w);return 0;}
+ }
+ if(msg==WM_CLOSE){DestroyWindow(w);return 0;}
+ return DefWindowProcW(w,msg,wp,lp);
+}
+static void show_profile(void){
+ WNDCLASSW cls={0};ProfileDialog state={0};MSG msg;HWND dialog,previous=GetFocus();int resume_after=g_game&&!g_paused;
+ if(resume_after)pause_game(L"Paused while editing the profile.");
+ cls.lpfnWndProc=profile_proc;cls.hInstance=g_instance;cls.lpszClassName=L"LauncherProfile";cls.hCursor=LoadCursorW(NULL,IDC_ARROW);cls.hbrBackground=(HBRUSH)(COLOR_BTNFACE+1);RegisterClassW(&cls);
+ dialog=CreateWindowExW(WS_EX_DLGMODALFRAME|WS_EX_CONTROLPARENT,L"LauncherProfile",L"Profile",WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU,CW_USEDEFAULT,CW_USEDEFAULT,490,465,g_window,NULL,g_instance,&state);
+ if(dialog){center_window_on_parent(dialog,g_window);EnableWindow(g_window,FALSE);ShowWindow(dialog,SW_SHOW);SetFocus(state.bank);
+  while(IsWindow(dialog)&&GetMessageW(&msg,NULL,0,0)>0){if(!IsDialogMessageW(dialog,&msg)){TranslateMessage(&msg);DispatchMessageW(&msg);}}
+  EnableWindow(g_window,TRUE);SetActiveWindow(g_window);
+  if(state.reset_requested&&g_game)reset_game();
+  else if(resume_after&&g_game)play_game();
+  else{update_controls();if(IsWindow(previous))SetFocus(previous);}
+ }else if(resume_after&&g_game)play_game();
+}
+
+#include "topgear_leaderboard_win32.inc"
+
 static void show_audio_settings(void) {
     AudioDialogState state;
     HWND dialog;
@@ -3045,6 +3273,8 @@ static HMENU create_menu_bar(void) {
                 L"&Controller Bindings...\tF5");
     AppendMenuW(settings, MF_STRING, ID_AUDIO_SETTINGS,
                 L"&Audio Settings...\tF6");
+    AppendMenuW(settings,MF_STRING,ID_PROFILE,L"Prof&ile...");
+    AppendMenuW(settings,MF_STRING,ID_LEADERBOARD,L"&Leaderboard...");
     AppendMenuW(settings, MF_SEPARATOR, 0, NULL);
     AppendMenuW(settings, MF_STRING, ID_FULLSCREEN,
                 L"Use &Full Screen When Playing");
@@ -3088,6 +3318,17 @@ static void initialize_paths_and_settings(void) {
                    sizeof(g_saves_directory) /
                        sizeof(g_saves_directory[0]),
                    g_executable_directory, L"Saves");
+    join_wide_path(g_data_directory, ARRAY_COUNT(g_data_directory),
+                   g_executable_directory, L"Data");
+    (void)ensure_directory_tree(g_data_directory);
+    join_wide_path(g_time_trial_data_path, ARRAY_COUNT(g_time_trial_data_path),
+                   g_data_directory, L"time-trial.dat");
+    {
+        wchar_t settings_path[PATH_CAPACITY];
+        join_wide_path(settings_path,ARRAY_COUNT(settings_path),g_data_directory,L"player-settings.dat");
+        (void)WideCharToMultiByte(CP_UTF8,0,settings_path,-1,g_player_settings_path,
+                                 (int)sizeof(g_player_settings_path),NULL,NULL);
+    }
     g_sram_path[0] = L'\0';
 
     (void)_snwprintf(g_settings_ini_path,
@@ -3141,7 +3382,12 @@ static void initialize_paths_and_settings(void) {
             (void)DeleteFileW(legacy_audio_ini);
         }
     }
-    (void)topgear_gamepad_win32_initialize(&g_gamepad, NULL);
+    {
+        wchar_t mapping_path[PATH_CAPACITY];
+        (void)_snwprintf(mapping_path,PATH_CAPACITY,L"%s\\gamecontrollerdb.txt",g_executable_directory);
+        mapping_path[PATH_CAPACITY-1]=0;
+        (void)topgear_gamepad_win32_initialize(&g_gamepad,mapping_path);
+    }
     /* Keep the configured default input source on first launch.  A connected
        physical or virtual controller must not silently disable the keyboard;
        the user can explicitly select Gamepad in Controls.  This follows the
@@ -3246,25 +3492,29 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
                 256, 8, 66, 30, window,
                 (HMENU)(INT_PTR)ID_AUDIO_SETTINGS, g_instance, NULL);
+            g_profile_button=CreateWindowExW(0,L"BUTTON",L"Prof&ile",
+                WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_PUSHBUTTON,328,8,72,30,window,
+                (HMENU)(INT_PTR)ID_PROFILE,g_instance,NULL);
+            g_leaderboard_button=CreateWindowExW(0,L"BUTTON",L"&Leaderboard",WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_PUSHBUTTON,406,8,104,30,window,(HMENU)(INT_PTR)ID_LEADERBOARD,g_instance,NULL);
             g_settings_button = CreateWindowExW(
                 0, L"BUTTON", L"&Settings",
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
-                328, 8, 82, 30, window,
+                516, 8, 82, 30, window,
                 (HMENU)(INT_PTR)ID_FRONTEND_SETTINGS, g_instance, NULL);
             g_keys_button = CreateWindowExW(
                 0, L"BUTTON", L"&Controls",
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
-                416, 8, 62, 30, window, (HMENU)(INT_PTR)ID_KEYS,
+                604, 8, 62, 30, window, (HMENU)(INT_PTR)ID_KEYS,
                 g_instance, NULL);
             g_fullscreen_checkbox = CreateWindowExW(
                 0, L"BUTTON", L"&Full screen",
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
-                488, 10, 112, 26, window,
+                676, 10, 112, 26, window,
                 (HMENU)(INT_PTR)ID_FULLSCREEN, g_instance, NULL);
             g_auto_run_checkbox = CreateWindowExW(
                 0, L"BUTTON", L"Auto-&Run",
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
-                610, 10, 88, 26, window,
+                798, 10, 88, 26, window,
                 (HMENU)(INT_PTR)ID_AUTO_RUN, g_instance, NULL);
             /* The ROM path remains internal. Status is exposed as native
                static text, not as an editable toolbar field. */
@@ -3283,6 +3533,8 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             set_control_font(g_reset_button);
             set_control_font(g_keys_button);
             set_control_font(g_audio_button);
+            set_control_font(g_profile_button);
+            set_control_font(g_leaderboard_button);
             set_control_font(g_settings_button);
             set_control_font(g_fullscreen_checkbox);
             set_control_font(g_auto_run_checkbox);
@@ -3299,7 +3551,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
 
         case WM_GETMINMAXINFO: {
             MINMAXINFO *info = (MINMAXINFO *)lparam;
-            info->ptMinTrackSize.x = 820;
+            info->ptMinTrackSize.x = 940;
             info->ptMinTrackSize.y = 580;
             return 0;
         }
@@ -3328,6 +3580,8 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 case ID_KEYS: show_key_bindings(); return 0;
                 case ID_FRONTEND_SETTINGS: show_frontend_settings(); return 0;
                 case ID_AUDIO_SETTINGS: show_audio_settings(); return 0;
+                case ID_PROFILE: show_profile(); return 0;
+                case ID_LEADERBOARD: show_leaderboard(); return 0;
                 case ID_FULLSCREEN:
                     if (lparam == 0) {
                         LRESULT checked = SendMessageW(g_fullscreen_checkbox,
@@ -3370,7 +3624,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                         static const wchar_t about[] =
                             L"F1 - Open the Welcome window\r\n\r\n"
                             L"Top Gear (SNES) Static Recompilation\r\n"
-                            L"Version 1.2.0\r\n\r\n"
+                            L"Version 2.0.0\r\n\r\n"
                             L"Title: Top Gear\r\n"
                             L"Region: USA NTSC\r\n"
                             L"File type: .sfc";
@@ -3479,8 +3733,12 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             }
             close_audio();
             (void)flush_battery_sram_win32(1, NULL, 0u);
+            (void)flush_time_trial_data_win32(1);
+            (void)flush_player_settings_win32();
             topgear_app_destroy(g_game);
             g_game = result->game;
+            (void)load_time_trial_data_win32(g_game);
+            (void)topgear_app_player_settings_load(g_game,g_player_settings_path);
             g_loaded_snapshot_slot = -1;
             g_sram_last_flush_frame = 0u;
             g_audio_last_fifo_dropped = 0u;

@@ -3330,6 +3330,7 @@ int tg_v22_reentry_group_03E7_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F9EB5u: /* A5 0A LDA $0A */
+        if(instance->mod_continue_screen==2u){instance->cpu.pc=tg_mod_continue_poll(instance)?0x9EBEu:0x9EAFu;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x0Au) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

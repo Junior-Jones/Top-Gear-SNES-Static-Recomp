@@ -2,12 +2,129 @@
 #include "topgear_internal.h"
 #include "topgear_v22_interrupt_dispatch.h"
 
-unsigned tg_v22_interrupt_context_count(void){return 2540u;}
+unsigned tg_v22_interrupt_context_count(void){return 2601u;}
 int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
  uint32_t key,address=0u,base24=0u; uint16_t word=0u; uint8_t byte=0u;
  if(!instance)return 0;
  (void)address;(void)base24;(void)word;(void)byte;
  key=tg_generated_context_key(instance);switch(key){
+ /* Track raster variant selected at executable-WRAM $7E:2028. */
+ case 0x0000B511u: /* ROM $00:B511: a9 00 00 */
+  word = 0x0000u;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB514u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B514u: /* ROM $00:B514: 8d 23 21 */
+  if (!tg_bus_write16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2123u), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB517u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B517u: /* ROM $00:B517: e2 20 */
+  instance->cpu.p |= 0x20u;
+  instance->cpu.pc = 0xB519u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B519u: /* ROM $00:B519: 8d 31 21 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2131u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB51Cu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B51Cu: /* ROM $00:B51C: a9 09 */
+  byte = 0x0009u;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB51Eu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B51Eu: /* ROM $00:B51E: 8d 01 21 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2101u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB521u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B521u: /* ROM $00:B521: a5 ba */
+  if (!tg_bus_read8(instance, (uint16_t)(instance->cpu.d + 0xBAu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB523u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B523u: /* ROM $00:B523: 8d 0f 21 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x210Fu), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB526u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B526u: /* ROM $00:B526: a5 bb */
+  if (!tg_bus_read8(instance, (uint16_t)(instance->cpu.d + 0xBBu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB528u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B528u: /* ROM $00:B528: 8d 0f 21 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x210Fu), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB52Bu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B52Bu: /* ROM $00:B52B: a9 1f */
+  byte = 0x001Fu;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB52Du;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B52Du: /* ROM $00:B52D: 8d 10 21 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2110u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB530u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B530u: /* ROM $00:B530: a9 03 */
+  byte = 0x0003u;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB532u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B532u: /* ROM $00:B532: 8d 10 21 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2110u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB535u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B535u: /* ROM $00:B535: c2 20 */
+  instance->cpu.p &= (uint8_t)~0x20u;
+  instance->cpu.pc = 0xB537u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B537u: /* ROM $00:B537: a9 d1 b6 */
+  word = 0xB6D1u;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB53Au;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B53Au: /* ROM $00:B53A: 85 0a */
+  if (!tg_bus_write16(instance, (uint16_t)(instance->cpu.d + 0x0Au), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB53Cu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B53Cu: /* ROM $00:B53C: a9 e0 00 */
+  word = 0x00E0u;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB53Fu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B53Fu: /* ROM $00:B53F: 8d 09 42 */
+  if (!tg_bus_write16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x4209u), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB542u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B542u: /* ROM $00:B542: 4c 78 be */
+  instance->cpu.pc = 0xBE78u;
+  instance->instruction_count++;
+  return 1;
+
  case 0x00008966u: /* E2 20 SEP #$20 */
   instance->cpu.p |=0x20u;
   if (instance->cpu.e) instance->cpu.p |= (TG_P_M | TG_P_X);
@@ -3765,6 +3882,253 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   instance->cpu.pc = (uint16_t)(word + 1u);
   instance->instruction_count++;
   return 1;
+ case 0x0000B3FEu: /* A9 00 00 LDA #$0000 */
+  word = 0x0000u;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB401u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B401u: /* 8D 23 21 STA $2123 */
+  if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2123u), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB404u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B404u: /* E2 20 SEP #$20 */
+  instance->cpu.p |=0x20u;
+  if (instance->cpu.e) instance->cpu.p |= (TG_P_M | TG_P_X);
+  if (instance->cpu.e || (instance->cpu.p & TG_P_X) != 0u) { instance->cpu.x &= 0x00FFu; instance->cpu.y &= 0x00FFu; }
+  instance->cpu.pc = 0xB406u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B406u: /* 8D 31 21 STA $2131 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2131u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB409u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B409u: /* A9 01 LDA #$01 */
+  byte = 0x01u;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB40Bu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B40Bu: /* 8D 01 21 STA $2101 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2101u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB40Eu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B40Eu: /* A5 A6 LDA $A6 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0xA6u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB410u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B410u: /* 8D 0F 21 STA $210F */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x210Fu), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB413u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B413u: /* A5 A7 LDA $A7 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0xA7u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB415u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B415u: /* 8D 0F 21 STA $210F */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x210Fu), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB418u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B418u: /* A9 8F LDA #$8F */
+  byte = 0x8Fu;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB41Au;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B41Au: /* 8D 10 21 STA $2110 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2110u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB41Du;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B41Du: /* A9 03 LDA #$03 */
+  byte = 0x03u;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB41Fu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B41Fu: /* 8D 10 21 STA $2110 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2110u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB422u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B422u: /* C2 20 REP #$20 */
+  instance->cpu.p &= (uint8_t)~0x20u;
+  if (instance->cpu.e) instance->cpu.p |= (TG_P_M | TG_P_X);
+  if (instance->cpu.e || (instance->cpu.p & TG_P_X) != 0u) { instance->cpu.x &= 0x00FFu; instance->cpu.y &= 0x00FFu; }
+  instance->cpu.pc = 0xB424u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B424u: /* A5 C0 LDA $C0 */
+  if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0xC0u) & 0xFFFFu), &word)) return 0;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB426u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B426u: /* 85 0A STA $0A */
+  if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x0Au) & 0xFFFFu), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB428u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B428u: /* A9 6C 00 LDA #$006C */
+  word = 0x006Cu;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB42Bu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B42Bu: /* 8D 09 42 STA $4209 */
+  if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x4209u), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB42Eu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B42Eu: /* 60 RTS */
+  if (!tg_pull16(instance, &word)) return 0;
+  instance->cpu.pc = (uint16_t)(word + 1u);
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B42Fu: /* A9 30 02 LDA #$0230 */
+  word = 0x0230u;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB432u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B432u: /* 8D 23 21 STA $2123 */
+  if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2123u), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB435u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B435u: /* E2 20 SEP #$20 */
+  instance->cpu.p |=0x20u;
+  if (instance->cpu.e) instance->cpu.p |= (TG_P_M | TG_P_X);
+  if (instance->cpu.e || (instance->cpu.p & TG_P_X) != 0u) { instance->cpu.x &= 0x00FFu; instance->cpu.y &= 0x00FFu; }
+  instance->cpu.pc = 0xB437u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B437u: /* A5 66 LDA $66 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0x66u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB439u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B439u: /* 8D 31 21 STA $2131 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2131u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB43Cu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B43Cu: /* A9 01 LDA #$01 */
+  byte = 0x01u;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB43Eu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B43Eu: /* 8D 01 21 STA $2101 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2101u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB441u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B441u: /* A5 B0 LDA $B0 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0xB0u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB443u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B443u: /* 8D 0F 21 STA $210F */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x210Fu), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB446u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B446u: /* A5 B1 LDA $B1 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0xB1u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB448u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B448u: /* 8D 0F 21 STA $210F */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x210Fu), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB44Bu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B44Bu: /* A5 B2 LDA $B2 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0xB2u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB44Du;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B44Du: /* 8D 10 21 STA $2110 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2110u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB450u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B450u: /* A5 B3 LDA $B3 */
+  if (!tg_bus_read8(instance, (uint32_t)((instance->cpu.d + 0xB3u) & 0xFFFFu), &byte)) return 0;
+  tg_set_acc8(instance, byte);
+  tg_set_nz8(instance, byte);
+  instance->cpu.pc = 0xB452u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B452u: /* 8D 10 21 STA $2110 */
+  if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2110u), tg_acc8(instance))) return 0;
+  instance->cpu.pc = 0xB455u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0400B455u: /* C2 20 REP #$20 */
+  instance->cpu.p &= (uint8_t)~0x20u;
+  if (instance->cpu.e) instance->cpu.p |= (TG_P_M | TG_P_X);
+  if (instance->cpu.e || (instance->cpu.p & TG_P_X) != 0u) { instance->cpu.x &= 0x00FFu; instance->cpu.y &= 0x00FFu; }
+  instance->cpu.pc = 0xB457u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B457u: /* A5 C0 LDA $C0 */
+  if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0xC0u) & 0xFFFFu), &word)) return 0;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB459u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B459u: /* 85 0A STA $0A */
+  if (!tg_bus_store16(instance, (uint32_t)((instance->cpu.d + 0x0Au) & 0xFFFFu), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB45Bu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B45Bu: /* A9 6C 00 LDA #$006C */
+  word = 0x006Cu;
+  tg_set_acc16(instance, word);
+  tg_set_nz16(instance, word);
+  instance->cpu.pc = 0xB45Eu;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B45Eu: /* 8D 09 42 STA $4209 */
+  if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x4209u), instance->cpu.a)) return 0;
+  instance->cpu.pc = 0xB461u;
+  instance->instruction_count++;
+  return 1;
+ case 0x0000B461u: /* 60 RTS */
+  if (!tg_pull16(instance, &word)) return 0;
+  instance->cpu.pc = (uint16_t)(word + 1u);
+  instance->instruction_count++;
+  return 1;
  case 0x0000B462u: /* A9 30 02 LDA #$0230 */
   word = 0x0230u;
   tg_set_acc16(instance, word);
@@ -6275,6 +6639,10 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0600B959u: /* 8D 41 21 STA $2141 */
+  /* Consume P2 events normally, but publish neutral in one-player modes.
+     Updating A also updates the native acknowledgement at $3D, avoiding a stall. */
+  if((instance->mod_time_trial_active||(!instance->wram[0x1F04u]&&!instance->wram[0x1F05u]))&&
+     tg_acc8(instance)>=0x0Du&&tg_acc8(instance)<=0x16u)tg_set_acc8(instance,0u);
   if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2141u), tg_acc8(instance))) return 0;
   instance->cpu.pc = 0xB95Cu;
   instance->instruction_count++;
@@ -6589,9 +6957,9 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000B9C5u: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xB9C6u;
@@ -6648,9 +7016,9 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000B9D9u: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xB9DAu;
@@ -8933,9 +9301,9 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000BD38u: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xBD39u;
@@ -8949,9 +9317,9 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000BD3Cu: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xBD3Du;
@@ -9394,9 +9762,9 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000BDE6u: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xBDE7u;
@@ -9410,9 +9778,9 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000BDEAu: /* 2A ROL A */
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0xBDEBu;
@@ -9773,7 +10141,7 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
   return 1;
  case 0x0000BE75u: /* 6C AC 00 JMP ($00AC) */
   if (!tg_bus_read16(instance, 0x0000ACu, &word)) return 0;
-  if (!(word==0xB462u || word==0xB49Bu || word==0xEC7Eu)) return tg_fail_frontier(instance, "Version 22 $00AC indirect JMP target is outside the ROM-proved finite set.", NULL);
+  if (!(word==0xB3FEu || word==0xB42Fu || word==0xB462u || word==0xB49Bu || word==0xEC7Eu)) return tg_fail_frontier(instance, "Version 22 $00AC indirect JMP target is outside the ROM-proved finite set.", NULL);
   instance->cpu.pc = word;
   instance->instruction_count++;
   return 1;
@@ -15688,7 +16056,7 @@ int tg_v22_interrupt_semantic_step(struct TopGearRecomp *instance){
  case 0x0000EC72u: /* FC 0A 00 JSR ($000A,X) */
   address = ((uint32_t)instance->cpu.pbr << 16) | (uint16_t)(0x000Au + instance->cpu.x);
   if (!tg_bus_read16(instance, address, &word)) return 0;
-  if (!(word==0xEC7Eu || word==0xB4C4u || word==0xB57Bu || word==0xB5B6u || word==0xB5E2u || word==0xB6D1u)) return tg_fail_frontier(instance, "Version 22 $000A raster IRQ indirect JSR target is outside its ROM-proved finite set.", NULL);
+  if (!(word==0xEC7Eu || word==0xB511u || word==0xB4C4u || word==0xB57Bu || word==0xB5B6u || word==0xB5E2u || word==0xB6D1u)) return tg_fail_frontier(instance, "Version 22 $000A raster IRQ indirect JSR target is outside its ROM-proved finite set.", NULL);
   if (!tg_push16(instance, 0xEC74u)) return 0;
   instance->cpu.pc = word;
   instance->instruction_count++;

@@ -1,0 +1,55 @@
+Top Gear SNES Static Recomp 1.2.0 - Linux qualification port
+Prepared 2026-09-04
+
+Scope
+-----
+This port preserves the static core and ports the build/test boundary to Linux.
+The production Win32 GUI/DirectSound launcher remains Windows-specific; the Linux
+qualification application is the existing platform-neutral headless frontend.
+No static-core execution semantics were changed for the port.
+
+Linux changes
+-------------
+- Top-level CMake no longer rejects non-Windows hosts.
+- Win32 launcher/DirectSound/settings/SDL gamepad targets are built only on Windows.
+- Portable audio-resampler test remains enabled on Linux.
+- Renderer-instance test uses pthreads/sched_yield on Linux and retains Win32 threads on Windows.
+- GCC-only -Wno-class-memaccess is now correctly limited to GNU C++.
+- Source/integrity manifests were regenerated for this Linux-port source tree.
+
+Qualification
+-------------
+ROM-free CTest: 12/12 PASS.
+Exact-ROM SHA-256:
+ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788
+ROM smoke: PASS.
+Deterministic audio snapshot continuation: PASS.
+Supplied current-v1.2.0 headless harness is byte-identical to source harness.
+Supplied Las Vegas route, 10-second Linux smoke: PASS.
+601 frames; 8,191,026 instructions; endpoint 0F:A253.
+Static audio: 320,361 PCM frames; 0 unknown; AOT failures 0; DSP failures 0;
+automatic fallback 0; DSP overflows 0; host dropped 0.
+PCM hash: 3D50C1143845A111.
+
+Long routes
+-----------
+The supplied 60-second route was started on the GCC -O1 Linux build and advanced
+normally to frame 2736 before the container command execution window ended. It
+did not report a fail-closed core error. The 60/120/180 CTest definitions remain
+present and should be run on a faster/native Linux host or across longer command
+windows for full baseline certification.
+
+Build example
+-------------
+cmake -S . -B build -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_FLAGS_RELEASE="-O1 -DNDEBUG" \
+  -DCMAKE_CXX_FLAGS_RELEASE="-O1 -DNDEBUG" \
+  -DTOPGEAR_TEST_ROM="/path/to/Top Gear (USA).sfc"
+cmake --build build -j4
+ctest --test-dir build --output-on-failure
+
+Headless gameplay example
+-------------------------
+./topgear-headless-audio-test --headless-v27 \
+  "/path/to/Top Gear (USA).sfc" 10 \
+  static-recomp/tests/routes/one-player-las-vegas.txt output-prefix

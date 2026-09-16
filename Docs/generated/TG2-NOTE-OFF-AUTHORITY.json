@@ -1,0 +1,23 @@
+{
+  "source": "static-recomp/static-audio/sequel/tg2/assets/tg2-driver-base.bin",
+  "sha256": "9427a6d09efb9b9f7fedddcec46ca38671268c53bc09aee8b41bad4d55937a19",
+  "range": "0ECA-0ED7",
+  "bytes": "f5 98 02 d0 06 8f 5c f2 fa 3d f3 5f 12 0d",
+  "exact_pc_opcodes": {
+    "0ECA": "F5",
+    "0ECD": "D0",
+    "0ECF": "8F",
+    "0ED2": "FA",
+    "0ED5": "5F"
+  },
+  "instructions": [
+    "MOV A,$0298+X",
+    "BNE $0ED5",
+    "MOV $F2,#$5C",
+    "MOV $F3,$3D",
+    "JMP $0D12"
+  ],
+  "closure": "BNE lands at 0ED5; both paths terminate at existing exact-PC 0D12 authority. All five opcode implementations were already emitted.",
+  "runtime_fallback": false,
+  "voice9_changed": false
+}

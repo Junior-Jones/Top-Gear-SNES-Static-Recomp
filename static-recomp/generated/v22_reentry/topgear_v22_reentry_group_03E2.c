@@ -1756,6 +1756,12 @@ int tg_v22_reentry_group_03E2_step(struct TopGearRecomp *instance){
     finishes 1st, 4th, 2nd and 4th.  The resulting 2nd-place country rank
     qualified for Brazil and displayed AMATEUR password MOONBATH. */
  case 0x040F888Au: /* B9 4E 1F LDA $1F4E,Y */
+  if (tg_mod_time_trial_skip_career_points(instance)) {
+   instance->cpu.pc = 0x8894u;
+   instance->instruction_count++;
+   return 1;
+  }
+  tg_mod_rally_note_points_award(instance);
   if (!tg_bus_read8(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0x1F4Eu + instance->cpu.y)), &byte)) return 0;
   tg_set_acc8(instance, byte);
   tg_set_nz8(instance, byte);
@@ -3109,6 +3115,16 @@ int tg_v22_reentry_group_03E2_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F8B7Bu: /* 20 B6 8B JSR $8BB6 */
+        /* Eight-race sections plus password seeds can exceed 99 points. */
+        if(!instance->mod_time_trial_active){
+            word=instance->cpu.a&255u;
+            instance->wram[0x68u]=(uint8_t)(word>=100u?'0'+word/100u:' ');
+            instance->wram[0x69u]=(uint8_t)(word>=10u?'0'+word/10u%10u:' ');
+            instance->wram[0x6Au]=(uint8_t)('0'+word%10u);
+            instance->wram[0x6Bu]=' ';instance->wram[0x6Cu]='P';
+            instance->wram[0x6Du]='T';instance->wram[0x6Eu]='S';instance->wram[0x6Fu]=' ';
+            instance->cpu.pc=0x8B95u;instance->instruction_count++;return 1;
+        }
   if (!tg_push16(instance, 0x8B7Du)) return 0;
   instance->cpu.pc = 0x8BB6u;
   instance->instruction_count++;

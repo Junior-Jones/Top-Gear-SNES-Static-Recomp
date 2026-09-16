@@ -4130,9 +4130,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E219Eu: /* 2A ROL A */
   if(!(instance->wram[0x0219Eu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:219E");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x219Fu;
@@ -4141,9 +4141,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E219Fu: /* 2A ROL A */
   if(!(instance->wram[0x0219Fu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:219F");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21A0u;
@@ -4265,9 +4265,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21B8u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021B8u]==0x26u && instance->wram[0x021B9u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21B8");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21BAu;
@@ -4276,9 +4276,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21BAu: /* 2A ROL A */
   if(!(instance->wram[0x021BAu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21BA");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21BBu;
@@ -4319,9 +4319,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21C2u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021C2u]==0x26u && instance->wram[0x021C3u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21C2");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21C4u;
@@ -4330,9 +4330,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21C4u: /* 2A ROL A */
   if(!(instance->wram[0x021C4u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21C4");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21C5u;
@@ -4373,9 +4373,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21CCu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021CCu]==0x26u && instance->wram[0x021CDu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21CC");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21CEu;
@@ -4384,9 +4384,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21CEu: /* 2A ROL A */
   if(!(instance->wram[0x021CEu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21CE");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21CFu;
@@ -4427,9 +4427,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21D6u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021D6u]==0x26u && instance->wram[0x021D7u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21D6");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21D8u;
@@ -4438,9 +4438,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21D8u: /* 2A ROL A */
   if(!(instance->wram[0x021D8u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21D8");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21D9u;
@@ -4481,9 +4481,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21E0u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021E0u]==0x26u && instance->wram[0x021E1u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21E0");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21E2u;
@@ -4492,9 +4492,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21E2u: /* 2A ROL A */
   if(!(instance->wram[0x021E2u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21E2");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21E3u;
@@ -4535,9 +4535,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21EAu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021EAu]==0x26u && instance->wram[0x021EBu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21EA");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21ECu;
@@ -4546,9 +4546,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21ECu: /* 2A ROL A */
   if(!(instance->wram[0x021ECu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21EC");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21EDu;
@@ -4589,9 +4589,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21F4u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021F4u]==0x26u && instance->wram[0x021F5u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21F4");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21F6u;
@@ -4600,9 +4600,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21F6u: /* 2A ROL A */
   if(!(instance->wram[0x021F6u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21F6");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21F7u;
@@ -4624,9 +4624,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E21FAu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x021FAu]==0x26u && instance->wram[0x021FBu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:21FA");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x21FCu;
@@ -4681,9 +4681,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2206u: /* 2A ROL A */
   if(!(instance->wram[0x02206u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2206");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2207u;
@@ -4692,9 +4692,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2207u: /* 2A ROL A */
   if(!(instance->wram[0x02207u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2207");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2208u;
@@ -4816,9 +4816,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2220u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02220u]==0x26u && instance->wram[0x02221u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2220");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2222u;
@@ -4827,9 +4827,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2222u: /* 2A ROL A */
   if(!(instance->wram[0x02222u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2222");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2223u;
@@ -4870,9 +4870,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E222Au: /* 26 80 ROL $80 */
   if(!(instance->wram[0x0222Au]==0x26u && instance->wram[0x0222Bu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:222A");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x222Cu;
@@ -4881,9 +4881,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E222Cu: /* 2A ROL A */
   if(!(instance->wram[0x0222Cu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:222C");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x222Du;
@@ -4924,9 +4924,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2234u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02234u]==0x26u && instance->wram[0x02235u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2234");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2236u;
@@ -4935,9 +4935,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2236u: /* 2A ROL A */
   if(!(instance->wram[0x02236u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2236");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2237u;
@@ -4978,9 +4978,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E223Eu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x0223Eu]==0x26u && instance->wram[0x0223Fu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:223E");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2240u;
@@ -4989,9 +4989,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2240u: /* 2A ROL A */
   if(!(instance->wram[0x02240u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2240");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2241u;
@@ -5032,9 +5032,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2248u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02248u]==0x26u && instance->wram[0x02249u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2248");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x224Au;
@@ -5043,9 +5043,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E224Au: /* 2A ROL A */
   if(!(instance->wram[0x0224Au]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:224A");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x224Bu;
@@ -5086,9 +5086,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2252u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02252u]==0x26u && instance->wram[0x02253u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2252");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2254u;
@@ -5097,9 +5097,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2254u: /* 2A ROL A */
   if(!(instance->wram[0x02254u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2254");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2255u;
@@ -5140,9 +5140,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E225Cu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x0225Cu]==0x26u && instance->wram[0x0225Du]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:225C");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x225Eu;
@@ -5151,9 +5151,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E225Eu: /* 2A ROL A */
   if(!(instance->wram[0x0225Eu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:225E");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x225Fu;
@@ -5183,9 +5183,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2264u: /* 2A ROL A */
   if(!(instance->wram[0x02264u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2264");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2265u;
@@ -5940,9 +5940,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2357u: /* 2A ROL A */
   if(!(instance->wram[0x02357u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2357");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2358u;
@@ -5951,9 +5951,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2358u: /* 2A ROL A */
   if(!(instance->wram[0x02358u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2358");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2359u;
@@ -5962,9 +5962,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2359u: /* 2A ROL A */
   if(!(instance->wram[0x02359u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2359");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x235Au;
@@ -6760,9 +6760,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2449u: /* 2A ROL A */
   if(!(instance->wram[0x02449u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2449");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x244Au;
@@ -6771,9 +6771,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E244Au: /* 2A ROL A */
   if(!(instance->wram[0x0244Au]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:244A");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x244Bu;
@@ -6895,9 +6895,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2463u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02463u]==0x26u && instance->wram[0x02464u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2463");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2465u;
@@ -6906,9 +6906,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2465u: /* 2A ROL A */
   if(!(instance->wram[0x02465u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2465");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2466u;
@@ -6949,9 +6949,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E246Du: /* 26 80 ROL $80 */
   if(!(instance->wram[0x0246Du]==0x26u && instance->wram[0x0246Eu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:246D");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x246Fu;
@@ -6960,9 +6960,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E246Fu: /* 2A ROL A */
   if(!(instance->wram[0x0246Fu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:246F");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2470u;
@@ -7003,9 +7003,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2477u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02477u]==0x26u && instance->wram[0x02478u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2477");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2479u;
@@ -7014,9 +7014,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2479u: /* 2A ROL A */
   if(!(instance->wram[0x02479u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2479");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x247Au;
@@ -7057,9 +7057,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2481u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02481u]==0x26u && instance->wram[0x02482u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2481");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2483u;
@@ -7068,9 +7068,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2483u: /* 2A ROL A */
   if(!(instance->wram[0x02483u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2483");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2484u;
@@ -7111,9 +7111,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E248Bu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x0248Bu]==0x26u && instance->wram[0x0248Cu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:248B");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x248Du;
@@ -7122,9 +7122,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E248Du: /* 2A ROL A */
   if(!(instance->wram[0x0248Du]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:248D");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x248Eu;
@@ -7165,9 +7165,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2495u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02495u]==0x26u && instance->wram[0x02496u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2495");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2497u;
@@ -7176,9 +7176,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2497u: /* 2A ROL A */
   if(!(instance->wram[0x02497u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2497");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2498u;
@@ -7219,9 +7219,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E249Fu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x0249Fu]==0x26u && instance->wram[0x024A0u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:249F");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24A1u;
@@ -7230,9 +7230,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24A1u: /* 2A ROL A */
   if(!(instance->wram[0x024A1u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24A1");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24A2u;
@@ -7254,9 +7254,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24A5u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024A5u]==0x26u && instance->wram[0x024A6u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24A5");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24A7u;
@@ -7311,9 +7311,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24B1u: /* 2A ROL A */
   if(!(instance->wram[0x024B1u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24B1");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24B2u;
@@ -7322,9 +7322,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24B2u: /* 2A ROL A */
   if(!(instance->wram[0x024B2u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24B2");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24B3u;
@@ -7446,9 +7446,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24CBu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024CBu]==0x26u && instance->wram[0x024CCu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24CB");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24CDu;
@@ -7457,9 +7457,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24CDu: /* 2A ROL A */
   if(!(instance->wram[0x024CDu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24CD");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24CEu;
@@ -7500,9 +7500,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24D5u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024D5u]==0x26u && instance->wram[0x024D6u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24D5");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24D7u;
@@ -7511,9 +7511,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24D7u: /* 2A ROL A */
   if(!(instance->wram[0x024D7u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24D7");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24D8u;
@@ -7554,9 +7554,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24DFu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024DFu]==0x26u && instance->wram[0x024E0u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24DF");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24E1u;
@@ -7565,9 +7565,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24E1u: /* 2A ROL A */
   if(!(instance->wram[0x024E1u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24E1");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24E2u;
@@ -7608,9 +7608,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24E9u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024E9u]==0x26u && instance->wram[0x024EAu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24E9");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24EBu;
@@ -7619,9 +7619,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24EBu: /* 2A ROL A */
   if(!(instance->wram[0x024EBu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24EB");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24ECu;
@@ -7662,9 +7662,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24F3u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024F3u]==0x26u && instance->wram[0x024F4u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24F3");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24F5u;
@@ -7673,9 +7673,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24F5u: /* 2A ROL A */
   if(!(instance->wram[0x024F5u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24F5");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24F6u;
@@ -7716,9 +7716,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24FDu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x024FDu]==0x26u && instance->wram[0x024FEu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24FD");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x24FFu;
@@ -7727,9 +7727,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E24FFu: /* 2A ROL A */
   if(!(instance->wram[0x024FFu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:24FF");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2500u;
@@ -7770,9 +7770,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2507u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02507u]==0x26u && instance->wram[0x02508u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2507");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2509u;
@@ -7781,9 +7781,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2509u: /* 2A ROL A */
   if(!(instance->wram[0x02509u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2509");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x250Au;
@@ -7813,9 +7813,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E250Fu: /* 2A ROL A */
   if(!(instance->wram[0x0250Fu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:250F");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2510u;
@@ -8293,9 +8293,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E25A7u: /* 2A ROL A */
   if(!(instance->wram[0x025A7u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:25A7");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x25A8u;
@@ -9052,9 +9052,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2694u: /* 2A ROL A */
   if(!(instance->wram[0x02694u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2694");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2695u;
@@ -9063,9 +9063,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2695u: /* 2A ROL A */
   if(!(instance->wram[0x02695u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2695");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2696u;
@@ -9074,9 +9074,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2696u: /* 2A ROL A */
   if(!(instance->wram[0x02696u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2696");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2697u;
@@ -10769,9 +10769,11 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
   instance->cpu.pc = 0x2880u;
   instance->instruction_count++;
   return 1;
- case 0x047E2880u: /* E9 00 SBC #$00 */
-  if(!(instance->wram[0x02880u]==0xE9u && instance->wram[0x02881u]==0x00u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2880");
-  byte = 0x00u;
+ case 0x047E2880u: /* E9 nn SBC: operand written by fixed STA $2881 at 287A. */
+  /* Native self-modification changes only this immediate data byte. The
+     opcode, context and operation remain statically compiled and guarded. */
+  if(instance->wram[0x02880u]!=0xE9u)return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2880");
+  byte = instance->wram[0x02881u];
   tg_sbc8(instance, byte);
   instance->cpu.pc = 0x2882u;
   instance->instruction_count++;
@@ -12055,9 +12057,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
   instance->cpu.pc = 0x29E7u;
   instance->instruction_count++;
   return 1;
- case 0x047E29E7u: /* E9 00 SBC #$00 */
-  if(!(instance->wram[0x029E7u]==0xE9u && instance->wram[0x029E8u]==0x00u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:29E7");
-  byte = 0x00u;
+ case 0x047E29E7u: /* SBC immediate data patched by native STA at 29E1. */
+  if(instance->wram[0x029E7u]!=0xE9u)return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:29E7");
+  byte = instance->wram[0x029E8u];
   tg_sbc8(instance, byte);
   instance->cpu.pc = 0x29E9u;
   instance->instruction_count++;
@@ -14020,9 +14022,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2BF5u: /* 2A ROL A */
   if(!(instance->wram[0x02BF5u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2BF5");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2BF6u;
@@ -14031,9 +14033,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2BF6u: /* 2A ROL A */
   if(!(instance->wram[0x02BF6u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2BF6");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2BF7u;
@@ -14155,9 +14157,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C0Fu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C0Fu]==0x26u && instance->wram[0x02C10u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C0F");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C11u;
@@ -14166,9 +14168,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C11u: /* 2A ROL A */
   if(!(instance->wram[0x02C11u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C11");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C12u;
@@ -14209,9 +14211,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C19u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C19u]==0x26u && instance->wram[0x02C1Au]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C19");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C1Bu;
@@ -14220,9 +14222,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C1Bu: /* 2A ROL A */
   if(!(instance->wram[0x02C1Bu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C1B");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C1Cu;
@@ -14263,9 +14265,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C23u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C23u]==0x26u && instance->wram[0x02C24u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C23");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C25u;
@@ -14274,9 +14276,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C25u: /* 2A ROL A */
   if(!(instance->wram[0x02C25u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C25");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C26u;
@@ -14317,9 +14319,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C2Du: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C2Du]==0x26u && instance->wram[0x02C2Eu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C2D");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C2Fu;
@@ -14328,9 +14330,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C2Fu: /* 2A ROL A */
   if(!(instance->wram[0x02C2Fu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C2F");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C30u;
@@ -14371,9 +14373,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C37u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C37u]==0x26u && instance->wram[0x02C38u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C37");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C39u;
@@ -14382,9 +14384,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C39u: /* 2A ROL A */
   if(!(instance->wram[0x02C39u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C39");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C3Au;
@@ -14425,9 +14427,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C41u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C41u]==0x26u && instance->wram[0x02C42u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C41");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C43u;
@@ -14436,9 +14438,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C43u: /* 2A ROL A */
   if(!(instance->wram[0x02C43u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C43");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C44u;
@@ -14479,9 +14481,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C4Bu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C4Bu]==0x26u && instance->wram[0x02C4Cu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C4B");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C4Du;
@@ -14490,9 +14492,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C4Du: /* 2A ROL A */
   if(!(instance->wram[0x02C4Du]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C4D");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C4Eu;
@@ -14514,9 +14516,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C51u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C51u]==0x26u && instance->wram[0x02C52u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C51");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C53u;
@@ -14571,9 +14573,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C5Du: /* 2A ROL A */
   if(!(instance->wram[0x02C5Du]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C5D");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C5Eu;
@@ -14582,9 +14584,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C5Eu: /* 2A ROL A */
   if(!(instance->wram[0x02C5Eu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C5E");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C5Fu;
@@ -14706,9 +14708,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C77u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C77u]==0x26u && instance->wram[0x02C78u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C77");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C79u;
@@ -14717,9 +14719,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C79u: /* 2A ROL A */
   if(!(instance->wram[0x02C79u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C79");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C7Au;
@@ -14760,9 +14762,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C81u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C81u]==0x26u && instance->wram[0x02C82u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C81");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C83u;
@@ -14771,9 +14773,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C83u: /* 2A ROL A */
   if(!(instance->wram[0x02C83u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C83");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C84u;
@@ -14814,9 +14816,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C8Bu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C8Bu]==0x26u && instance->wram[0x02C8Cu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C8B");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C8Du;
@@ -14825,9 +14827,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C8Du: /* 2A ROL A */
   if(!(instance->wram[0x02C8Du]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C8D");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C8Eu;
@@ -14868,9 +14870,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C95u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C95u]==0x26u && instance->wram[0x02C96u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C95");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C97u;
@@ -14879,9 +14881,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C97u: /* 2A ROL A */
   if(!(instance->wram[0x02C97u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C97");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2C98u;
@@ -14922,9 +14924,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2C9Fu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02C9Fu]==0x26u && instance->wram[0x02CA0u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2C9F");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CA1u;
@@ -14933,9 +14935,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2CA1u: /* 2A ROL A */
   if(!(instance->wram[0x02CA1u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2CA1");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CA2u;
@@ -14976,9 +14978,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2CA9u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02CA9u]==0x26u && instance->wram[0x02CAAu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2CA9");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CABu;
@@ -14987,9 +14989,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2CABu: /* 2A ROL A */
   if(!(instance->wram[0x02CABu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2CAB");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CACu;
@@ -15030,9 +15032,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2CB3u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02CB3u]==0x26u && instance->wram[0x02CB4u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2CB3");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CB5u;
@@ -15041,9 +15043,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2CB5u: /* 2A ROL A */
   if(!(instance->wram[0x02CB5u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2CB5");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CB6u;
@@ -15073,9 +15075,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2CBBu: /* 2A ROL A */
   if(!(instance->wram[0x02CBBu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2CBB");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2CBCu;
@@ -15830,9 +15832,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2DAEu: /* 2A ROL A */
   if(!(instance->wram[0x02DAEu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2DAE");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2DAFu;
@@ -15841,9 +15843,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2DAFu: /* 2A ROL A */
   if(!(instance->wram[0x02DAFu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2DAF");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2DB0u;
@@ -15852,9 +15854,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2DB0u: /* 2A ROL A */
   if(!(instance->wram[0x02DB0u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2DB0");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2DB1u;
@@ -16650,9 +16652,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EA0u: /* 2A ROL A */
   if(!(instance->wram[0x02EA0u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EA0");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EA1u;
@@ -16661,9 +16663,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EA1u: /* 2A ROL A */
   if(!(instance->wram[0x02EA1u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EA1");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EA2u;
@@ -16785,9 +16787,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EBAu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02EBAu]==0x26u && instance->wram[0x02EBBu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EBA");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EBCu;
@@ -16796,9 +16798,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EBCu: /* 2A ROL A */
   if(!(instance->wram[0x02EBCu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EBC");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EBDu;
@@ -16839,9 +16841,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EC4u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02EC4u]==0x26u && instance->wram[0x02EC5u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EC4");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EC6u;
@@ -16850,9 +16852,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EC6u: /* 2A ROL A */
   if(!(instance->wram[0x02EC6u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EC6");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EC7u;
@@ -16893,9 +16895,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2ECEu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02ECEu]==0x26u && instance->wram[0x02ECFu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2ECE");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2ED0u;
@@ -16904,9 +16906,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2ED0u: /* 2A ROL A */
   if(!(instance->wram[0x02ED0u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2ED0");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2ED1u;
@@ -16947,9 +16949,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2ED8u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02ED8u]==0x26u && instance->wram[0x02ED9u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2ED8");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EDAu;
@@ -16958,9 +16960,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EDAu: /* 2A ROL A */
   if(!(instance->wram[0x02EDAu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EDA");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EDBu;
@@ -17001,9 +17003,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EE2u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02EE2u]==0x26u && instance->wram[0x02EE3u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EE2");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EE4u;
@@ -17012,9 +17014,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EE4u: /* 2A ROL A */
   if(!(instance->wram[0x02EE4u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EE4");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EE5u;
@@ -17055,9 +17057,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EECu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02EECu]==0x26u && instance->wram[0x02EEDu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EEC");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EEEu;
@@ -17066,9 +17068,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EEEu: /* 2A ROL A */
   if(!(instance->wram[0x02EEEu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EEE");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EEFu;
@@ -17109,9 +17111,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EF6u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02EF6u]==0x26u && instance->wram[0x02EF7u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EF6");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EF8u;
@@ -17120,9 +17122,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EF8u: /* 2A ROL A */
   if(!(instance->wram[0x02EF8u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EF8");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EF9u;
@@ -17144,9 +17146,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2EFCu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02EFCu]==0x26u && instance->wram[0x02EFDu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2EFC");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2EFEu;
@@ -17201,9 +17203,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F08u: /* 2A ROL A */
   if(!(instance->wram[0x02F08u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F08");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F09u;
@@ -17212,9 +17214,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F09u: /* 2A ROL A */
   if(!(instance->wram[0x02F09u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F09");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F0Au;
@@ -17336,9 +17338,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F22u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F22u]==0x26u && instance->wram[0x02F23u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F22");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F24u;
@@ -17347,9 +17349,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F24u: /* 2A ROL A */
   if(!(instance->wram[0x02F24u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F24");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F25u;
@@ -17390,9 +17392,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F2Cu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F2Cu]==0x26u && instance->wram[0x02F2Du]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F2C");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F2Eu;
@@ -17401,9 +17403,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F2Eu: /* 2A ROL A */
   if(!(instance->wram[0x02F2Eu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F2E");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F2Fu;
@@ -17444,9 +17446,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F36u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F36u]==0x26u && instance->wram[0x02F37u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F36");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F38u;
@@ -17455,9 +17457,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F38u: /* 2A ROL A */
   if(!(instance->wram[0x02F38u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F38");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F39u;
@@ -17498,9 +17500,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F40u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F40u]==0x26u && instance->wram[0x02F41u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F40");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F42u;
@@ -17509,9 +17511,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F42u: /* 2A ROL A */
   if(!(instance->wram[0x02F42u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F42");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F43u;
@@ -17552,9 +17554,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F4Au: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F4Au]==0x26u && instance->wram[0x02F4Bu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F4A");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F4Cu;
@@ -17563,9 +17565,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F4Cu: /* 2A ROL A */
   if(!(instance->wram[0x02F4Cu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F4C");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F4Du;
@@ -17606,9 +17608,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F54u: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F54u]==0x26u && instance->wram[0x02F55u]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F54");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F56u;
@@ -17617,9 +17619,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F56u: /* 2A ROL A */
   if(!(instance->wram[0x02F56u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F56");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F57u;
@@ -17660,9 +17662,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F5Eu: /* 26 80 ROL $80 */
   if(!(instance->wram[0x02F5Eu]==0x26u && instance->wram[0x02F5Fu]==0x80u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F5E");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), &word)) return 0;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   if (!tg_bus_write16(instance, (uint32_t)((instance->cpu.d + 0x80u) & 0xFFFFu), word)) return 0;
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F60u;
@@ -17671,9 +17673,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F60u: /* 2A ROL A */
   if(!(instance->wram[0x02F60u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F60");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F61u;
@@ -17703,9 +17705,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2F66u: /* 2A ROL A */
   if(!(instance->wram[0x02F66u]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2F66");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2F67u;
@@ -18183,9 +18185,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E2FFEu: /* 2A ROL A */
   if(!(instance->wram[0x02FFEu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2FFE");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x2FFFu;
@@ -18942,9 +18944,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E30EBu: /* 2A ROL A */
   if(!(instance->wram[0x030EBu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:30EB");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x30ECu;
@@ -18953,9 +18955,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E30ECu: /* 2A ROL A */
   if(!(instance->wram[0x030ECu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:30EC");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x30EDu;
@@ -18964,9 +18966,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
  case 0x007E30EDu: /* 2A ROL A */
   if(!(instance->wram[0x030EDu]==0x2Au))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:30ED");
   word = instance->cpu.a;
-  word = (uint16_t)tg_flag(instance, TG_P_C);
+  byte = (uint8_t)tg_flag(instance, TG_P_C);
   tg_set_flag(instance, TG_P_C, (word & 0x8000u) != 0u);
-  word = (uint16_t)((word << 1) | word);
+  word = (uint16_t)((word << 1) | byte);
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
   instance->cpu.pc = 0x30EEu;
@@ -20632,9 +20634,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
   instance->cpu.pc = 0x32D1u;
   instance->instruction_count++;
   return 1;
- case 0x047E32D1u: /* E9 00 SBC #$00 */
-  if(!(instance->wram[0x032D1u]==0xE9u && instance->wram[0x032D2u]==0x00u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:32D1");
-  byte = 0x00u;
+ case 0x047E32D1u: /* SBC immediate data patched by native STA at 32CB. */
+  if(instance->wram[0x032D1u]!=0xE9u)return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:32D1");
+  byte = instance->wram[0x032D2u];
   tg_sbc8(instance, byte);
   instance->cpu.pc = 0x32D3u;
   instance->instruction_count++;
@@ -21864,9 +21866,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
   instance->cpu.pc = 0x342Cu;
   instance->instruction_count++;
   return 1;
- case 0x047E342Cu: /* E9 00 SBC #$00 */
-  if(!(instance->wram[0x0342Cu]==0xE9u && instance->wram[0x0342Du]==0x00u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:342C");
-  byte = 0x00u;
+ case 0x047E342Cu: /* SBC immediate data patched by native STA at 3426. */
+  if(instance->wram[0x0342Cu]!=0xE9u)return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:342C");
+  byte = instance->wram[0x0342Du];
   tg_sbc8(instance, byte);
   instance->cpu.pc = 0x342Eu;
   instance->instruction_count++;

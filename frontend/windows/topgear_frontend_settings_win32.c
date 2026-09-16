@@ -429,12 +429,12 @@ static LRESULT CALLBACK controls_proc(HWND w,UINT msg,WPARAM wp,LPARAM lp){
         c=(DialogContext*)GetWindowLongPtrW(w,GWLP_USERDATA);SetWindowTextW(w,L"Top Gear Controller Bindings");
         group=CreateWindowW(L"BUTTON",L"Active input",WS_CHILD|WS_VISIBLE|BS_GROUPBOX,
                             14,12,712,84,w,NULL,NULL,NULL);set_font(group);
-        label=CreateWindowW(L"STATIC",L"Use for gameplay:",WS_CHILD|WS_VISIBLE,
+        label=CreateWindowW(L"STATIC",L"&Input device:",WS_CHILD|WS_VISIBLE,
                             30,39,125,22,w,NULL,NULL,NULL);set_font(label);
         c->source=CreateWindowExW(0,L"COMBOBOX",L"",WS_CHILD|WS_VISIBLE|WS_TABSTOP|CBS_DROPDOWNLIST,
                                   158,35,190,160,w,(HMENU)ID_INPUT_SOURCE,NULL,NULL);set_font(c->source);
         SendMessageW(c->source,CB_ADDSTRING,0,(LPARAM)L"Keyboard");
-        SendMessageW(c->source,CB_ADDSTRING,0,(LPARAM)L"Gamepad");
+        SendMessageW(c->source,CB_ADDSTRING,0,(LPARAM)L"Gamepad (USB / Bluetooth)");
         SendMessageW(c->source,CB_SETCURSEL,c->value.input_source,0);
         c->controller_status=CreateWindowW(L"STATIC",L"",WS_CHILD|WS_VISIBLE,
                                            30,65,675,20,w,(HMENU)ID_CONTROLLER_STATUS,NULL,NULL);set_font(c->controller_status);

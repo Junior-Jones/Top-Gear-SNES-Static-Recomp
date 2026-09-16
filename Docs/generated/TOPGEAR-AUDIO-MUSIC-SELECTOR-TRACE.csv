@@ -1,0 +1,8 @@
+selector,frontend_name,sequence_descriptor_aram,channel_pointer_block_aram,evidence_kind,wram_1f06,observed_scpu_to_smp_port0,scpu_selection_code,evidence
+01,Title,13AB,13E3,cold-boot-code,,,00:8075-00:8077,"Power-on loads $01 then STA $2140 at $00:8077"
+02,Frankfurt,13B3,13F3,four-race-snapshot,0003,02,00:817C-00:81A0,"Race-4 San Francisco snapshot has WRAM $1F06=$0003 and live S-CPU->S-SMP port0=$02; same modulo-4 slot is Frankfurt"
+03,Bordeaux,13BB,1403,four-race-snapshot,0002,03,00:817C-00:81A0,"Race-3 New York snapshot has WRAM $1F06=$0002 and live S-CPU->S-SMP port0=$03; same modulo-4 slot is Bordeaux"
+04,Hiroshima,13C3,1413,four-race-snapshot,0001,04,00:817C-00:81A0,"Race-2 Los Angeles snapshot has WRAM $1F06=$0001 and live S-CPU->S-SMP port0=$04; same modulo-4 slot is Hiroshima"
+05,Las Vegas,13CB,1423,four-race-snapshot,0000,05,00:817C-00:81A0,"Race-1 Las Vegas snapshot has WRAM $1F06=$0000 and live S-CPU->S-SMP port0=$05"
+06,Qualified,13D3,1433,qualification-code,,,0F:858A->0F:8133,"Qualification path loads $05 before common routine; routine increments to music selector $06"
+07,Ending Theme,13DB,1443,completion-code,,,0F:8560->0F:8133,"Completion path beside 'CONGRATULATIONS / ON COMPLETING TOP GEAR' loads $06; common routine increments to selector $07"

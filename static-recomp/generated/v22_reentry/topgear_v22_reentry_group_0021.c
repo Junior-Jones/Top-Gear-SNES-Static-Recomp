@@ -597,7 +597,14 @@ int tg_v22_reentry_group_0021_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x00008783u: /* B0 0B BCS $00:8790 */
-  instance->cpu.pc = tg_flag(instance, TG_P_C) ? 0x8790u : 0x8785u;
+  /* Native Career ends after ten competitors finish. A fuelled Time Trial
+     player must be allowed to finish the required laps regardless of traffic. */
+  if(instance->mod_time_trial_active && instance->mod_time_trial_required_laps &&
+     instance->mod_time_trial_lap_count < instance->mod_time_trial_required_laps &&
+     (instance->wram[0x1F01u]&0x80u) &&
+     (instance->wram[0x1E62u] || instance->wram[0x1E63u]))
+      instance->cpu.pc = 0x878Au;
+  else instance->cpu.pc = tg_flag(instance, TG_P_C) ? 0x8790u : 0x8785u;
   instance->instruction_count++;
   return 1;
  case 0x00008785u: /* AD B4 1E LDA $1EB4 */

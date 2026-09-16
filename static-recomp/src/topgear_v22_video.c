@@ -159,6 +159,12 @@ static TgPixel screenpx(const TopGearRecomp *i,unsigned mask,unsigned wen,unsign
 int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
     unsigned x;uint8_t opal[256],opri[256];
     if(!i||y>=224u)return 0;
+    /* Settings owns its text after native VBlank DMA, before visible pixels.
+       In-place values must not expose the stock Options rows while held. */
+    if(y==0u&&i->mod_menu_remodel_active&&i->mod_menu_remodel_page==12u){
+        i->mod_menu_remodel_dirty=1u;
+        tg_mod_menu_remodel_draw_if_dirty(i);
+    }
     objline(i,y,opal,opri);
     for(x=0;x<256u;x++){
         TgPixel mp,sp;uint16_t color,add=i->ppu_fixed_color;uint8_t inid=regv(i,0x2100u),main=regv(i,0x212cu)&0x1fu,sub=regv(i,0x212du)&0x1fu,mw=regv(i,0x212eu)&0x1fu,swm=regv(i,0x212fu)&0x1fu,cgw=regv(i,0x2130u),cga=regv(i,0x2131u);unsigned br=inid&15u;int blank=(inid&0x80u)!=0,cw,clip,prevent,math;
@@ -174,12 +180,14 @@ int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
         }
         i->mode1_frame[(y*256u+x)*2u]=(uint8_t)color;i->mode1_frame[(y*256u+x)*2u+1u]=(uint8_t)(color>>8);
     }
+    tg_mod_time_trial_overlay_scanline(i,y);
     return 1;
 }
 
 int topgear_recomp_v22_render_current_frame(TopGearRecomp *i,TopGearV22VideoInfo *info){
     unsigned x,y;uint8_t opal[256],opri[256];uint32_t non=0;uint8_t seen[32768/8];
     if(!i||!info)return 0;
+    if(i->mod_menu_remodel_active&&i->mod_menu_remodel_page==12u){i->mod_menu_remodel_dirty=1u;tg_mod_menu_remodel_draw_if_dirty(i);}
     memset(info,0,sizeof(*info));memset(seen,0,sizeof(seen));
     for(y=0;y<224;y++){
         unsigned mode=regv(i,0x2105u)&7u;

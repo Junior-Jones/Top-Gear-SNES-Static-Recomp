@@ -233,6 +233,10 @@ int tg_v22_reentry_group_0029_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000A569u: /* A9 13 00 LDA #$0013 */
+        tg_mod_career_race_reset(instance);
+        tg_mod_attempt_race(instance);
+        /* Solo Time Trial: pole grid, no rival collision or display entries. */
+        if(instance->mod_time_trial_active){tg_bus_store16(instance,0x1F00u,19u);tg_bus_store16(instance,0x1F02u,0u);}
   word = 0x0013u;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

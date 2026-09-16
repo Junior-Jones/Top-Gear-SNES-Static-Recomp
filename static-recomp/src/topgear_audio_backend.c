@@ -1,5 +1,6 @@
 #include "topgear_internal.h"
 #include "sc_static_apu.h"
+#include "../static-audio/sequel/music_runtime.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -21,6 +22,16 @@
 static void audio_pcm_sink(void *context,int16_t left,int16_t right){
     TopGearRecomp *instance=(TopGearRecomp*)context;
     if(!instance)return;
+    if(instance->mod_music_engine||instance->mod_music_player_state==1u){
+        int16_t ml=0,mr=0;int32_t l,r;
+        int ok;
+        if(instance->mod_music_player_state==1u){unsigned t=instance->mod_music_player_track;ok=t<7u?tg0_music_sample(&ml,&mr):t<13u?tg2_music_sample(&ml,&mr):tg3_music_sample(&ml,&mr);}
+        else if(instance->mod_music_player_state==2u)ok=1;
+        else ok=instance->mod_music_engine==1u?tg2_music_sample(&ml,&mr):tg3_music_sample(&ml,&mr);
+        if(!ok){instance->static_audio_failed=1u;(void)tg_fail_frontier(instance,"Imported music sample failed.","STATIC-MUSIC");return;}
+        l=(int32_t)left+ml;r=(int32_t)right+mr;
+        left=(int16_t)(l>32767?32767:l< -32768?-32768:l);right=(int16_t)(r>32767?32767:r< -32768?-32768:r);
+    }
     tg_audio_push_frame(instance,left,right);
     instance->pcm_frames_produced++;
 }
@@ -43,6 +54,7 @@ int tg_audio_backend_reset(TopGearRecomp *instance,char *error,size_t cap){
         sc_static_apu_reset();
         if(error&&cap)error[0]='\0';
     }
+    if(!tg0_music_prepare()||!tg2_music_prepare()||!tg3_music_prepare())return copy_static_error(instance,"initialization","imported ROM-derived music preparation failed");
     sc_static_apu_set_sink(audio_pcm_sink,instance);
     sc_static_apu_set_trace_callbacks(NULL);
     instance->static_audio_failed=0u;
@@ -52,6 +64,7 @@ int tg_audio_backend_reset(TopGearRecomp *instance,char *error,size_t cap){
 void tg_audio_backend_release(TopGearRecomp *instance){
     if(!instance)return;
     if(instance->static_audio_acquired){
+        tg0_music_release();tg2_music_release();tg3_music_release();
         sc_static_apu_release();
         instance->static_audio_acquired=0u;
     }
@@ -66,6 +79,16 @@ int tg_audio_backend_sync(TopGearRecomp *instance,uint64_t master_clock){
        The former dual-backend code updated it before dispatch, leaving a false
        clock in snapshots/status whenever a fail-closed sync was rejected. */
     instance->audio_last_apu_master_clock=master_clock;
+    if(!tg_mod_insert_audio_process(instance,master_clock))return 0;
+    /* Music stays at level five outside the title. Native race effects bypass
+       music attenuation, just as the independent ninth-channel cues do. */
+    {
+        unsigned gain=instance->mod_audio_mute?0u:
+            ((instance->mod_audio_menu_context||instance->mod_menu_remodel_active||instance->mod_music_race)?50u:100u);
+        sc_static_apu_native_effects(instance->mod_music_race&&!instance->mod_audio_menu_context&&!instance->mod_menu_remodel_active?0xF0u:0u);
+        sc_static_apu_music_volume((instance->mod_music_engine||instance->mod_music_player_state)?0u:gain);
+        tg0_music_gain(gain);tg2_music_gain(gain);tg3_music_gain(gain);
+    }
     return 1;
 }
 
@@ -92,6 +115,20 @@ int tg_audio_backend_cpu_read_port(TopGearRecomp *instance,uint64_t master_clock
 int tg_audio_backend_read_aram(const TopGearRecomp *instance,uint32_t offset,void *output,size_t bytes){
     if(!instance||!output||offset>TOPGEAR_RECOMP_ARAM_SIZE||bytes>TOPGEAR_RECOMP_ARAM_SIZE-offset||!instance->static_audio_acquired)return 0;
     return sc_static_apu_read_aram(offset,output,bytes);
+}
+
+int tg_audio_backend_mod_write_aram(TopGearRecomp *instance,uint32_t offset,const void *input,size_t bytes){
+    if(!instance||!instance->static_audio_acquired)return 0;
+    if(!sc_static_apu_mod_write_aram(offset,input,bytes))
+        return copy_static_error(instance,"accessibility-mod ARAM write","requested range is invalid or overlaps statically compiled S-SMP code");
+    return 1;
+}
+
+int tg_audio_backend_mod_write_dsp_register(TopGearRecomp *instance,uint8_t address,uint8_t value){
+    if(!instance||!instance->static_audio_acquired)return 0;
+    if(!sc_static_apu_mod_write_dsp_register(address,value))
+        return copy_static_error(instance,"accessibility-mod DSP write","requested S-DSP register write failed");
+    return 1;
 }
 
 int tg_audio_backend_read_dsp_register(const TopGearRecomp *instance,uint8_t address,uint8_t *value){

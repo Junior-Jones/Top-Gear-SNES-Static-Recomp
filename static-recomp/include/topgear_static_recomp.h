@@ -214,6 +214,15 @@ enum TopGearAudioBackend {
     TOPGEAR_AUDIO_BACKEND_STATIC = 0
 };
 
+typedef struct TopGearRallyDebugStatus {
+    uint8_t active;
+    uint8_t schedule_valid;
+    uint8_t race_index;
+    uint8_t schedule[8];
+    uint32_t rng_state;
+    uint64_t generation_count;
+} TopGearRallyDebugStatus;
+
 typedef struct TopGearStaticAudioStatus {
     uint64_t synchronized_master_clock;
     uint64_t smp_cycles;
@@ -1807,6 +1816,41 @@ typedef struct TopGearV06ProtocolInfo {
 
 enum TopGearRunResult { TOPGEAR_RUN_ERROR=-1, TOPGEAR_RUN_FRONTIER=0, TOPGEAR_RUN_COMPLETE=1 };
 
+#define TOPGEAR_TIME_TRIAL_TRACK_COUNT 32u
+#define TOPGEAR_TIME_TRIAL_CAR_COUNT 4u
+#define TOPGEAR_TIME_TRIAL_RECORDS_PER_CAR 5u
+#define TOPGEAR_TIME_TRIAL_MAX_LAPS 8u
+#define TOPGEAR_TIME_TRIAL_RUN_VALID UINT8_C(0x01)
+#define TOPGEAR_TIME_TRIAL_RUN_COMPLETE UINT8_C(0x02)
+
+/* One completed Time Trial handoff. Historical collections deliberately live
+   outside TopGearRecomp in the host-side Data store. This fixed 168-byte
+   structure is also the TGTT-v5 historical record payload. */
+typedef struct TopGearTimeTrialRun {
+    char name[8];
+    uint8_t car_id;
+    uint8_t gearbox; /* 0=AUTO, 1=MANUAL */
+    uint8_t course;
+    uint8_t required_laps;
+    uint8_t completed_laps;
+    uint8_t valid_flags;
+    uint8_t reserved0[2];
+    uint32_t total_time_ticks;
+    uint32_t best_sector1_ticks;
+    uint32_t best_sector2_ticks;
+    uint32_t best_sector3_ticks;
+    uint32_t lap_time_ticks[TOPGEAR_TIME_TRIAL_MAX_LAPS];
+    uint32_t lap_sector1_ticks[TOPGEAR_TIME_TRIAL_MAX_LAPS];
+    uint32_t lap_sector2_ticks[TOPGEAR_TIME_TRIAL_MAX_LAPS];
+    uint32_t lap_sector3_ticks[TOPGEAR_TIME_TRIAL_MAX_LAPS];
+    uint32_t sequence;
+    uint32_t reserved1;
+} TopGearTimeTrialRun;
+
+typedef int (*TopGearTimeTrialLeaderboardProvider)(void *user, unsigned track,
+                                                    int car_filter, unsigned rank,
+                                                    TopGearTimeTrialRun *out);
+
 const char *topgear_recomp_version_string(void);
 const char *topgear_recomp_video_standard(void);
 #ifdef TOPGEAR_ENABLE_RESEARCH_API
@@ -1818,9 +1862,20 @@ int topgear_recomp_verify_rom(const uint8_t*,size_t,TopGearRomInfo*,char*,size_t
 int topgear_recomp_create(TopGearRecomp**,const uint8_t*,size_t,char*,size_t);
 void topgear_recomp_destroy(TopGearRecomp*);
 int topgear_recomp_reset(TopGearRecomp*,char*,size_t);
+/* Versioned player setup payload. File I/O belongs to the host Data layer.
+   Export returns zero until a stable menu setup is available; import is for
+   a newly created/reset core and is applied after the ROM's initialization. */
+#define TOPGEAR_MUSIC_STATE_SIZE 96u
+int topgear_recomp_music_state_export(TopGearRecomp*,void*,size_t);
+int topgear_recomp_music_state_import(TopGearRecomp*,const void*,size_t);
+void topgear_recomp_music_state_seed(TopGearRecomp*,uint32_t);
+#define TOPGEAR_PLAYER_SETTINGS_SIZE 96u
+int topgear_recomp_player_settings_export(TopGearRecomp*,void*,size_t);
+int topgear_recomp_player_settings_import(TopGearRecomp*,const void*,size_t);
 int topgear_recomp_set_audio_backend(TopGearRecomp*,enum TopGearAudioBackend,char*,size_t);
 enum TopGearAudioBackend topgear_recomp_audio_backend(const TopGearRecomp*);
 const char *topgear_recomp_audio_backend_name(const TopGearRecomp*);
+int topgear_recomp_rally_debug_status(const TopGearRecomp*,TopGearRallyDebugStatus*);
 int topgear_recomp_static_audio_status(const TopGearRecomp*,TopGearStaticAudioStatus*);
 int topgear_recomp_set_hook(TopGearRecomp*,uint32_t,TopGearHookCallback,void*);
 void topgear_recomp_clear_hook(TopGearRecomp*);
@@ -1863,6 +1918,13 @@ int topgear_recomp_sram_copy(const TopGearRecomp*,void*,size_t);
 int topgear_recomp_sram_load(TopGearRecomp*,const void*,size_t,char*,size_t);
 int topgear_recomp_sram_dirty(const TopGearRecomp*);
 void topgear_recomp_sram_mark_clean(TopGearRecomp*);
+void topgear_recomp_time_trial_set_leaderboard_provider(TopGearRecomp*,
+    TopGearTimeTrialLeaderboardProvider, void*);
+int topgear_recomp_time_trial_completed_run_pending(const TopGearRecomp*);
+int topgear_recomp_time_trial_completed_run(const TopGearRecomp*,TopGearTimeTrialRun*);
+int topgear_recomp_time_trial_commit_completed_run(TopGearRecomp*);
+int topgear_recomp_time_trial_query_leaderboard(const TopGearRecomp*,
+    unsigned track,int car_filter,unsigned rank,TopGearTimeTrialRun*);
 int topgear_recomp_audio_overflowed(const TopGearRecomp*);
 void topgear_recomp_audio_clear_overflow(TopGearRecomp*);
 
@@ -1921,11 +1983,27 @@ int topgear_recomp_music_command(TopGearRecomp*,uint8_t selector,
                                   char*,size_t);
 int topgear_recomp_sound_command(TopGearRecomp*,uint8_t command,
                                   char*,size_t);
+/* Pulse a discrete APUIO1 event exactly once.  The helper holds the command
+   only until the Full Static S-SMP echoes its acknowledgement, immediately
+   restores neutral $00, and verifies the neutral acknowledgement.  This is
+   required for one-shot SFX previews because leaving APUIO1 asserted causes
+   the level-sensitive game driver to dispatch the same effect repeatedly. */
+int topgear_recomp_sound_command_pulse(TopGearRecomp*,uint8_t command,
+                                        char*,size_t);
+/* Race engine pitch updates are parameterized APUIO1 commands: the game writes
+   the 16-bit pitch to APUIO2/APUIO3, then sends command $03 for Player 1
+   (or $0E for Player 2). This helper reproduces that exact command shape for
+   isolated audio research/recording without inventing a host-side engine. */
+int topgear_recomp_sound_parameter_command(TopGearRecomp*,uint8_t command,
+                                            uint16_t parameter,char*,size_t);
 
 /* Prepare a static-audio regression core through the game's exact power-on
-   sequence at $00:805A-$00:807A. Unlike a bare port write, this executes the
-   command-$18 reset, $07:8000 driver upload, APUIO0 clear/delay, and final
-   selector write. It runs headlessly and never opens a headed game window. */
+   sequence at $00:805A-$00:807A. Music selection is a coupled two-stage
+   operation: selector-1 is first supplied to $07:8000, where $07:8164 selects
+   that song's ROM-resource upload chain into ARAM $8900+, and only after the
+   upload completes is APUIO0 written with selector.  Both values are replaced
+   at their real generated instruction boundaries. It runs headlessly and never
+   opens a headed game window. */
 int topgear_recomp_music_preview_prepare(TopGearRecomp*,uint8_t selector,
                                           char*,size_t);
 
@@ -1943,6 +2021,11 @@ size_t topgear_recomp_audio_available(const TopGearRecomp*);
 size_t topgear_recomp_audio_read(TopGearRecomp*,int16_t*,size_t);
 size_t topgear_recomp_audio_discard(TopGearRecomp*,size_t);
 void topgear_recomp_audio_clear(TopGearRecomp*);
+
+typedef struct TopGearPlayerProfile {char name[9];uint8_t car,manual,controls;} TopGearPlayerProfile;
+int topgear_recomp_profile_read(TopGearRecomp*,unsigned,TopGearPlayerProfile*);
+int topgear_recomp_profile_write(TopGearRecomp*,unsigned,const TopGearPlayerProfile*);
+int topgear_recomp_profile_record(TopGearRecomp*,void*,size_t);
 
 #ifdef __cplusplus
 }

@@ -109,34 +109,34 @@ static const TopGearAudioCatalogInfo k_audio_catalog[] = {
     MUSIC_ITEM(0x06u,0x13D3u,"Music $06 - sequence ARAM $13D3","menu/title-side music sequence"),
     MUSIC_ITEM(0x07u,0x13DBu,"Music $07 - sequence ARAM $13DB","menu/title-side music sequence"),
     CONTROL_ITEM(0x01u,0x10A7u,0x10E1u,"Control $01 - table $10A7 -> entry $10E1","voice-mask control"),
-    CONTROL_ITEM(0x02u,0x10A9u,0x10EEu,"Parameterized effect $02 - table $10A9 -> entry $10EE","voice-4 setup; needs pitch command $03"),
-    CONTROL_ITEM(0x03u,0x10ABu,0x110Cu,"Control $03 - table $10AB -> entry $110C","DSP parameter control"),
+    CONTROL_ITEM(0x02u,0x10A9u,0x10EEu,"P1 engine start $02 - table $10A9 -> entry $10EE","voice-4 engine setup; pitch is updated by $03"),
+    CONTROL_ITEM(0x03u,0x10ABu,0x110Cu,"P1 engine pitch $03 - table $10AB -> entry $110C","voice-4 pitch from APUIO2/APUIO3"),
     CONTROL_ITEM(0x04u,0x10ADu,0x1123u,"No-op $04 - table $10AD -> entry $1123","return/no-op"),
-    SFX_ITEM(0x05u,0x10AFu,0x1124u,"SFX $05 - table $10AF -> entry $1124 (turbo)"),
+    SFX_ITEM(0x05u,0x10AFu,0x1124u,"P1 boost/turbo $05 - voice 5, SRCN $12"),
     CONTROL_ITEM(0x06u,0x10B1u,0x1142u,"Control $06 - table $10B1 -> entry $1142","voice-mask control"),
-    SFX_ITEM(0x07u,0x10B3u,0x114Fu,"SFX $07 - table $10B3 -> entry $114F"),
-    SFX_ITEM(0x08u,0x10B5u,0x1165u,"SFX $08 - table $10B5 -> entry $1165"),
-    SFX_ITEM(0x09u,0x10B7u,0x117Bu,"SFX $09 - table $10B7 -> entry $117B"),
-    SFX_ITEM(0x0Au,0x10B9u,0x1191u,"SFX $0A - table $10B9 -> entry $1191"),
-    SFX_ITEM(0x0Bu,0x10BBu,0x11AFu,"SFX $0B - table $10BB -> entry $11AF (collision/rival)"),
+    SFX_ITEM(0x07u,0x10B3u,0x114Fu,"P1 finish-line $07 - voice 5, SRCN $13 centered"),
+    SFX_ITEM(0x08u,0x10B5u,0x1165u,"Unmapped P1 SRCN $13 left-pan variant $08"),
+    SFX_ITEM(0x09u,0x10B7u,0x117Bu,"Unmapped P1 SRCN $13 right-pan variant $09"),
+    SFX_ITEM(0x0Au,0x10B9u,0x1191u,"P1 tire/skid $0A - voice 5, SRCN $10"),
+    SFX_ITEM(0x0Bu,0x10BBu,0x11AFu,"P1 collision $0B - voice 5, SRCN $14"),
     CONTROL_ITEM(0x0Cu,0x10BDu,0x11CDu,"No-op $0C - table $10BD -> entry $11CD","return/no-op"),
-    CONTROL_ITEM(0x0Du,0x10BFu,0x11CEu,"Parameterized effect $0D - table $10BF -> entry $11CE","voice-6 setup; needs pitch command $0E"),
-    CONTROL_ITEM(0x0Eu,0x10C1u,0x11ECu,"Control $0E - table $10C1 -> entry $11EC","DSP parameter control"),
+    CONTROL_ITEM(0x0Du,0x10BFu,0x11CEu,"P2 engine start $0D - table $10BF -> entry $11CE","voice-6 engine setup; pitch is updated by $0E"),
+    CONTROL_ITEM(0x0Eu,0x10C1u,0x11ECu,"P2 engine pitch $0E - table $10C1 -> entry $11EC","voice-6 pitch from APUIO2/APUIO3"),
     CONTROL_ITEM(0x0Fu,0x10C3u,0x1203u,"No-op $0F - table $10C3 -> entry $1203","return/no-op"),
-    SFX_ITEM(0x10u,0x10C5u,0x1204u,"SFX $10 - table $10C5 -> entry $1204"),
+    SFX_ITEM(0x10u,0x10C5u,0x1204u,"P2 boost/turbo $10 - voice 7, SRCN $12"),
     CONTROL_ITEM(0x11u,0x10C7u,0x1222u,"Control $11 - table $10C7 -> entry $1222","voice-mask control"),
-    SFX_ITEM(0x12u,0x10C9u,0x122Fu,"SFX $12 - table $10C9 -> entry $122F"),
-    SFX_ITEM(0x13u,0x10CBu,0x1245u,"SFX $13 - table $10CB -> entry $1245"),
-    SFX_ITEM(0x14u,0x10CDu,0x125Bu,"SFX $14 - table $10CD -> entry $125B"),
-    SFX_ITEM(0x15u,0x10CFu,0x1271u,"SFX $15 - table $10CF -> entry $1271"),
-    SFX_ITEM(0x16u,0x10D1u,0x128Fu,"SFX $16 - table $10D1 -> entry $128F"),
+    SFX_ITEM(0x12u,0x10C9u,0x122Fu,"P2 finish-line $12 - voice 6, SRCN $13 centered"),
+    SFX_ITEM(0x13u,0x10CBu,0x1245u,"Unmapped P2 SRCN $13 left-pan variant $13"),
+    SFX_ITEM(0x14u,0x10CDu,0x125Bu,"Unmapped P2 SRCN $13 right-pan variant $14"),
+    SFX_ITEM(0x15u,0x10CFu,0x1271u,"P2 tire/skid $15 - voice 7, SRCN $10"),
+    SFX_ITEM(0x16u,0x10D1u,0x128Fu,"P2 collision $16 - voice 7, SRCN $14"),
     CONTROL_ITEM(0x17u,0x10D3u,0x12ADu,"No-op $17 - table $10D3 -> entry $12AD","return/no-op"),
     CONTROL_ITEM(0x18u,0x10D5u,0x12AEu,"Control $18 - table $10D5 -> entry $12AE","S-SMP reset/IPL transfer"),
     CONTROL_ITEM(0x19u,0x10D7u,0x12B7u,"Control $19 - table $10D7 -> entry $12B7","DSP/driver control"),
-    SFX_ITEM(0x1Au,0x10D9u,0x12D1u,"SFX $1A - table $10D9 -> entry $12D1"),
-    SFX_ITEM(0x1Bu,0x10DBu,0x12EFu,"SFX $1B - table $10DB -> entry $12EF"),
-    SFX_ITEM(0x1Cu,0x10DDu,0x130Du,"SFX $1C - table $10DD -> entry $130D"),
-    SFX_ITEM(0x1Du,0x10DFu,0x132Bu,"SFX $1D - table $10DF -> entry $132B")
+    SFX_ITEM(0x1Au,0x10D9u,0x12D1u,"Unmapped driver effect $1A - voice 5, SRCN $16"),
+    SFX_ITEM(0x1Bu,0x10DBu,0x12EFu,"Unmapped driver effect $1B - voice 7, SRCN $16"),
+    SFX_ITEM(0x1Cu,0x10DDu,0x130Du,"Unmapped driver effect $1C - voice 5, SRCN $16 alternate envelope"),
+    SFX_ITEM(0x1Du,0x10DFu,0x132Bu,"Unmapped driver effect $1D - voice 7, SRCN $16 alternate envelope")
 };
 #undef MUSIC_ITEM
 #undef SFX_ITEM
@@ -204,13 +204,24 @@ static int run_to_music_preview_address(TopGearRecomp *i,uint32_t address,
 
 int topgear_recomp_music_preview_prepare(TopGearRecomp *i,uint8_t selector,
                                           char *error,size_t cap){
+    uint16_t upload_index;
     if(!i){tg_copy_text(error,cap,"No Top Gear static core is loaded.");return 0;}
     if(selector<1u||selector>7u){tg_copy_text(error,cap,"Music previews use selectors $01-$07.");return 0;}
     if(!topgear_recomp_reset(i,error,cap))return 0;
-    /* Power-on naturally executes command $18, calls the complete uploader at
-       $07:8000, clears APUIO0, and waits before loading selector $01 at
-       $00:8075. Break immediately before its $00:8077 port write and replace
-       only that 8-bit selector; the reset/upload protocol remains unchanged. */
+    /* Every real music transition has TWO coupled selectors.  The value before
+       the final APUIO0 selector is written (selector-1) is passed to $07:8000,
+       where it indexes the seven-entry upload-chain table at $07:8164.  Those
+       chains install song-specific BRR/sample/instrument resources.  Only after
+       that upload completes does the game write APUIO0=selector.
+
+       Cold boot hardcodes upload index 0 at $00:8061 and selector 1 at
+       $00:8075.  For an isolated preview we preserve the exact cold-boot
+       command-$18/reset protocol but replace BOTH coupled values at their real
+       instruction boundaries.  Replacing only the final APUIO0 byte leaves the
+       Title upload resources resident and produces incomplete $02-$07 songs. */
+    upload_index=(uint16_t)(selector-1u);
+    if(!run_to_music_preview_address(i,0x008064u,120u,error,cap))return 0;
+    i->cpu.a=upload_index;
     if(!run_to_music_preview_address(i,0x008077u,120u,error,cap))return 0;
     i->cpu.a=(uint16_t)((i->cpu.a&0xFF00u)|selector);
     if(!run_to_music_preview_address(i,0x00807Au,4u,error,cap))return 0;
@@ -230,6 +241,70 @@ int topgear_recomp_sound_command(TopGearRecomp *i,uint8_t command,char *error,si
     i->scpu_to_smp[1]=command;
     if(!tg_audio_backend_cpu_write_port(i,master_clock,1u,command)){
         tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP rejected the sound command.");return 0;
+    }
+    tg_copy_text(error,cap,"");return 1;
+}
+
+int topgear_recomp_sound_command_pulse(TopGearRecomp *i,uint8_t command,char *error,size_t cap){
+    uint8_t ack=0u;
+    unsigned elapsed_ms;
+    const uint64_t step=(uint64_t)TOPGEAR_RECOMP_NTSC_MASTER_CLOCK_HZ/1000u;
+    if(command==0u){tg_copy_text(error,cap,"A pulsed sound command must be $01-$1D; $00 is the neutral level.");return 0;}
+    if(!topgear_recomp_sound_command(i,command,error,cap))return 0;
+    /* APUIO1 is a level-sensitive command latch in this driver, not an edge
+       queue.  The real S-SMP copies a stable input byte back to output port 1
+       when it accepts a dispatch.  Keep the command asserted only until that
+       acknowledgement, then return the CPU->SMP port to neutral $00 before the
+       dispatcher can see the same command as another event. */
+    for(elapsed_ms=0u;elapsed_ms<50u;++elapsed_ms){
+        uint64_t target=i->audio_last_apu_master_clock+step;
+        if(!tg_audio_backend_sync(i,target)){
+            tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP stopped while waiting for a sound-command acknowledgement.");return 0;
+        }
+        if(!tg_audio_backend_cpu_read_port(i,target,1u,&ack)){
+            tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP sound-command acknowledgement could not be read.");return 0;
+        }
+        if(ack==command)break;
+    }
+    if(ack!=command){tg_copy_text(error,cap,"The Full Static S-SMP did not acknowledge the sound command within 50 ms.");return 0;}
+    if(!topgear_recomp_sound_command(i,0u,error,cap))return 0;
+    /* Prove that neutral is observed too.  This is not needed to key-on the
+       one-shot, but it makes the research helper fail closed if the handshake
+       ever changes. */
+    for(elapsed_ms=0u;elapsed_ms<50u;++elapsed_ms){
+        uint64_t target=i->audio_last_apu_master_clock+step;
+        if(!tg_audio_backend_sync(i,target)){
+            tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP stopped while clearing a sound-command pulse.");return 0;
+        }
+        if(!tg_audio_backend_cpu_read_port(i,target,1u,&ack)){
+            tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP neutral acknowledgement could not be read.");return 0;
+        }
+        if(ack==0u){tg_copy_text(error,cap,"");return 1;}
+    }
+    tg_copy_text(error,cap,"The Full Static S-SMP did not acknowledge neutral $00 after the one-shot sound command.");return 0;
+}
+
+int topgear_recomp_sound_parameter_command(TopGearRecomp *i,uint8_t command,uint16_t parameter,char *error,size_t cap){
+    uint64_t master_clock;
+    uint8_t low=(uint8_t)(parameter&0xFFu),high=(uint8_t)(parameter>>8u);
+    if(!i){tg_copy_text(error,cap,"No Top Gear static core is loaded.");return 0;}
+    if(i->failed){tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The static core has stopped.");return 0;}
+    if(command!=0x03u&&command!=0x0Eu){tg_copy_text(error,cap,"Parameterized race-engine updates use command $03 (P1) or $0E (P2).");return 0;}
+    if(!i->static_audio_acquired){tg_copy_text(error,cap,"Full Static audio is not initialized.");return 0;}
+    if(!i->v23_event_mode||!i->v22_semantic_main_mode){tg_copy_text(error,cap,"Advance the ROM until the Version 27 event scheduler has initialized before selecting a sound command.");return 0;}
+    master_clock=i->v23_event_master_clock>i->audio_last_apu_master_clock?
+        i->v23_event_master_clock:i->audio_last_apu_master_clock;
+    i->scpu_to_smp[2]=low;
+    if(!tg_audio_backend_cpu_write_port(i,master_clock,2u,low)){
+        tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP rejected the engine pitch low byte.");return 0;
+    }
+    i->scpu_to_smp[3]=high;
+    if(!tg_audio_backend_cpu_write_port(i,master_clock,3u,high)){
+        tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP rejected the engine pitch high byte.");return 0;
+    }
+    i->scpu_to_smp[1]=command;
+    if(!tg_audio_backend_cpu_write_port(i,master_clock,1u,command)){
+        tg_copy_text(error,cap,i->last_error[0]?i->last_error:"The Full Static S-SMP rejected the parameterized engine command.");return 0;
     }
     tg_copy_text(error,cap,"");return 1;
 }
@@ -270,10 +345,13 @@ void topgear_recomp_destroy(TopGearRecomp *i){if(!i)return;tg_audio_backend_rele
 
 int topgear_recomp_reset(TopGearRecomp *i,char *error,size_t cap){
     uint8_t *rom;TopGearHookCallback hook_callback;void *hook_user;uint32_t hook_mask;uint8_t static_audio_acquired;
+    TopGearTimeTrialLeaderboardProvider tt_provider; void *tt_provider_user;
     if(!i||!i->rom){tg_copy_text(error,cap,"Static core is incomplete.");return 0;}
     rom=i->rom;hook_callback=i->hook_callback;hook_user=i->hook_user;hook_mask=i->hook_mask;static_audio_acquired=i->static_audio_acquired;
+    tt_provider=i->mod_time_trial_leaderboard_provider;tt_provider_user=i->mod_time_trial_leaderboard_user;
     memset(i,0,sizeof(*i));
     i->rom=rom;i->hook_callback=hook_callback;i->hook_user=hook_user;i->hook_mask=hook_mask;i->static_audio_acquired=static_audio_acquired;
+    i->mod_time_trial_leaderboard_provider=tt_provider;i->mod_time_trial_leaderboard_user=tt_provider_user;
     i->vram_increment_words=1u;i->forced_blank=1u;i->cpu.s=0x01FFu;i->cpu.p=(uint8_t)(TG_P_I|TG_P_M|TG_P_X);i->cpu.e=1u;i->cpu.pc=0x8000u;
     i->smp.sp=0xEFu;i->smp_control=0xB0u;i->smp_to_scpu[0]=0xAAu;i->smp_to_scpu[1]=0xBBu;i->ipl_state=TG_IPL_READY;i->smp_cycle_resumable=1u;i->dsp_possible_phase_mask=0xFFFFFFFFu;i->vtime_target=0x01FFu;
     clear_frontier(i);if(!tg_audio_backend_reset(i,error,cap))return 0;tg_copy_text(error,cap,"");tg_emit_hook(i,TOPGEAR_HOOK_EVENT_RESET,0x008000u,0u,1u);return 1;
@@ -315,4 +393,49 @@ int topgear_recomp_dsp_scaffold_info(const TopGearRecomp *i,TopGearDspScaffoldIn
     x->dsp_clock_count=a.smp_cycles;
     x->pcm_frames_produced=a.pcm_frames;
     return 1;
+}
+
+int topgear_recomp_rally_debug_status(const TopGearRecomp *instance,TopGearRallyDebugStatus *out){
+    if(!instance||!out)return 0;
+    memset(out,0,sizeof(*out));
+    out->active=instance->mod_rally_active;
+    out->schedule_valid=instance->mod_rally_schedule_valid;
+    out->race_index=instance->mod_rally_race_index;
+    memcpy(out->schedule,instance->mod_rally_schedule,sizeof(out->schedule));
+    out->rng_state=instance->mod_rally_rng_state;
+    out->generation_count=instance->mod_rally_generation_count;
+    return 1;
+}
+
+void topgear_recomp_time_trial_set_leaderboard_provider(TopGearRecomp *i,
+    TopGearTimeTrialLeaderboardProvider provider,void *user){
+    if(!i)return;
+    i->mod_time_trial_leaderboard_provider=provider;
+    i->mod_time_trial_leaderboard_user=user;
+    i->mod_menu_remodel_dirty=1u;
+}
+
+int topgear_recomp_time_trial_completed_run_pending(const TopGearRecomp *i){
+    return i&&i->mod_time_trial_completed_run_valid&&i->mod_time_trial_completed_run_pending;
+}
+
+int topgear_recomp_time_trial_completed_run(const TopGearRecomp *i,
+                                             TopGearTimeTrialRun *out){
+    if(!i||!out||!i->mod_time_trial_completed_run_valid)return 0;
+    *out=i->mod_time_trial_completed_run;
+    return 1;
+}
+
+int topgear_recomp_time_trial_commit_completed_run(TopGearRecomp *i){
+    return tg_mod_time_trial_commit_completed_run(i);
+}
+
+int topgear_recomp_time_trial_query_leaderboard(const TopGearRecomp *i,
+    unsigned track,int car_filter,unsigned rank,TopGearTimeTrialRun *out){
+    if(!i||!out||track>=TOPGEAR_TIME_TRIAL_TRACK_COUNT||
+       rank>=TOPGEAR_TIME_TRIAL_RECORDS_PER_CAR||car_filter< -1||
+       car_filter>=(int)TOPGEAR_TIME_TRIAL_CAR_COUNT)return 0;
+    if(!i->mod_time_trial_leaderboard_provider)return 0;
+    return i->mod_time_trial_leaderboard_provider(
+        i->mod_time_trial_leaderboard_user,track,car_filter,rank,out);
 }

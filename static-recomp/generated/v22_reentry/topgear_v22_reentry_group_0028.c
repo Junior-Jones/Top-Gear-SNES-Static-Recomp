@@ -1024,7 +1024,7 @@ int tg_v22_reentry_group_0028_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000A237u: /* 8C 7A 1E STY $1E7A */
-  if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1E7Au), (uint16_t)instance->cpu.y)) return 0;
+  if (!tg_bus_store16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1E7Au), (uint16_t)(instance->mod_time_trial_active?0u:instance->cpu.y))) return 0;
   instance->cpu.pc = 0xA23Au;
   instance->instruction_count++;
   return 1;
@@ -1260,6 +1260,8 @@ int tg_v22_reentry_group_0028_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000A2C4u: /* B5 02 LDA $02,X */
+        /* Solo Time Trial: pole grid, no rival collision or display entries. */
+        if(instance->mod_time_trial_active){instance->cpu.pc=0xA1B5u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x02u + instance->cpu.x) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

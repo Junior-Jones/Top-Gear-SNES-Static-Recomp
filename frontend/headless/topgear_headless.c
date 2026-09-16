@@ -102,7 +102,10 @@ static int load_script(const char *path,Ctx *c){
 static void capture_state(Ctx *c){
     const size_t fb=256u*224u*2u;uint8_t *frame,*wram;char path[1024];FILE *f;if(!c||!c->capture_pending)return;
     frame=(uint8_t*)malloc(fb);if(frame&&topgear_recomp_v22_read_frame_bgr555(c->core,0u,frame,fb)){snprintf(path,sizeof(path),"%s.event-%03u.ppm",c->prefix,c->capture_number);(void)write_ppm(path,frame);}free(frame);
-    wram=(uint8_t*)malloc(TOPGEAR_RECOMP_WRAM_SIZE);if(wram&&topgear_recomp_read_wram(c->core,0u,wram,TOPGEAR_RECOMP_WRAM_SIZE)){snprintf(path,sizeof(path),"%s.event-%03u.wram.bin",c->prefix,c->capture_number);f=fopen(path,"wb");if(f){fwrite(wram,1u,TOPGEAR_RECOMP_WRAM_SIZE,f);fclose(f);}}free(wram);c->capture_pending=0;
+    wram=(uint8_t*)malloc(TOPGEAR_RECOMP_WRAM_SIZE);if(wram&&topgear_recomp_read_wram(c->core,0u,wram,TOPGEAR_RECOMP_WRAM_SIZE)){snprintf(path,sizeof(path),"%s.event-%03u.wram.bin",c->prefix,c->capture_number);f=fopen(path,"wb");if(f){fwrite(wram,1u,TOPGEAR_RECOMP_WRAM_SIZE,f);fclose(f);}}free(wram);
+    { uint8_t *vram=(uint8_t*)malloc(65536u); if(vram&&topgear_recomp_v07_read_vram(c->core,0u,vram,65536u)){snprintf(path,sizeof(path),"%s.event-%03u.vram.bin",c->prefix,c->capture_number);f=fopen(path,"wb");if(f){fwrite(vram,1u,65536u,f);fclose(f);}} free(vram); }
+    { uint8_t oam[544]; if(topgear_recomp_v07_read_oam(c->core,0u,oam,sizeof(oam))){snprintf(path,sizeof(path),"%s.event-%03u.oam.bin",c->prefix,c->capture_number);f=fopen(path,"wb");if(f){fwrite(oam,1u,sizeof(oam),f);fclose(f);}} }
+    c->capture_pending=0;
 }
 static void drain_audio(Ctx *c,uint64_t ms){
     int16_t samples[4096u*2u];size_t got;if(!c||!c->core)return;
@@ -143,6 +146,14 @@ static int run_v27(TopGearRecomp *core,uint32_t seconds,const char *script,const
         (unsigned long long)a.fifo_dropped_frames);
     if(rr!=TOPGEAR_RUN_COMPLETE)printf("Frontier/error: %s\n",topgear_recomp_last_error(core));
     if(wav_path)printf("WAV: %s; capture-start=%llu ms; requested=%llu ms; frames=%llu at 32040 Hz\n",wav_path,(unsigned long long)wav_start_ms,(unsigned long long)wav_duration_ms,(unsigned long long)c.wav_frames);
+    { TopGearRallyDebugStatus rs; unsigned ri;
+      if(topgear_recomp_rally_debug_status(core,&rs)&&rs.schedule_valid){
+        printf("Rally schedule: generation=%llu active=%u race-index=%u ordinals=",
+               (unsigned long long)rs.generation_count,(unsigned)rs.active,(unsigned)rs.race_index);
+        for(ri=0u;ri<8u;ri++)printf("%s%u",ri?",":"",(unsigned)rs.schedule[ri]);
+        printf(" rng=%08X\n",(unsigned)rs.rng_state);
+      }
+    }
     printf("Trace: %s\n",trace);
     if(wav_path&&c.wav_frames!=c.wav_target_frames)ok=0;
     return rr==TOPGEAR_RUN_COMPLETE&&!r.instruction_limit_hit&&c.next==due&&!a.aot_failed&&!a.sdsp_static_failed&&a.pcm_unknown_frames==0u&&a.dsp_pcm_overflows==0u&&a.automatic_fallback_enabled==0u&&ok?0:1;

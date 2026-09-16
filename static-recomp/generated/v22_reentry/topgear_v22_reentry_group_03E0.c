@@ -687,6 +687,7 @@ int tg_v22_reentry_group_03E0_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F83D7u: /* 20 3C A5 JSR $A53C */
+        /* Finish the native video/NMI reinitialization before branching. */
   if (!tg_push16(instance, 0x83D9u)) return 0;
   instance->cpu.pc = 0xA53Cu;
   instance->instruction_count++;
@@ -779,6 +780,7 @@ int tg_v22_reentry_group_03E0_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000F83DDu: /* AD F6 1F LDA $1FF6 */
+
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1FF6u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -2718,6 +2720,9 @@ int tg_v22_reentry_group_03E0_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x040F8154u: /* 8D 40 21 STA $2140 */
+        /* Native title/qualification/results transitions end imported race music. */
+        if(tg_acc8(instance)>=6u)instance->mod_music_engine=0u;
+        if(tg_acc8(instance)==1u)tg_mod_music_menu_enter(instance);
   if (!tg_bus_write8(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x2140u), tg_acc8(instance))) return 0;
   instance->cpu.pc = 0x8157u;
   instance->instruction_count++;
