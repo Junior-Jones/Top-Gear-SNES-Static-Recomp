@@ -87,14 +87,14 @@
       "sha256": "304ff0ca4267d5968aef9979132407447900bf94df9f0425f4f7209923db7bc9"
     },
     {
-      "bytes": 2754,
+      "bytes": 2500,
       "path": "Docs/MENU-AUDIO-SAVE-FIX-2026-09-11.md",
-      "sha256": "d60e08153b81be9b8702e2e3d80c5cd507f9f1330ac794464389b98ae8dc977e"
+      "sha256": "29d6d701c654025cf8b15f53023dc1e973d2eaeafb50701f7a2ee733b4f109e4"
     },
     {
-      "bytes": 2973,
+      "bytes": 2902,
       "path": "Docs/MENU-MUSIC-CONTROLS-2026-09-11.md",
-      "sha256": "6a42a2729dd9fd4373a256c7b0a305b7c19b663b4178fca058c253e35d7b22b5"
+      "sha256": "f684c8ee3d0ba9083d209afe2979b3c108cf117826792558cd8a00b1a6c7b059"
     },
     {
       "bytes": 1409,
@@ -2197,7 +2197,7 @@
       "sha256": "51605bc8a16e478811fa6197a6bd463ca66022fbe1708d2461e299e8b1f904f2"
     }
   ],
-  "inventory_sha256": "f589013e8bd9a646b4a96012a344c960883fb805c50827a96ecefb92b6df071c",
+  "inventory_sha256": "5cce35702271d6d1d0301a7971457d1050e600ce60011b5c8bf0823f6d9afe12",
   "project_version": "1.2.0",
   "schema": "topgear-source-manifest-v1"
 }
