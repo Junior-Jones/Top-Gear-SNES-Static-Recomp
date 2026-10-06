@@ -1,15 +1,19 @@
 /* Top Gear Definitive Edition - macOS launcher.
 
    The launcher drives the same static core, Data stores and input latch as
-   the Windows frontend. SDL3 supplies the window (Metal renderer), Core Audio
-   output, keyboard, gamepad and native file/message dialogs. Frame pacing,
-   durable Data commits and fail-closed diagnostics follow the Windows host. */
+   the Windows frontend. SDL3 supplies the window (Metal renderer), the Core
+   Audio device, keyboard and gamepad input; topgear_mac_ui.m supplies native
+   AppKit menus and dialogs. Frame pacing, audio control, durable Data
+   commits and fail-closed diagnostics follow the Windows host. */
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
 #include "topgear_app_core.h"
+#include "topgear_audio_output_sdl.h"
 #include "topgear_input_latch.h"
+#include "topgear_mac_settings.h"
+#include "topgear_mac_ui.h"
 
 #include <dirent.h>
 #include <errno.h>
@@ -29,91 +33,30 @@
 
 #define APP_TITLE "Top Gear"
 #define DATA_FOLDER_NAME "Top Gear Definitive Edition"
-#define PATH_CAPACITY 4096u
-#define BINDING_COUNT 12
-#define SNAPSHOT_SLOT_COUNT 5
+#define PATH_CAPACITY TOPGEAR_MAC_PATH_CAPACITY
 #define STATUS_DISPLAY_NS (4ull * SDL_NS_PER_SECOND)
 #define LATE_REBASE_DIVISOR 8u
-#define AUDIO_RATE TOPGEAR_APP_AUDIO_SAMPLE_RATE
-#define AUDIO_READ_FRAMES 4096u
-/* Two emulated frames of queued PCM covers Core Audio's pull period. */
-#define AUDIO_BASE_TARGET_FRAMES 1068u
-#define AUDIO_MAX_RATE_ADJUSTMENT 0.005
-#define AUDIO_AVERAGING_FRAMES 30u
 #define ARRAY_COUNT(a) (sizeof(a) / sizeof((a)[0]))
-
-enum GamepadControl {
-    PAD_NONE = 0, PAD_DPAD_UP, PAD_DPAD_DOWN, PAD_DPAD_LEFT, PAD_DPAD_RIGHT,
-    PAD_LS_UP, PAD_LS_DOWN, PAD_LS_LEFT, PAD_LS_RIGHT,
-    PAD_SOUTH, PAD_EAST, PAD_WEST, PAD_NORTH,
-    PAD_LEFT_SHOULDER, PAD_RIGHT_SHOULDER, PAD_LEFT_TRIGGER, PAD_RIGHT_TRIGGER,
-    PAD_START, PAD_BACK, PAD_LEFT_STICK, PAD_RIGHT_STICK, PAD_CONTROL_COUNT
-};
-
-static const char *const k_pad_names[PAD_CONTROL_COUNT] = {
-    "none", "dpup", "dpdown", "dpleft", "dpright",
-    "lsup", "lsdown", "lsleft", "lsright",
-    "south", "east", "west", "north",
-    "lshoulder", "rshoulder", "ltrigger", "rtrigger",
-    "start", "back", "lstick", "rstick"
-};
-
-/* Binding order matches the Windows launcher's settings.ini. */
-static const char *const k_binding_names[BINDING_COUNT] = {
-    "Up", "Down", "Left", "Right", "B", "A", "Y", "X", "L", "R",
-    "Start", "Select"
-};
-static const uint16_t k_binding_masks[BINDING_COUNT] = {
-    TOPGEAR_INPUT_UP, TOPGEAR_INPUT_DOWN, TOPGEAR_INPUT_LEFT,
-    TOPGEAR_INPUT_RIGHT, TOPGEAR_INPUT_B, TOPGEAR_INPUT_A, TOPGEAR_INPUT_Y,
-    TOPGEAR_INPUT_X, TOPGEAR_INPUT_L, TOPGEAR_INPUT_R, TOPGEAR_INPUT_START,
-    TOPGEAR_INPUT_SELECT
-};
-
-typedef struct MacSettings {
-    int integer_scale;
-    int pause_on_focus_loss;
-    int fullscreen_on_play;
-    int show_fps_counter;
-    int ntsc_frame_lock;
-    int snapshot_slot;
-    int audio_enabled;
-    int audio_volume;
-    int audio_latency_ms;
-    SDL_Scancode keys[BINDING_COUNT];
-    int pads[BINDING_COUNT];
-    char rom_path[PATH_CAPACITY];
-} MacSettings;
-
-typedef struct MacAudio {
-    SDL_AudioStream *stream;
-    int16_t pcm[AUDIO_READ_FRAMES * TOPGEAR_APP_AUDIO_CHANNELS];
-    uint32_t target_frames;
-    uint32_t history[AUDIO_AVERAGING_FRAMES];
-    uint32_t history_count;
-    uint32_t history_index;
-    int playing;
-    uint64_t underruns;
-    uint64_t recoveries;
-} MacAudio;
 
 static SDL_Window *g_window;
 static SDL_Renderer *g_renderer;
 static SDL_Texture *g_texture;
 static SDL_Gamepad *g_gamepad;
 static TopGearApp *g_game;
-static MacSettings g_settings;
-static MacAudio g_audio;
+static TopGearMacSettings g_settings;
+static TopGearMacAudioOutput g_audio;
 static TopGearInputLatch g_keyboard_input;
+static Uint32 g_command_event;
 static int g_quit;
 static int g_paused = 1;
 static int g_failed;
-static int g_show_help;
-static int g_startup_prompt_pending;
+static int g_fullscreen_by_play;
+static int g_capture_fullscreen;
+static int g_loaded_snapshot_slot = -1;
 static int g_resume_after_dialog;
-static int g_fullscreen_entered;
 static uint32_t g_uploaded_frame = UINT32_MAX;
-static char g_status[512];
+static char g_selected_rom[PATH_CAPACITY];
+static char g_status[PATH_CAPACITY + 256u];
 static uint64_t g_status_until;
 
 static uint64_t g_frame_ns_base;
@@ -137,8 +80,33 @@ static char g_settings_path[PATH_CAPACITY];
 static char g_player_settings_path[PATH_CAPACITY];
 static char g_time_trial_data_path[PATH_CAPACITY];
 
+static const char k_welcome_text[] =
+    "Frontend shortcuts\n"
+    "Escape - Switch between the game and the launcher (pause)\n"
+    "1 - Save the current snapshot slot\n"
+    "2 - Load the current snapshot slot\n"
+    "F1 - Welcome and shortcut guide\n"
+    "F2 - Open the Save Snapshot window\n"
+    "F3 - Open the Load Snapshot window\n"
+    "F4 - Settings (also Command-Comma)\n"
+    "F5 - Controls\n"
+    "F6 - Audio settings\n"
+    "F7 - Run the selected ROM\n"
+    "F8 - Capture the current game frame\n"
+    "Command-O - Open a ROM\n"
+    "Command-R - Reset the ROM\n"
+    "Control-Command-F - Toggle full screen\n"
+    "Command-D - Show the data folder in Finder\n"
+    "Command-Q - Quit\n\n"
+    "On most Mac keyboards, hold Fn to use the F keys.\n\n"
+    "ROM title: Top Gear\n"
+    "Region: USA NTSC\n"
+    "File type: .sfc\n"
+    "Place the ROM in the Rom folder (inside the data folder, Command-D) "
+    "or choose File > Open ROM.";
+
 /* ------------------------------------------------------------------ */
-/* Status and messages                                                 */
+/* Status                                                              */
 /* ------------------------------------------------------------------ */
 
 static void set_status(const char *format, ...) SDL_PRINTF_VARARG_FUNC(1);
@@ -151,21 +119,7 @@ static void set_status(const char *format, ...) {
     SDL_Log("%s", g_status);
 }
 
-static void pause_audio(void);
-static void resume_audio(void);
-static void reset_pacing_clock(void);
-
-static void show_message(SDL_MessageBoxFlags flags, const char *title,
-                         const char *text) {
-    int resume = g_game && !g_paused;
-    if (resume) pause_audio();
-    (void)SDL_ShowSimpleMessageBox(flags, title, text, g_window);
-    topgear_input_latch_reset(&g_keyboard_input);
-    if (resume) {
-        resume_audio();
-        reset_pacing_clock();
-    }
-}
+static const char *last_status(void) { return g_status; }
 
 /* ------------------------------------------------------------------ */
 /* Paths and files                                                     */
@@ -232,39 +186,6 @@ static int read_whole_file(const char *path, size_t limit, uint8_t **bytes,
     }
     *bytes = buffer;
     *size = count;
-    return 1;
-}
-
-/* Flush to the device, then atomically replace the destination. */
-static int write_file_durable(const char *path, const void *bytes,
-                              size_t size) {
-    char temporary[PATH_CAPACITY + 32u];
-    int descriptor;
-    const uint8_t *cursor = (const uint8_t *)bytes;
-    size_t remaining = size;
-    int written = snprintf(temporary, sizeof(temporary), "%s.tmp-%ld", path,
-                           (long)getpid());
-    if (written < 0 || (size_t)written >= sizeof(temporary)) return 0;
-    descriptor = open(temporary, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (descriptor < 0) return 0;
-    while (remaining > 0u) {
-        ssize_t chunk = write(descriptor, cursor, remaining);
-        if (chunk < 0 && errno == EINTR) continue;
-        if (chunk <= 0) break;
-        cursor += chunk;
-        remaining -= (size_t)chunk;
-    }
-    /* fsync only reaches the drive cache on macOS; F_FULLFSYNC commits it. */
-    if (remaining != 0u ||
-        (fcntl(descriptor, F_FULLFSYNC) != 0 && fsync(descriptor) != 0)) {
-        (void)close(descriptor);
-        (void)unlink(temporary);
-        return 0;
-    }
-    if (close(descriptor) != 0 || rename(temporary, path) != 0) {
-        (void)unlink(temporary);
-        return 0;
-    }
     return 1;
 }
 
@@ -367,153 +288,9 @@ static int find_sfc_rom(char *path, size_t capacity) {
     return selected[0] && join_path(path, capacity, g_rom_directory, selected);
 }
 
-/* ------------------------------------------------------------------ */
-/* settings.ini                                                        */
-/* ------------------------------------------------------------------ */
-
-static void settings_defaults(MacSettings *s) {
-    int index;
-    static const SDL_Scancode keys[BINDING_COUNT] = {
-        SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_LEFT,
-        SDL_SCANCODE_RIGHT, SDL_SCANCODE_D, SDL_SCANCODE_F, SDL_SCANCODE_A,
-        SDL_SCANCODE_S, SDL_SCANCODE_E, SDL_SCANCODE_R, SDL_SCANCODE_G,
-        SDL_SCANCODE_T
-    };
-    static const int pads[BINDING_COUNT] = {
-        PAD_DPAD_UP, PAD_DPAD_DOWN, PAD_DPAD_LEFT, PAD_DPAD_RIGHT,
-        PAD_SOUTH, PAD_EAST, PAD_WEST, PAD_NORTH,
-        PAD_LEFT_SHOULDER, PAD_RIGHT_SHOULDER, PAD_START, PAD_BACK
-    };
-    memset(s, 0, sizeof(*s));
-    s->ntsc_frame_lock = 1;
-    s->snapshot_slot = 1;
-    s->audio_enabled = 1;
-    s->audio_volume = 100;
-    for (index = 0; index < BINDING_COUNT; ++index) {
-        s->keys[index] = keys[index];
-        s->pads[index] = pads[index];
-    }
-}
-
-static char *trim(char *text) {
-    char *end;
-    while (*text == ' ' || *text == '\t') ++text;
-    end = text + strlen(text);
-    while (end > text && (end[-1] == ' ' || end[-1] == '\t' ||
-                          end[-1] == '\r' || end[-1] == '\n'))
-        *--end = '\0';
-    return text;
-}
-
-static int clamp_int(int value, int low, int high) {
-    return value < low ? low : value > high ? high : value;
-}
-
-static void apply_setting(MacSettings *s, const char *section,
-                          const char *key, const char *value) {
-    int index;
-    int number = atoi(value);
-    if (!SDL_strcasecmp(section, "General")) {
-        if (!SDL_strcasecmp(key, "IntegerScale")) s->integer_scale = number != 0;
-        else if (!SDL_strcasecmp(key, "PauseOnFocusLoss")) s->pause_on_focus_loss = number != 0;
-        else if (!SDL_strcasecmp(key, "FullScreenOnPlay")) s->fullscreen_on_play = number != 0;
-        else if (!SDL_strcasecmp(key, "ShowFpsCounter")) s->show_fps_counter = number != 0;
-        else if (!SDL_strcasecmp(key, "NtscFrameLock")) s->ntsc_frame_lock = number != 0;
-        else if (!SDL_strcasecmp(key, "SnapshotSlot"))
-            s->snapshot_slot = clamp_int(number, 1, SNAPSHOT_SLOT_COUNT);
-    } else if (!SDL_strcasecmp(section, "Audio")) {
-        if (!SDL_strcasecmp(key, "Enabled")) s->audio_enabled = number != 0;
-        else if (!SDL_strcasecmp(key, "Volume")) s->audio_volume = clamp_int(number, 0, 100);
-        else if (!SDL_strcasecmp(key, "LatencyMs")) s->audio_latency_ms = clamp_int(number, 0, 40);
-    } else if (!SDL_strcasecmp(section, "ROM")) {
-        if (!SDL_strcasecmp(key, "Path"))
-            (void)snprintf(s->rom_path, sizeof(s->rom_path), "%s", value);
-    } else if (!SDL_strcasecmp(section, "Keyboard")) {
-        for (index = 0; index < BINDING_COUNT; ++index) {
-            if (SDL_strcasecmp(key, k_binding_names[index])) continue;
-            {
-                SDL_Scancode code = SDL_GetScancodeFromName(value);
-                if (code != SDL_SCANCODE_UNKNOWN) s->keys[index] = code;
-            }
-        }
-    } else if (!SDL_strcasecmp(section, "Gamepad")) {
-        for (index = 0; index < BINDING_COUNT; ++index) {
-            int control;
-            if (SDL_strcasecmp(key, k_binding_names[index])) continue;
-            for (control = 0; control < PAD_CONTROL_COUNT; ++control)
-                if (!SDL_strcasecmp(value, k_pad_names[control]))
-                    s->pads[index] = control;
-        }
-    }
-}
-
-static void settings_load(MacSettings *s, const char *path) {
-    uint8_t *bytes;
-    size_t size;
-    char section[64] = "";
-    char *line;
-    char *next;
-    settings_defaults(s);
-    if (!read_whole_file(path, 1024u * 1024u, &bytes, &size)) return;
-    bytes = (uint8_t *)realloc(bytes, size + 1u);
-    if (!bytes) return;
-    bytes[size] = '\0';
-    for (line = (char *)bytes; line && *line; line = next) {
-        char *equals;
-        char *text;
-        next = strchr(line, '\n');
-        if (next) *next++ = '\0';
-        text = trim(line);
-        if (*text == ';' || *text == '#' || !*text) continue;
-        if (*text == '[') {
-            char *close = strchr(text, ']');
-            if (close) {
-                *close = '\0';
-                (void)snprintf(section, sizeof(section), "%s", trim(text + 1));
-            }
-            continue;
-        }
-        equals = strchr(text, '=');
-        if (!equals) continue;
-        *equals = '\0';
-        apply_setting(s, section, trim(text), trim(equals + 1));
-    }
-    free(bytes);
-}
-
-static int settings_save(const MacSettings *s, const char *path) {
-    char text[16384];
-    size_t used = 0u;
-    int index;
-#define APPEND(...) do { \
-        int n = snprintf(text + used, sizeof(text) - used, __VA_ARGS__); \
-        if (n < 0 || (size_t)n >= sizeof(text) - used) return 0; \
-        used += (size_t)n; \
-    } while (0)
-    APPEND("; Top Gear Definitive Edition - macOS launcher settings.\n"
-           "; Edit while the app is closed. See README.txt in the app bundle.\n\n");
-    APPEND("[General]\nIntegerScale=%d\nPauseOnFocusLoss=%d\n"
-           "FullScreenOnPlay=%d\nShowFpsCounter=%d\nNtscFrameLock=%d\n"
-           "SnapshotSlot=%d\n\n",
-           s->integer_scale, s->pause_on_focus_loss, s->fullscreen_on_play,
-           s->show_fps_counter, s->ntsc_frame_lock, s->snapshot_slot);
-    APPEND("[Audio]\nEnabled=%d\nVolume=%d\nLatencyMs=%d\n\n",
-           s->audio_enabled, s->audio_volume, s->audio_latency_ms);
-    APPEND("[ROM]\nPath=%s\n\n[Keyboard]\n", s->rom_path);
-    for (index = 0; index < BINDING_COUNT; ++index)
-        APPEND("%s=%s\n", k_binding_names[index],
-               SDL_GetScancodeName(s->keys[index]));
-    APPEND("\n[Gamepad]\n");
-    for (index = 0; index < BINDING_COUNT; ++index)
-        APPEND("%s=%s\n", k_binding_names[index],
-               k_pad_names[clamp_int(s->pads[index], 0, PAD_CONTROL_COUNT - 1)]);
-#undef APPEND
-    return write_file_durable(path, text, used);
-}
-
 static void save_settings(void) {
-    if (!settings_save(&g_settings, g_settings_path))
-        set_status("settings.ini could not be saved in %s.", g_root_directory);
+    if (!topgear_mac_settings_save(&g_settings, g_settings_path))
+        set_status("Settings changed, but the settings file could not be written.");
 }
 
 /* ------------------------------------------------------------------ */
@@ -562,7 +339,7 @@ static int flush_time_trial_data(int force) {
     bytes = malloc(size);
     if (!bytes) return 0;
     if (!topgear_app_time_trial_data_export(g_game, bytes, size) ||
-        !write_file_durable(g_time_trial_data_path, bytes, size)) {
+        !topgear_mac_write_file_durable(g_time_trial_data_path, bytes, size)) {
         free(bytes);
         return 0;
     }
@@ -583,108 +360,29 @@ static int flush_player_settings(void) {
 /* Audio                                                               */
 /* ------------------------------------------------------------------ */
 
-static uint32_t audio_queued_frames(void) {
-    int bytes = g_audio.stream ? SDL_GetAudioStreamQueued(g_audio.stream) : 0;
-    return bytes > 0 ? (uint32_t)bytes /
-                       (TOPGEAR_APP_AUDIO_CHANNELS * sizeof(int16_t)) : 0u;
-}
-
 static void close_audio(void) {
-    if (g_audio.stream) SDL_DestroyAudioStream(g_audio.stream);
-    memset(&g_audio, 0, sizeof(g_audio));
+    topgear_mac_audio_output_close(&g_audio);
     if (g_game) (void)topgear_app_audio_discard(g_game);
 }
 
-static void open_audio(void) {
-    SDL_AudioSpec spec;
+static int open_audio(int show_error) {
+    char error[512];
     close_audio();
-    if (!g_settings.audio_enabled) return;
-    spec.format = SDL_AUDIO_S16;
-    spec.channels = (int)TOPGEAR_APP_AUDIO_CHANNELS;
-    spec.freq = (int)AUDIO_RATE;
-    /* The device stream opens paused; SDL converts 32,040 Hz to the device
-       rate for speaker output only, never inside the core. */
-    g_audio.stream = SDL_OpenAudioDeviceStream(
-        SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, NULL, NULL);
-    if (!g_audio.stream) {
-        set_status("Audio output is unavailable: %s", SDL_GetError());
-        return;
+    if (!g_game || !g_settings.audio.enabled) return 1;
+    if (!topgear_mac_audio_output_open(&g_audio, &g_settings.audio, error,
+                                       sizeof(error))) {
+        set_status("%s", error[0] ? error : "Unable to start audio output.");
+        if (show_error)
+            topgear_mac_ui_information("Audio Settings", NULL,
+                error[0] ? error : "Unable to start audio output.");
+        return 0;
     }
-    (void)SDL_SetAudioStreamGain(g_audio.stream,
-                                 (float)g_settings.audio_volume / 100.0f);
-    g_audio.target_frames = AUDIO_BASE_TARGET_FRAMES +
-        (uint32_t)g_settings.audio_latency_ms * AUDIO_RATE / 1000u;
-}
-
-static void pause_audio(void) {
-    if (!g_audio.stream) return;
-    (void)SDL_PauseAudioStreamDevice(g_audio.stream);
-    (void)SDL_ClearAudioStream(g_audio.stream);
-    g_audio.playing = 0;
-}
-
-static void resume_audio(void) {
-    static const int16_t silence[AUDIO_BASE_TARGET_FRAMES * 2u];
-    if (g_game) (void)topgear_app_audio_discard(g_game);
-    if (!g_audio.stream) return;
-    (void)SDL_ClearAudioStream(g_audio.stream);
-    /* Prime the target depth so the first frames cannot underrun. */
-    (void)SDL_PutAudioStreamData(g_audio.stream, silence, sizeof(silence));
-    (void)SDL_SetAudioStreamFrequencyRatio(g_audio.stream, 1.0f);
-    g_audio.history_count = 0u;
-    g_audio.history_index = 0u;
-    (void)SDL_ResumeAudioStreamDevice(g_audio.stream);
-    g_audio.playing = 1;
-}
-
-static void drain_core_audio(TopGearApp *game) {
-    size_t frames;
-    while ((frames = topgear_app_audio_read(game, g_audio.pcm,
-                                            AUDIO_READ_FRAMES)) > 0u) {
-        if (g_audio.stream && g_audio.playing)
-            (void)SDL_PutAudioStreamData(
-                g_audio.stream, g_audio.pcm,
-                (int)(frames * TOPGEAR_APP_AUDIO_CHANNELS * sizeof(int16_t)));
-    }
+    return 1;
 }
 
 static void audio_progress(TopGearApp *game, void *opaque) {
     (void)opaque;
-    drain_core_audio(game);
-}
-
-/* Once per emulated frame: steer the queue toward its target depth with a
-   small playback-rate correction, and recover from a runaway backlog. */
-static void audio_end_of_frame(void) {
-    uint32_t queued;
-    uint64_t sum = 0u;
-    uint32_t index;
-    double average;
-    double error;
-    double ratio;
-    if (!g_audio.stream || !g_audio.playing) return;
-    queued = audio_queued_frames();
-    if (queued == 0u) ++g_audio.underruns;
-    if (queued > g_audio.target_frames + AUDIO_RATE / 5u) {
-        (void)SDL_ClearAudioStream(g_audio.stream);
-        g_audio.history_count = 0u;
-        ++g_audio.recoveries;
-        return;
-    }
-    g_audio.history[g_audio.history_index] = queued;
-    g_audio.history_index = (g_audio.history_index + 1u) %
-                            AUDIO_AVERAGING_FRAMES;
-    if (g_audio.history_count < AUDIO_AVERAGING_FRAMES) ++g_audio.history_count;
-    for (index = 0u; index < g_audio.history_count; ++index)
-        sum += g_audio.history[index];
-    average = (double)sum / (double)g_audio.history_count;
-    error = (average - (double)g_audio.target_frames) / (double)AUDIO_RATE;
-    ratio = 1.0 + error * 0.1;
-    if (ratio > 1.0 + AUDIO_MAX_RATE_ADJUSTMENT)
-        ratio = 1.0 + AUDIO_MAX_RATE_ADJUSTMENT;
-    if (ratio < 1.0 - AUDIO_MAX_RATE_ADJUSTMENT)
-        ratio = 1.0 - AUDIO_MAX_RATE_ADJUSTMENT;
-    (void)SDL_SetAudioStreamFrequencyRatio(g_audio.stream, (float)ratio);
+    topgear_mac_audio_output_pump_progress(&g_audio, game);
 }
 
 /* ------------------------------------------------------------------ */
@@ -700,71 +398,47 @@ static uint16_t opposite_direction(uint16_t mask) {
 }
 
 static uint16_t key_to_input(SDL_Scancode code) {
-    uint16_t mask = 0u;
     int index;
-    for (index = 0; index < BINDING_COUNT; ++index)
-        if (g_settings.keys[index] == code) mask |= k_binding_masks[index];
-    return mask;
+    for (index = 0; index < TOPGEAR_MAC_BINDING_COUNT; ++index)
+        if (g_settings.keys[index] == (int)code)
+            return topgear_mac_binding_mask(index);
+    return 0u;
 }
 
-static int pad_control_pressed(int control) {
-    const Sint16 stick = 16384;
-    const Sint16 trigger = 8192;
-    SDL_Gamepad *pad = g_gamepad;
-    switch (control) {
-        case PAD_DPAD_UP: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_DPAD_UP);
-        case PAD_DPAD_DOWN: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_DPAD_DOWN);
-        case PAD_DPAD_LEFT: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_DPAD_LEFT);
-        case PAD_DPAD_RIGHT: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
-        case PAD_LS_UP: return SDL_GetGamepadAxis(pad, SDL_GAMEPAD_AXIS_LEFTY) < -stick;
-        case PAD_LS_DOWN: return SDL_GetGamepadAxis(pad, SDL_GAMEPAD_AXIS_LEFTY) > stick;
-        case PAD_LS_LEFT: return SDL_GetGamepadAxis(pad, SDL_GAMEPAD_AXIS_LEFTX) < -stick;
-        case PAD_LS_RIGHT: return SDL_GetGamepadAxis(pad, SDL_GAMEPAD_AXIS_LEFTX) > stick;
-        case PAD_SOUTH: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_SOUTH);
-        case PAD_EAST: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_EAST);
-        case PAD_WEST: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_WEST);
-        case PAD_NORTH: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_NORTH);
-        case PAD_LEFT_SHOULDER: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_LEFT_SHOULDER);
-        case PAD_RIGHT_SHOULDER: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER);
-        case PAD_LEFT_TRIGGER: return SDL_GetGamepadAxis(pad, SDL_GAMEPAD_AXIS_LEFT_TRIGGER) > trigger;
-        case PAD_RIGHT_TRIGGER: return SDL_GetGamepadAxis(pad, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) > trigger;
-        case PAD_START: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_START);
-        case PAD_BACK: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_BACK);
-        case PAD_LEFT_STICK: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_LEFT_STICK);
-        case PAD_RIGHT_STICK: return SDL_GetGamepadButton(pad, SDL_GAMEPAD_BUTTON_RIGHT_STICK);
-        default: return 0;
+static SDL_Gamepad *current_gamepad(void) {
+    if (g_gamepad && !SDL_GamepadConnected(g_gamepad)) {
+        SDL_CloseGamepad(g_gamepad);
+        g_gamepad = NULL;
     }
+    if (!g_gamepad) {
+        int count = 0;
+        SDL_JoystickID *pads = SDL_GetGamepads(&count);
+        if (pads && count > 0) g_gamepad = SDL_OpenGamepad(pads[0]);
+        SDL_free(pads);
+    }
+    return g_gamepad;
+}
+
+static int gamepad_gameplay_active(void) {
+    return g_settings.input_source == TOPGEAR_MAC_INPUT_SOURCE_GAMEPAD &&
+           g_gamepad && SDL_GamepadConnected(g_gamepad);
 }
 
 static uint16_t gamepad_input(void) {
     uint16_t mask = 0u;
     int index;
-    if (!g_gamepad ||
-        !(SDL_GetWindowFlags(g_window) & SDL_WINDOW_INPUT_FOCUS)) return 0u;
-    for (index = 0; index < BINDING_COUNT; ++index)
-        if (pad_control_pressed(g_settings.pads[index]))
-            mask |= k_binding_masks[index];
-    /* Opposite directions cancel, as on the original controller. */
-    if ((mask & (TOPGEAR_INPUT_LEFT | TOPGEAR_INPUT_RIGHT)) ==
-        (TOPGEAR_INPUT_LEFT | TOPGEAR_INPUT_RIGHT))
-        mask &= (uint16_t)~(TOPGEAR_INPUT_LEFT | TOPGEAR_INPUT_RIGHT);
-    if ((mask & (TOPGEAR_INPUT_UP | TOPGEAR_INPUT_DOWN)) ==
-        (TOPGEAR_INPUT_UP | TOPGEAR_INPUT_DOWN))
-        mask &= (uint16_t)~(TOPGEAR_INPUT_UP | TOPGEAR_INPUT_DOWN);
+    if (!(SDL_GetWindowFlags(g_window) & SDL_WINDOW_INPUT_FOCUS)) return 0u;
+    for (index = 0; index < TOPGEAR_MAC_BINDING_COUNT; ++index)
+        if (topgear_mac_pad_control_pressed(g_gamepad, g_settings.pads[index]))
+            mask |= topgear_mac_binding_mask(index);
     return mask;
 }
 
-static void open_first_gamepad(void) {
-    SDL_JoystickID *pads;
-    int count = 0;
-    if (g_gamepad) return;
-    pads = SDL_GetGamepads(&count);
-    if (pads && count > 0) {
-        g_gamepad = SDL_OpenGamepad(pads[0]);
-        if (g_gamepad)
-            set_status("Gamepad connected: %s", SDL_GetGamepadName(g_gamepad));
-    }
-    SDL_free(pads);
+/* The selected source supplies player one; the keyboard takes over while
+   no gamepad is connected, as on Windows. */
+static uint16_t current_gameplay_input(void) {
+    return gamepad_gameplay_active() ? gamepad_input() :
+           topgear_input_latch_sample(&g_keyboard_input);
 }
 
 /* ------------------------------------------------------------------ */
@@ -773,11 +447,10 @@ static void open_first_gamepad(void) {
 
 static void initialize_pacing(void) {
     /* One NTSC frame is 655171/39375000 s. Keep the remainder exactly. */
-    const uint64_t numerator = TOPGEAR_APP_PRESENTATION_FPS_NUMERATOR;
     const uint64_t scaled = SDL_NS_PER_SECOND *
                             (uint64_t)TOPGEAR_APP_PRESENTATION_FPS_DENOMINATOR;
-    g_frame_ns_base = scaled / numerator;
-    g_frame_ns_remainder = scaled % numerator;
+    g_frame_ns_base = scaled / TOPGEAR_APP_PRESENTATION_FPS_NUMERATOR;
+    g_frame_ns_remainder = scaled % TOPGEAR_APP_PRESENTATION_FPS_NUMERATOR;
 }
 
 static void reset_pacing_clock(void) {
@@ -798,7 +471,7 @@ static void advance_frame_deadline(void) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Game lifecycle                                                      */
+/* Presentation                                                        */
 /* ------------------------------------------------------------------ */
 
 static void update_window_title(void) {
@@ -820,329 +493,33 @@ static void update_window_title(void) {
     SDL_SetWindowTitle(g_window, title);
 }
 
-static void pause_game(const char *message) {
-    pause_audio();
-    g_paused = 1;
-    topgear_input_latch_reset(&g_keyboard_input);
-    if (message) set_status("%s", message);
-    update_window_title();
+static void set_fullscreen(int fullscreen) {
+    int active = (SDL_GetWindowFlags(g_window) & SDL_WINDOW_FULLSCREEN) != 0;
+    if (active == (fullscreen != 0)) return;
+    (void)SDL_SetWindowFullscreen(g_window, fullscreen != 0);
+    (void)SDL_SyncWindow(g_window);
 }
 
-static void play_game(void) {
-    if (!g_game || g_failed) return;
-    g_paused = 0;
-    g_show_help = 0;
-    topgear_input_latch_reset(&g_keyboard_input);
-    resume_audio();
-    reset_pacing_clock();
-    if (g_settings.fullscreen_on_play && !g_fullscreen_entered) {
-        g_fullscreen_entered = 1;
-        (void)SDL_SetWindowFullscreen(g_window, true);
+static void wrap_lines(const char *text, size_t width, char lines[][128],
+                       int *count, int max_lines) {
+    const char *cursor = text;
+    *count = 0;
+    while (*cursor && *count < max_lines) {
+        size_t length = strlen(cursor);
+        size_t take = length < width ? length : width;
+        if (take < length) {
+            size_t space = take;
+            while (space > 0 && cursor[space] != ' ') --space;
+            if (space > 0) take = space;
+        }
+        if (take > 127u) take = 127u;
+        memcpy(lines[*count], cursor, take);
+        lines[*count][take] = '\0';
+        ++*count;
+        cursor += take;
+        while (*cursor == ' ') ++cursor;
     }
-    update_window_title();
 }
-
-static void toggle_pause_play(void) {
-    if (!g_game || g_failed) return;
-    if (g_paused) play_game();
-    else pause_game("Paused. Press Escape to continue.");
-}
-
-static void stop_game_on_core_failure(void) {
-    char stamp[32];
-    char log_name[96];
-    char log_path[PATH_CAPACITY];
-    char error[192];
-    char text[PATH_CAPACITY + 1024u];
-    int log_written;
-    /* A missing static authority is a production error: stop, keep the last
-       frame, write the diagnostics and never fall back to an interpreter. */
-    pause_audio();
-    g_paused = 1;
-    g_failed = 1;
-    topgear_input_latch_reset(&g_keyboard_input);
-    timestamp(stamp, sizeof(stamp));
-    (void)snprintf(log_name, sizeof(log_name),
-                   "Static-Core-Failure-%s.txt", stamp);
-    log_written = ensure_directory_tree(g_logs_directory) &&
-        join_path(log_path, sizeof(log_path), g_logs_directory, log_name) &&
-        topgear_app_write_diagnostic_log(g_game, log_path, NULL, error,
-                                         sizeof(error));
-    (void)snprintf(text, sizeof(text),
-        "Top Gear stopped because the static-recompiled core reached an "
-        "execution or hardware state that is not in its compiled production "
-        "authority. No interpreter or emulator fallback was used.\n\n"
-        "Error details:\n%s\n\n%s%s",
-        topgear_app_last_error(g_game)[0] ? topgear_app_last_error(g_game) :
-            "The static core stopped without a text description.",
-        log_written ? "Diagnostic log:\n" :
-            "The Logs folder or diagnostic text file could not be created.",
-        log_written ? log_path : "");
-    set_status("Static core stopped fail-closed. Cmd+R resets the game.");
-    update_window_title();
-    show_message(SDL_MESSAGEBOX_ERROR, "Static Recompilation Error", text);
-}
-
-static int read_rom_file(const char *path, uint8_t **rom, char *error,
-                         size_t capacity) {
-    size_t size;
-    if (!read_whole_file(path, TOPGEAR_APP_ROM_SIZE + 1u, rom, &size)) {
-        (void)snprintf(error, capacity, "Unable to open the selected ROM file.");
-        return 0;
-    }
-    if (size != TOPGEAR_APP_ROM_SIZE) {
-        free(*rom);
-        *rom = NULL;
-        (void)snprintf(error, capacity,
-            "The exact 524,288-byte Top Gear (USA) NTSC ROM is required.");
-        return 0;
-    }
-    return 1;
-}
-
-static void present(void);
-
-static void load_rom(const char *path) {
-    uint8_t *rom = NULL;
-    TopGearApp *game = NULL;
-    char error[256];
-    int resume_after_failure = (g_game && !g_paused && !g_failed) ||
-                               g_resume_after_dialog;
-    g_resume_after_dialog = 0;
-    memset(error, 0, sizeof(error));
-    pause_game(NULL);
-    set_status("Loading and verifying the exact Top Gear ROM...");
-    present();
-    if (!read_rom_file(path, &rom, error, sizeof(error)) ||
-        !topgear_app_create(&game, rom, TOPGEAR_APP_ROM_SIZE, error,
-                            sizeof(error))) {
-        free(rom);
-        set_status("%s", error[0] ? error : "Run failed.");
-        show_message(SDL_MESSAGEBOX_ERROR, APP_TITLE,
-                     error[0] ? error :
-                     "The static recompilation could not be started.");
-        if (resume_after_failure) play_game();
-        return;
-    }
-    free(rom);
-    /* Commit the previous game's Data before the new core reads it. */
-    close_audio();
-    (void)flush_time_trial_data(1);
-    (void)flush_player_settings();
-    topgear_app_destroy(g_game);
-    g_game = game;
-    g_failed = 0;
-    g_uploaded_frame = UINT32_MAX;
-    if (!load_time_trial_data(g_game))
-        set_status("Time Trial Data could not be read; the file was left unchanged.");
-    if (!topgear_app_player_settings_load(g_game, g_player_settings_path))
-        set_status("Player or music settings could not be read; the file was left unchanged.");
-    (void)snprintf(g_settings.rom_path, sizeof(g_settings.rom_path), "%s", path);
-    save_settings();
-    open_audio();
-    play_game();
-}
-
-static void reset_game(void) {
-    char error[256];
-    if (!g_game) return;
-    pause_game(NULL);
-    memset(error, 0, sizeof(error));
-    if (!topgear_app_reset(g_game, error, sizeof(error))) {
-        set_status("%s", error[0] ? error : "Unable to reset the ROM.");
-        show_message(SDL_MESSAGEBOX_ERROR, APP_TITLE,
-                     "The ROM could not be reset.");
-        return;
-    }
-    g_failed = 0;
-    g_uploaded_frame = UINT32_MAX;
-    set_status("ROM returned to the real cold-reset frame.");
-    play_game();
-}
-
-static void advance_one_frame(void) {
-    TopGearAppFrameResult result;
-    uint16_t input;
-    memset(&result, 0, sizeof(result));
-    input = topgear_input_latch_sample(&g_keyboard_input) | gamepad_input();
-    if (!topgear_app_advance_streamed(g_game, input, 1u, audio_progress, NULL,
-                                      &result)) {
-        stop_game_on_core_failure();
-        return;
-    }
-    topgear_input_latch_consume(&g_keyboard_input, input);
-    drain_core_audio(g_game);
-    audio_end_of_frame();
-    if (!flush_player_settings())
-        set_status("Player or music settings could not be saved. The last "
-                   "committed Data files have been preserved.");
-    if (!flush_time_trial_data(0) && topgear_app_time_trial_data_dirty(g_game))
-        set_status("Time Trial Data save failed. The Results page stays "
-                   "locked while saving is retried.");
-    if (topgear_app_audio_overflowed(g_game))
-        topgear_app_audio_clear_overflow(g_game);
-}
-
-/* ------------------------------------------------------------------ */
-/* Snapshots and screenshots                                           */
-/* ------------------------------------------------------------------ */
-
-static int snapshot_path(int slot, char *path, size_t capacity) {
-    char name[64];
-    (void)snprintf(name, sizeof(name), "snapshot-slot-%d.scsnap", slot);
-    return ensure_directory_tree(g_saves_directory) &&
-           join_path(path, capacity, g_saves_directory, name);
-}
-
-static void save_snapshot(void) {
-    char path[PATH_CAPACITY];
-    char error[256];
-    int slot = g_settings.snapshot_slot;
-    if (!g_game) {
-        set_status("Load the ROM before using snapshots.");
-        return;
-    }
-    memset(error, 0, sizeof(error));
-    if (!snapshot_path(slot, path, sizeof(path))) {
-        set_status("The Saves folder could not be created.");
-        return;
-    }
-    if (!topgear_app_snapshot_save(g_game, path, error, sizeof(error))) {
-        set_status("%s", error[0] ? error : "Snapshot save failed.");
-        return;
-    }
-    set_status("Snapshot slot %d saved at frame %u.", slot,
-               topgear_app_current_frame(g_game));
-}
-
-static void load_snapshot(void) {
-    char path[PATH_CAPACITY];
-    char error[256];
-    int slot = g_settings.snapshot_slot;
-    int resume = !g_paused;
-    if (!g_game) {
-        set_status("Load the ROM before using snapshots.");
-        return;
-    }
-    if (!snapshot_path(slot, path, sizeof(path)) || !path_is_file(path)) {
-        set_status("Snapshot slot %d is empty.", slot);
-        return;
-    }
-    memset(error, 0, sizeof(error));
-    pause_audio();
-    if (!topgear_app_snapshot_load(g_game, path, error, sizeof(error))) {
-        set_status("%s", error[0] ? error : "Snapshot load failed.");
-        if (resume) resume_audio();
-        return;
-    }
-    g_failed = 0;
-    g_uploaded_frame = UINT32_MAX;
-    if (resume) {
-        resume_audio();
-        reset_pacing_clock();
-    }
-    set_status("Snapshot slot %d loaded at frame %u.", slot,
-               topgear_app_current_frame(g_game));
-}
-
-static void select_snapshot_slot(int slot) {
-    g_settings.snapshot_slot = clamp_int(slot, 1, SNAPSHOT_SLOT_COUNT);
-    save_settings();
-    set_status("Snapshot slot %d selected. 1 saves, 2 loads.",
-               g_settings.snapshot_slot);
-}
-
-static void capture_screenshot(void) {
-    char stamp[32];
-    char name[96];
-    char path[PATH_CAPACITY];
-    uint32_t *pixels;
-    SDL_Surface *surface;
-    int ok = 0;
-    const size_t count = (size_t)TOPGEAR_APP_FRAME_WIDTH *
-                         TOPGEAR_APP_FRAME_HEIGHT;
-    if (!g_game) return;
-    /* Encode a private copy of the last completed core frame, never the
-       window surface. */
-    pixels = (uint32_t *)malloc(count * sizeof(*pixels));
-    if (!pixels) return;
-    memcpy(pixels, topgear_app_frame_bgra(g_game), count * sizeof(*pixels));
-    timestamp(stamp, sizeof(stamp));
-    (void)snprintf(name, sizeof(name), "topgear-frame-%08u-%s.bmp",
-                   topgear_app_current_frame(g_game), stamp);
-    surface = SDL_CreateSurfaceFrom((int)TOPGEAR_APP_FRAME_WIDTH,
-                                    (int)TOPGEAR_APP_FRAME_HEIGHT,
-                                    SDL_PIXELFORMAT_XRGB8888, pixels,
-                                    (int)TOPGEAR_APP_FRAME_WIDTH * 4);
-    if (surface && ensure_directory_tree(g_screenshots_directory) &&
-        join_path(path, sizeof(path), g_screenshots_directory, name))
-        ok = SDL_SaveBMP(surface, path);
-    SDL_DestroySurface(surface);
-    free(pixels);
-    if (ok) set_status("Screenshot saved: Screenshots/%s", name);
-    else set_status("Unable to save the current game-frame screenshot.");
-}
-
-/* ------------------------------------------------------------------ */
-/* File dialog                                                         */
-/* ------------------------------------------------------------------ */
-
-static void SDLCALL rom_dialog_done(void *userdata, const char *const *files,
-                                    int filter) {
-    (void)userdata;
-    (void)filter;
-    if (!files || !files[0]) {
-        SDL_SetAtomicInt(&g_dialog_result_ready, 2);
-        return;
-    }
-    (void)snprintf(g_dialog_result, sizeof(g_dialog_result), "%s", files[0]);
-    SDL_SetAtomicInt(&g_dialog_result_ready, 1);
-}
-
-static void browse_for_rom(void) {
-    static const SDL_DialogFileFilter filters[] = {
-        { "Super Nintendo ROM (*.sfc)", "sfc" }
-    };
-    g_resume_after_dialog = g_game && !g_paused && !g_failed;
-    pause_game(NULL);
-    SDL_ShowOpenFileDialog(rom_dialog_done, NULL, g_window, filters,
-                           (int)ARRAY_COUNT(filters), g_rom_directory, false);
-}
-
-static void service_dialog_result(void) {
-    int ready = SDL_GetAtomicInt(&g_dialog_result_ready);
-    if (!ready) return;
-    SDL_SetAtomicInt(&g_dialog_result_ready, 0);
-    if (ready == 1) load_rom(g_dialog_result);
-    else if (g_resume_after_dialog) play_game();
-}
-
-static void show_data_folder(void) {
-    char url[PATH_CAPACITY + 16u];
-    (void)snprintf(url, sizeof(url), "file://%s", g_root_directory);
-    if (!SDL_OpenURL(url))
-        set_status("Data folder: %s", g_root_directory);
-}
-
-/* ------------------------------------------------------------------ */
-/* Presentation                                                        */
-/* ------------------------------------------------------------------ */
-
-static const char *const k_help_lines[] = {
-    "Esc       Pause / resume",
-    "Cmd+O     Open a ROM",
-    "Cmd+R     Reset",
-    "Cmd+F     Full screen (also F11)",
-    "Cmd+1..5  Select snapshot slot",
-    "1 / 2     Save / load snapshot",
-    "F8        Screenshot",
-    "Cmd+I     Integer scaling",
-    "Cmd+D     Show data folder",
-    "Cmd+Q     Quit",
-    "",
-    "Keys: arrows, D=B F=A A=Y S=X",
-    "      E=L R=R G=Start T=Select",
-};
 
 static void draw_text_block(const char *const *lines, int count, int output_w,
                             int output_h, int at_bottom) {
@@ -1180,16 +557,64 @@ static void draw_text_block(const char *const *lines, int count, int output_w,
     (void)SDL_SetRenderScale(g_renderer, 1.0f, 1.0f);
 }
 
+static void game_rect(int output_w, int output_h, SDL_FRect *rect) {
+    float w;
+    float h;
+    if (g_settings.integer_scale >= 1) {
+        /* The selected integer scale, reduced until it fits. */
+        int scale = g_settings.integer_scale;
+        while (scale > 1 &&
+               (scale * (int)TOPGEAR_APP_FRAME_WIDTH > output_w ||
+                scale * (int)TOPGEAR_APP_FRAME_HEIGHT > output_h))
+            --scale;
+        w = (float)(scale * (int)TOPGEAR_APP_FRAME_WIDTH);
+        h = (float)(scale * (int)TOPGEAR_APP_FRAME_HEIGHT);
+    } else {
+        /* Automatic: fit the window at the Windows launcher's 4:3. */
+        h = (float)output_h;
+        w = h * 4.0f / 3.0f;
+        if (w > (float)output_w) {
+            w = (float)output_w;
+            h = w * 3.0f / 4.0f;
+        }
+    }
+    rect->x = SDL_floorf(((float)output_w - w) / 2.0f);
+    rect->y = SDL_floorf(((float)output_h - h) / 2.0f);
+    rect->w = w;
+    rect->h = h;
+}
+
+static void save_fullscreen_capture(int output_w, int output_h) {
+    char stamp[32];
+    char name[128];
+    char path[PATH_CAPACITY];
+    SDL_Surface *surface;
+    int ok = 0;
+    g_capture_fullscreen = 0;
+    /* The displayed screen exactly as presented, including the 4:3 scaling
+       and letterbox bars, before any launcher overlay is drawn. */
+    surface = SDL_RenderReadPixels(g_renderer, NULL);
+    timestamp(stamp, sizeof(stamp));
+    (void)snprintf(name, sizeof(name),
+                   "topgear-fullscreen-%dx%d-frame-%08u-%s.bmp", output_w,
+                   output_h, topgear_app_current_frame(g_game), stamp);
+    if (surface && ensure_directory_tree(g_screenshots_directory) &&
+        join_path(path, sizeof(path), g_screenshots_directory, name))
+        ok = SDL_SaveBMP(surface, path);
+    SDL_DestroySurface(surface);
+    if (ok) set_status("Fullscreen screenshot saved: Screenshots/%s", name);
+    else set_status("Unable to save the fullscreen screenshot.");
+}
+
 static void present(void) {
     int output_w = 0;
     int output_h = 0;
+    int show_status;
     (void)SDL_GetCurrentRenderOutputSize(g_renderer, &output_w, &output_h);
     (void)SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 255);
     (void)SDL_RenderClear(g_renderer);
     if (g_game) {
         SDL_FRect destination;
-        float w;
-        float h;
         uint32_t frame = topgear_app_current_frame(g_game);
         if (frame != g_uploaded_frame) {
             (void)SDL_UpdateTexture(g_texture, NULL,
@@ -1197,112 +622,702 @@ static void present(void) {
                                     (int)TOPGEAR_APP_FRAME_WIDTH * 4);
             g_uploaded_frame = frame;
         }
-        if (g_settings.integer_scale) {
-            int scale = SDL_min(output_w / (int)TOPGEAR_APP_FRAME_WIDTH,
-                                output_h / (int)TOPGEAR_APP_FRAME_HEIGHT);
-            if (scale < 1) scale = 1;
-            w = (float)(scale * (int)TOPGEAR_APP_FRAME_WIDTH);
-            h = (float)(scale * (int)TOPGEAR_APP_FRAME_HEIGHT);
-        } else {
-            /* Match the Windows launcher's default 4:3 presentation. */
-            h = (float)output_h;
-            w = h * 4.0f / 3.0f;
-            if (w > (float)output_w) {
-                w = (float)output_w;
-                h = w * 3.0f / 4.0f;
-            }
-        }
-        destination.x = SDL_floorf(((float)output_w - w) / 2.0f);
-        destination.y = SDL_floorf(((float)output_h - h) / 2.0f);
-        destination.w = w;
-        destination.h = h;
+        game_rect(output_w, output_h, &destination);
         (void)SDL_RenderTexture(g_renderer, g_texture, NULL, &destination);
+        if (g_capture_fullscreen) save_fullscreen_capture(output_w, output_h);
     }
-    if (g_show_help) {
-        draw_text_block(k_help_lines, (int)ARRAY_COUNT(k_help_lines),
-                        output_w, output_h, 0);
-    } else if (!g_game) {
+    if (!g_game) {
         static const char *const lines[] = {
             ("Top Gear Definitive Edition " TOPGEAR_APP_VERSION),
             "",
-            "Press Cmd+O to choose the Top Gear (USA) ROM,",
-            "or drop the .sfc file onto this window.",
+            "File > Open ROM (Command-O) selects the Top Gear (USA) ROM.",
+            "F7 runs it. You can also drop the .sfc file here.",
             "",
-            "F1 shows all shortcuts.",
+            "F1 shows the Welcome window and all shortcuts.",
         };
         draw_text_block(lines, (int)ARRAY_COUNT(lines), output_w, output_h, 0);
     } else if (g_paused && !g_failed) {
         static const char *const lines[] = {
             "Paused",
             "",
-            "Esc resumes. F1 shows all shortcuts.",
+            "Escape resumes. F1 shows all shortcuts.",
         };
         draw_text_block(lines, (int)ARRAY_COUNT(lines), output_w, output_h, 0);
     }
-    if (g_status[0] && SDL_GetTicksNS() < g_status_until) {
-        const char *line = g_status;
-        draw_text_block(&line, 1, output_w, output_h, 1);
+    /* Like the Windows status bar, the latest status stays visible while
+       the launcher is paused; during play it fades after a few seconds. */
+    show_status = g_status[0] &&
+                  (!g_game || g_paused || SDL_GetTicksNS() < g_status_until);
+    if (show_status) {
+        char wrapped[4][128];
+        const char *lines[4];
+        int count;
+        int index;
+        int columns = output_w / (SDL_max(1, output_h / 300) *
+                                  SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) - 4;
+        wrap_lines(g_status, (size_t)SDL_clamp(columns, 20, 127), wrapped,
+                   &count, 4);
+        for (index = 0; index < count; ++index) lines[index] = wrapped[index];
+        draw_text_block(lines, count, output_w, output_h, 1);
     }
     (void)SDL_RenderPresent(g_renderer);
+}
+
+/* ------------------------------------------------------------------ */
+/* Game lifecycle                                                      */
+/* ------------------------------------------------------------------ */
+
+static void pause_game(const char *message) {
+    topgear_mac_audio_output_pause(&g_audio);
+    g_paused = 1;
+    topgear_input_latch_reset(&g_keyboard_input);
+    /* As on Windows, pausing restores the windowed launcher presentation. */
+    if (g_fullscreen_by_play) {
+        g_fullscreen_by_play = 0;
+        set_fullscreen(0);
+    }
+    if (message) set_status("%s", message);
+    update_window_title();
+}
+
+static void play_game(void) {
+    if (!g_game || g_failed) return;
+    g_paused = 0;
+    topgear_input_latch_reset(&g_keyboard_input);
+    if (g_settings.fullscreen_on_play &&
+        !(SDL_GetWindowFlags(g_window) & SDL_WINDOW_FULLSCREEN)) {
+        set_fullscreen(1);
+        g_fullscreen_by_play = 1;
+    }
+    topgear_mac_audio_output_resume(&g_audio);
+    reset_pacing_clock();
+    if (topgear_mac_audio_output_is_open(&g_audio))
+        set_status("Top Gear is running.");
+    else
+        set_status("Running generated static code. Audio output is disabled in Audio Settings.");
+    update_window_title();
+}
+
+static void toggle_pause_play(void) {
+    if (!g_game || g_failed) return;
+    if (g_paused) play_game();
+    else pause_game("Paused. Choose Play or press Escape to continue.");
+}
+
+/* Dialogs pause the game and resume it afterwards when it was running. */
+static int begin_dialog(const char *message) {
+    int resume = g_game && !g_paused && !g_failed;
+    if (resume) pause_game(message);
+    else if (g_fullscreen_by_play) pause_game(NULL);
+    present();
+    return resume;
+}
+
+static void end_dialog(int resume) {
+    topgear_input_latch_reset(&g_keyboard_input);
+    if (resume && g_game) play_game();
+    else update_window_title();
+}
+
+static void stop_game_on_core_failure(void) {
+    char stamp[32];
+    char log_name[96];
+    char log_path[PATH_CAPACITY];
+    char error[192];
+    char text[PATH_CAPACITY + 2048u];
+    const char *detail;
+    int log_written;
+    /* A missing static authority is a production error: stop, keep the last
+       frame, write the diagnostics and never fall back to an interpreter. */
+    topgear_mac_audio_output_pause(&g_audio);
+    g_paused = 1;
+    g_failed = 1;
+    topgear_input_latch_reset(&g_keyboard_input);
+    if (g_fullscreen_by_play) {
+        g_fullscreen_by_play = 0;
+        set_fullscreen(0);
+    }
+    detail = topgear_app_last_error(g_game);
+    if (!detail || !detail[0])
+        detail = "The static core stopped without a text description.";
+    timestamp(stamp, sizeof(stamp));
+    (void)snprintf(log_name, sizeof(log_name),
+                   "Static-Core-Failure-%s.txt", stamp);
+    log_written = ensure_directory_tree(g_logs_directory) &&
+        join_path(log_path, sizeof(log_path), g_logs_directory, log_name) &&
+        topgear_app_write_diagnostic_log(g_game, log_path, NULL, error,
+                                         sizeof(error));
+    if (log_written) {
+        set_status("Static core stopped fail-closed. Diagnostic log: %s", log_path);
+        (void)snprintf(text, sizeof(text),
+            "Top Gear stopped because the static-recompiled core reached an "
+            "execution or hardware state that is not in its compiled production "
+            "authority. No interpreter or emulator fallback was used.\n\n"
+            "Error details\n-------------\n%s\n\n"
+            "Diagnostic log\n--------------\n%s\n\n"
+            "Keep this text file when reporting the problem. It contains the "
+            "processor state, exact source and target contexts, expected "
+            "successors, recent execution history, timing, audio, PPU and "
+            "machine-state hashes needed to reproduce and repair the gap.",
+            detail, log_path);
+    } else {
+        set_status("Static core stopped fail-closed, but its diagnostic log could not be written.");
+        (void)snprintf(text, sizeof(text),
+            "Top Gear stopped because the static-recompiled core reached an "
+            "execution or hardware state that is not in its compiled production "
+            "authority. No interpreter or emulator fallback was used.\n\n"
+            "Error details\n-------------\n%s\n\n"
+            "The Logs folder or diagnostic text file could not be created. "
+            "Check that the data folder is writable, then reproduce the error.",
+            detail);
+    }
+    update_window_title();
+    present();
+    topgear_mac_ui_information("Static Recompilation Error", NULL, text);
+}
+
+static int read_rom_file(const char *path, uint8_t **rom, char *error,
+                         size_t capacity) {
+    size_t size;
+    if (!read_whole_file(path, TOPGEAR_APP_ROM_SIZE + 1u, rom, &size)) {
+        (void)snprintf(error, capacity, "Unable to open the selected ROM file.");
+        return 0;
+    }
+    if (size != TOPGEAR_APP_ROM_SIZE) {
+        free(*rom);
+        *rom = NULL;
+        (void)snprintf(error, capacity,
+            "The exact 524,288-byte Top Gear (USA) NTSC ROM is required.");
+        return 0;
+    }
+    return 1;
+}
+
+static void start_rom_load(int play_after_load) {
+    uint8_t *rom = NULL;
+    TopGearApp *game = NULL;
+    char error[256];
+    int resume_after_failure = g_game && !g_paused && !g_failed;
+    if (!g_selected_rom[0]) return;
+    memset(error, 0, sizeof(error));
+    pause_game(NULL);
+    set_status("Loading and verifying the exact Top Gear ROM...");
+    present();
+    if (!read_rom_file(g_selected_rom, &rom, error, sizeof(error)) ||
+        !topgear_app_create(&game, rom, TOPGEAR_APP_ROM_SIZE, error,
+                            sizeof(error))) {
+        free(rom);
+        set_status("%s", error[0] ? error : "Run failed.");
+        topgear_mac_ui_information(APP_TITLE, NULL,
+            error[0] ? error : "The static recompilation could not be started.");
+        if (resume_after_failure) play_game();
+        return;
+    }
+    free(rom);
+    /* Commit the previous game's Data before the new core reads it. */
+    close_audio();
+    (void)flush_time_trial_data(1);
+    (void)flush_player_settings();
+    topgear_app_destroy(g_game);
+    g_game = game;
+    g_failed = 0;
+    g_loaded_snapshot_slot = -1;
+    g_uploaded_frame = UINT32_MAX;
+    (void)load_time_trial_data(g_game);
+    (void)topgear_app_player_settings_load(g_game, g_player_settings_path);
+    (void)open_audio(1);
+    if (play_after_load) {
+        play_game();
+    } else {
+        update_window_title();
+        set_status("Top Gear is loaded and ready. Choose Play to start.");
+    }
+}
+
+/* A selected ROM is verified when it runs; selection alone only remembers
+   it, as the Windows launcher's Browse does. */
+static void select_rom(const char *path, int run_now) {
+    (void)snprintf(g_selected_rom, sizeof(g_selected_rom), "%s", path);
+    (void)snprintf(g_settings.rom_path, sizeof(g_settings.rom_path), "%s", path);
+    save_settings();
+    if (run_now || g_settings.auto_run_on_load) {
+        set_status("ROM selected. Starting now.");
+        start_rom_load(1);
+    } else {
+        set_status("ROM selected. Choose Run or press F7.");
+    }
+}
+
+static void reset_game(void) {
+    char error[256];
+    if (!g_game) return;
+    pause_game(NULL);
+    close_audio();
+    memset(error, 0, sizeof(error));
+    if (!topgear_app_reset(g_game, error, sizeof(error))) {
+        set_status("%s", error[0] ? error : "Unable to reset the ROM.");
+        topgear_mac_ui_information(APP_TITLE, NULL, "The ROM could not be reset.");
+        (void)open_audio(1);
+        return;
+    }
+    (void)open_audio(1);
+    g_failed = 0;
+    g_loaded_snapshot_slot = -1;
+    g_uploaded_frame = UINT32_MAX;
+    set_status("ROM returned to the real cold-reset frame.");
+    play_game();
+}
+
+static void advance_one_frame(void) {
+    TopGearAppFrameResult result;
+    uint16_t input;
+    memset(&result, 0, sizeof(result));
+    input = current_gameplay_input();
+    if (!topgear_app_advance_streamed(g_game, input, 1u, audio_progress, NULL,
+                                      &result)) {
+        stop_game_on_core_failure();
+        return;
+    }
+    if (!gamepad_gameplay_active())
+        topgear_input_latch_consume(&g_keyboard_input, input);
+    topgear_mac_audio_output_pump(&g_audio, g_game);
+    if (!flush_player_settings())
+        set_status("Player or music settings could not be saved. The last "
+                   "committed Data files have been preserved; check the file "
+                   "and folder permissions.");
+    if (!flush_time_trial_data(0) && topgear_app_time_trial_data_dirty(g_game))
+        set_status("Time Trial Data save failed. The completed result is not "
+                   "committed; the Results page will remain locked while "
+                   "saving is retried.");
+    if (topgear_app_audio_overflowed(g_game))
+        topgear_app_audio_clear_overflow(g_game);
+    if (!result.frame_rendered && result.renderer_error[0])
+        set_status("%s", result.renderer_error);
+}
+
+/* ------------------------------------------------------------------ */
+/* Snapshots and screenshots                                           */
+/* ------------------------------------------------------------------ */
+
+static int snapshot_path(int slot, char *path, size_t capacity) {
+    char name[64];
+    if (slot < 1 || slot > TOPGEAR_MAC_SNAPSHOT_SLOT_COUNT) return 0;
+    (void)snprintf(name, sizeof(name), "snapshot-slot-%d.scsnap", slot);
+    return ensure_directory_tree(g_saves_directory) &&
+           join_path(path, capacity, g_saves_directory, name);
+}
+
+static int snapshot_exists(int slot) {
+    char path[PATH_CAPACITY];
+    return snapshot_path(slot, path, sizeof(path)) && path_is_file(path);
+}
+
+static void snapshot_describe(int slot, int load_mode, char *text,
+                              size_t capacity) {
+    char path[PATH_CAPACITY];
+    char date[96];
+    struct stat info;
+    struct tm local;
+    if (!snapshot_path(slot, path, sizeof(path)) || stat(path, &info) != 0) {
+        (void)snprintf(text, capacity, "%s",
+                       load_mode ? "Empty slot - Not loaded" : "Empty slot");
+        return;
+    }
+    if (localtime_r(&info.st_mtime, &local))
+        (void)strftime(date, sizeof(date), "%x %H:%M", &local);
+    else
+        (void)snprintf(date, sizeof(date), "Date unavailable");
+    if (load_mode)
+        (void)snprintf(text, capacity, "Saved %s - %s", date,
+                       g_loaded_snapshot_slot == slot ? "Loaded" : "Not loaded");
+    else
+        (void)snprintf(text, capacity, "Saved %s", date);
+}
+
+static int save_snapshot_slot(int slot) {
+    char path[PATH_CAPACITY];
+    char error[256];
+    if (slot < 1 || slot > TOPGEAR_MAC_SNAPSHOT_SLOT_COUNT) slot = 1;
+    g_settings.snapshot_slot = slot;
+    save_settings();
+    if (!snapshot_path(slot, path, sizeof(path))) {
+        set_status("The Saves folder could not be created.");
+        return 0;
+    }
+    memset(error, 0, sizeof(error));
+    if (!topgear_app_snapshot_save(g_game, path, error, sizeof(error))) {
+        set_status("%s", error[0] ? error : "Snapshot save failed.");
+        return 0;
+    }
+    set_status("Snapshot slot %d saved at frame %u: %s", slot,
+               topgear_app_current_frame(g_game), path);
+    return 1;
+}
+
+static int load_snapshot_slot(int slot) {
+    char path[PATH_CAPACITY];
+    char error[256];
+    if (slot < 1 || slot > TOPGEAR_MAC_SNAPSHOT_SLOT_COUNT) slot = 1;
+    g_settings.snapshot_slot = slot;
+    save_settings();
+    if (!snapshot_exists(slot)) {
+        set_status("Snapshot slot %d is empty.", slot);
+        return 0;
+    }
+    (void)snapshot_path(slot, path, sizeof(path));
+    /* A snapshot changes emulated machine time, not the host audio device:
+       keep the device open and discard only queued audio. */
+    topgear_mac_audio_output_pause(&g_audio);
+    topgear_mac_audio_output_flush(&g_audio);
+    (void)topgear_app_audio_discard(g_game);
+    memset(error, 0, sizeof(error));
+    if (!topgear_app_snapshot_load(g_game, path, error, sizeof(error))) {
+        set_status("%s", error[0] ? error : "Snapshot load failed.");
+        return 0;
+    }
+    (void)topgear_app_audio_discard(g_game);
+    topgear_mac_audio_output_flush(&g_audio);
+    topgear_mac_audio_output_pause(&g_audio);
+    g_failed = 0;
+    g_loaded_snapshot_slot = slot;
+    g_uploaded_frame = UINT32_MAX;
+    set_status("Snapshot slot %d loaded at frame %u.", slot,
+               topgear_app_current_frame(g_game));
+    return 1;
+}
+
+static void save_current_snapshot(void) {
+    int resume;
+    if (!g_game) {
+        set_status("Load and run the ROM before using snapshots.");
+        return;
+    }
+    resume = !g_paused && !g_failed;
+    if (resume) pause_game("Paused while saving the current snapshot.");
+    (void)save_snapshot_slot(g_settings.snapshot_slot);
+    if (resume) play_game();
+}
+
+static void load_current_snapshot(void) {
+    int resume;
+    if (!g_game) {
+        set_status("Load and run the ROM before using snapshots.");
+        return;
+    }
+    resume = !g_paused && !g_failed;
+    if (resume) pause_game("Paused while loading the current snapshot.");
+    (void)load_snapshot_slot(g_settings.snapshot_slot);
+    if (resume) play_game();
+}
+
+static void show_snapshot_window(int save_mode) {
+    TopGearMacSnapshotHost host;
+    int resume;
+    int loaded;
+    if (!g_game) {
+        set_status("Load and run the ROM before using snapshots.");
+        return;
+    }
+    if (!ensure_directory_tree(g_saves_directory)) {
+        topgear_mac_ui_information(APP_TITLE, NULL,
+                                   "The Saves folder could not be created.");
+        return;
+    }
+    memset(&host, 0, sizeof(host));
+    host.save = save_snapshot_slot;
+    host.load = load_snapshot_slot;
+    host.exists = snapshot_exists;
+    host.describe = snapshot_describe;
+    host.last_status = last_status;
+    host.selected_slot = g_settings.snapshot_slot;
+    host.loaded_slot = g_loaded_snapshot_slot;
+    resume = begin_dialog("Paused while the Snapshot window is open.");
+    loaded = topgear_mac_ui_snapshots(save_mode, &host);
+    if ((resume || loaded) && g_game) {
+        end_dialog(1);
+    } else {
+        set_status("Snapshot window closed. The game remains paused.");
+        end_dialog(0);
+    }
+}
+
+static void capture_screenshot(void) {
+    char stamp[32];
+    char name[96];
+    char path[PATH_CAPACITY];
+    uint32_t *pixels;
+    SDL_Surface *surface;
+    int ok = 0;
+    const size_t count = (size_t)TOPGEAR_APP_FRAME_WIDTH *
+                         TOPGEAR_APP_FRAME_HEIGHT;
+    if (!g_game) return;
+    if (SDL_GetWindowFlags(g_window) & SDL_WINDOW_FULLSCREEN) {
+        /* Full screen captures the displayed screen on the next present. */
+        g_capture_fullscreen = 1;
+        if (g_paused) present();
+        return;
+    }
+    /* Windowed: encode a private copy of the last completed core frame,
+       never the window surface. */
+    pixels = (uint32_t *)malloc(count * sizeof(*pixels));
+    if (!pixels) return;
+    memcpy(pixels, topgear_app_frame_bgra(g_game), count * sizeof(*pixels));
+    timestamp(stamp, sizeof(stamp));
+    (void)snprintf(name, sizeof(name), "topgear-frame-%08u-%s.bmp",
+                   topgear_app_current_frame(g_game), stamp);
+    surface = SDL_CreateSurfaceFrom((int)TOPGEAR_APP_FRAME_WIDTH,
+                                    (int)TOPGEAR_APP_FRAME_HEIGHT,
+                                    SDL_PIXELFORMAT_XRGB8888, pixels,
+                                    (int)TOPGEAR_APP_FRAME_WIDTH * 4);
+    if (surface && ensure_directory_tree(g_screenshots_directory) &&
+        join_path(path, sizeof(path), g_screenshots_directory, name))
+        ok = SDL_SaveBMP(surface, path);
+    SDL_DestroySurface(surface);
+    free(pixels);
+    if (ok) set_status("Screenshot saved at frame %u: Screenshots/%s",
+                       topgear_app_current_frame(g_game), name);
+    else set_status("Unable to save the current game-frame screenshot.");
+}
+
+/* ------------------------------------------------------------------ */
+/* Dialog commands                                                     */
+/* ------------------------------------------------------------------ */
+
+static void SDLCALL rom_dialog_done(void *userdata, const char *const *files,
+                                    int filter) {
+    (void)userdata;
+    (void)filter;
+    if (!files || !files[0]) {
+        SDL_SetAtomicInt(&g_dialog_result_ready, 2);
+        return;
+    }
+    (void)snprintf(g_dialog_result, sizeof(g_dialog_result), "%s", files[0]);
+    SDL_SetAtomicInt(&g_dialog_result_ready, 1);
+}
+
+static void browse_for_rom(void) {
+    static const SDL_DialogFileFilter filters[] = {
+        { "SNES ROM images (*.sfc)", "sfc" }
+    };
+    char directory[PATH_CAPACITY];
+    char *slash;
+    (void)snprintf(directory, sizeof(directory), "%s",
+                   g_selected_rom[0] ? g_selected_rom : g_rom_directory);
+    slash = g_selected_rom[0] ? strrchr(directory, '/') : NULL;
+    if (slash) *slash = '\0';
+    g_resume_after_dialog = begin_dialog(NULL);
+    SDL_ShowOpenFileDialog(rom_dialog_done, NULL, g_window, filters,
+                           (int)ARRAY_COUNT(filters), directory, false);
+}
+
+static void service_dialog_result(void) {
+    int ready = SDL_GetAtomicInt(&g_dialog_result_ready);
+    int resume = g_resume_after_dialog;
+    if (!ready) return;
+    SDL_SetAtomicInt(&g_dialog_result_ready, 0);
+    g_resume_after_dialog = 0;
+    if (ready == 1) select_rom(g_dialog_result, 0);
+    if (!g_game || g_paused) end_dialog(resume);
+}
+
+static void show_settings(void) {
+    TopGearMacSettings edited = g_settings;
+    int resume = begin_dialog("Paused while Settings is open.");
+    if (topgear_mac_ui_settings(&edited)) {
+        g_settings = edited;
+        if (topgear_mac_settings_save(&g_settings, g_settings_path))
+            set_status("Settings changed and saved.");
+        else
+            set_status("Settings changed, but the settings file could not be written.");
+        reset_pacing_clock();
+    }
+    end_dialog(resume);
+}
+
+static void show_controls(void) {
+    TopGearMacSettings edited = g_settings;
+    int resume = begin_dialog("Paused while Controller Bindings is open.");
+    if (topgear_mac_ui_controls(&edited, current_gamepad)) {
+        g_settings = edited;
+        if (topgear_mac_settings_save(&g_settings, g_settings_path))
+            set_status("Control settings changed and saved.");
+        else
+            set_status("Control settings changed, but the settings file could not be written.");
+    }
+    end_dialog(resume);
+}
+
+static void show_audio_settings(void) {
+    TopGearMacAudioSettings edited = g_settings.audio;
+    TopGearMacAudioDiagnostics diagnostics;
+    char device[TOPGEAR_MAC_AUDIO_DEVICE_NAME_CAPACITY];
+    int resume;
+    topgear_mac_audio_output_get_diagnostics(&g_audio, &diagnostics);
+    (void)snprintf(device, sizeof(device), "%s", g_audio.opened_device_name);
+    resume = begin_dialog("Paused while Audio Settings is open.");
+    if (topgear_mac_ui_audio(&edited, &diagnostics, device)) {
+        g_settings.audio = edited;
+        save_settings();
+        if (g_game) {
+            if (open_audio(1) && topgear_mac_audio_output_is_open(&g_audio))
+                set_status("Audio settings applied.");
+            else if (!g_settings.audio.enabled)
+                set_status("Audio settings applied. Audio output is disabled.");
+        } else {
+            set_status("Audio settings saved. They will be used when the game starts.");
+        }
+    }
+    end_dialog(resume);
+}
+
+static void show_profile(void) {
+    char status[256];
+    int resume = begin_dialog("Paused while editing the profile.");
+    int result = topgear_mac_ui_profile(g_game, g_player_settings_path,
+                                        g_data_directory, status,
+                                        sizeof(status));
+    if (result) set_status("%s", status);
+    if (result == 2 && g_game) reset_game();
+    else end_dialog(resume);
+}
+
+static void show_leaderboard(void) {
+    int resume = begin_dialog("Paused while Leaderboard is open.");
+    topgear_mac_ui_leaderboard(g_game, g_time_trial_data_path);
+    end_dialog(resume);
+}
+
+static void show_welcome(void) {
+    int resume = begin_dialog("Paused while Welcome is open.");
+    topgear_mac_ui_information("Welcome",
+                               "Welcome to Top Gear (SNES) Static Recompilation",
+                               k_welcome_text);
+    end_dialog(resume);
+}
+
+static void show_about(void) {
+    int resume = begin_dialog(NULL);
+    topgear_mac_ui_information("About Top Gear",
+        "Top Gear (SNES) Static Recompilation",
+        "Version " TOPGEAR_APP_VERSION "\n\n"
+        "Title: Top Gear\nRegion: USA NTSC\nFile type: .sfc\n\n"
+        "F1 - Open the Welcome window\n\n"
+        "SDL is used under the zlib license; see SDL-LICENSE.txt and "
+        "THIRD-PARTY-NOTICES.txt inside the application bundle.");
+    end_dialog(resume);
+}
+
+static void show_data_folder(void) {
+    char url[PATH_CAPACITY + 16u];
+    (void)snprintf(url, sizeof(url), "file://%s", g_root_directory);
+    if (!SDL_OpenURL(url))
+        set_status("Data folder: %s", g_root_directory);
+}
+
+/* ------------------------------------------------------------------ */
+/* Commands                                                            */
+/* ------------------------------------------------------------------ */
+
+static int validate_command(int command, int *checked) {
+    int running = g_game && !g_paused && !g_failed;
+    if (checked) *checked = 0;
+    switch (command) {
+        case TOPGEAR_MAC_COMMAND_OPEN_ROM: return !g_game;
+        case TOPGEAR_MAC_COMMAND_RUN: return g_selected_rom[0] && !g_game;
+        case TOPGEAR_MAC_COMMAND_PAUSE_PLAY:
+            if (checked) *checked = running;
+            return g_game && !g_failed;
+        case TOPGEAR_MAC_COMMAND_RESET:
+        case TOPGEAR_MAC_COMMAND_SAVE_CURRENT_SNAPSHOT:
+        case TOPGEAR_MAC_COMMAND_LOAD_CURRENT_SNAPSHOT:
+        case TOPGEAR_MAC_COMMAND_SAVE_SNAPSHOT:
+        case TOPGEAR_MAC_COMMAND_LOAD_SNAPSHOT:
+        case TOPGEAR_MAC_COMMAND_SCREENSHOT:
+            return g_game != NULL;
+        case TOPGEAR_MAC_COMMAND_FULLSCREEN_ON_PLAY:
+            if (checked) *checked = g_settings.fullscreen_on_play;
+            return 1;
+        case TOPGEAR_MAC_COMMAND_AUTO_RUN:
+            if (checked) *checked = g_settings.auto_run_on_load;
+            return 1;
+        default:
+            return 1;
+    }
+}
+
+static void execute_command(int command) {
+    if (!validate_command(command, NULL) || topgear_mac_ui_modal_active())
+        return;
+    switch (command) {
+        case TOPGEAR_MAC_COMMAND_OPEN_ROM: browse_for_rom(); break;
+        case TOPGEAR_MAC_COMMAND_RUN: start_rom_load(1); break;
+        case TOPGEAR_MAC_COMMAND_PAUSE_PLAY: toggle_pause_play(); break;
+        case TOPGEAR_MAC_COMMAND_RESET: reset_game(); break;
+        case TOPGEAR_MAC_COMMAND_SAVE_CURRENT_SNAPSHOT: save_current_snapshot(); break;
+        case TOPGEAR_MAC_COMMAND_LOAD_CURRENT_SNAPSHOT: load_current_snapshot(); break;
+        case TOPGEAR_MAC_COMMAND_SAVE_SNAPSHOT: show_snapshot_window(1); break;
+        case TOPGEAR_MAC_COMMAND_LOAD_SNAPSHOT: show_snapshot_window(0); break;
+        case TOPGEAR_MAC_COMMAND_SCREENSHOT: capture_screenshot(); break;
+        case TOPGEAR_MAC_COMMAND_SHOW_DATA_FOLDER: show_data_folder(); break;
+        case TOPGEAR_MAC_COMMAND_SETTINGS: show_settings(); break;
+        case TOPGEAR_MAC_COMMAND_CONTROLS: show_controls(); break;
+        case TOPGEAR_MAC_COMMAND_AUDIO_SETTINGS: show_audio_settings(); break;
+        case TOPGEAR_MAC_COMMAND_PROFILE: show_profile(); break;
+        case TOPGEAR_MAC_COMMAND_LEADERBOARD: show_leaderboard(); break;
+        case TOPGEAR_MAC_COMMAND_FULLSCREEN_ON_PLAY:
+            g_settings.fullscreen_on_play = !g_settings.fullscreen_on_play;
+            save_settings();
+            break;
+        case TOPGEAR_MAC_COMMAND_AUTO_RUN:
+            g_settings.auto_run_on_load = !g_settings.auto_run_on_load;
+            save_settings();
+            break;
+        case TOPGEAR_MAC_COMMAND_WELCOME: show_welcome(); break;
+        case TOPGEAR_MAC_COMMAND_ABOUT: show_about(); break;
+        default: break;
+    }
+}
+
+/* Menu actions arrive inside SDL's event pump; queue them so dialogs run
+   from the main loop rather than re-entrantly. */
+static void post_command(int command) {
+    SDL_Event event;
+    SDL_zero(event);
+    event.type = g_command_event;
+    event.user.code = command;
+    (void)SDL_PushEvent(&event);
 }
 
 /* ------------------------------------------------------------------ */
 /* Events                                                              */
 /* ------------------------------------------------------------------ */
 
-static void toggle_fullscreen(void) {
-    int fullscreen = (SDL_GetWindowFlags(g_window) & SDL_WINDOW_FULLSCREEN) != 0;
-    (void)SDL_SetWindowFullscreen(g_window, !fullscreen);
-}
-
-static int handle_command_key(SDL_Scancode code) {
-    switch (code) {
-        case SDL_SCANCODE_O: browse_for_rom(); return 1;
-        case SDL_SCANCODE_R: reset_game(); return 1;
-        case SDL_SCANCODE_F: toggle_fullscreen(); return 1;
-        case SDL_SCANCODE_D: show_data_folder(); return 1;
-        case SDL_SCANCODE_I:
-            g_settings.integer_scale = !g_settings.integer_scale;
-            save_settings();
-            set_status(g_settings.integer_scale ? "Integer scaling on." :
-                                                  "4:3 presentation.");
-            return 1;
-        case SDL_SCANCODE_1: case SDL_SCANCODE_2: case SDL_SCANCODE_3:
-        case SDL_SCANCODE_4: case SDL_SCANCODE_5:
-            select_snapshot_slot((int)(code - SDL_SCANCODE_1) + 1);
-            return 1;
-        default: return 0;
-    }
-}
-
 static void handle_key_down(const SDL_KeyboardEvent *key) {
     uint16_t mask;
-    if (key->mod & SDL_KMOD_GUI) {
-        (void)handle_command_key(key->scancode);
-        return;
-    }
+    if (key->mod & SDL_KMOD_GUI) return;
     switch (key->scancode) {
         case SDL_SCANCODE_ESCAPE:
-            if (key->repeat) return;
-            if (g_show_help) g_show_help = 0;
-            else toggle_pause_play();
+            if (!key->repeat) execute_command(TOPGEAR_MAC_COMMAND_PAUSE_PLAY);
             return;
-        case SDL_SCANCODE_F1:
-            if (!key->repeat) {
-                g_show_help = !g_show_help;
-                if (g_show_help && g_game && !g_paused) pause_game(NULL);
-            }
+        /* The menu normally consumes these; this path covers keys the menu
+           bar passes through. */
+        case SDL_SCANCODE_F1: execute_command(TOPGEAR_MAC_COMMAND_WELCOME); return;
+        case SDL_SCANCODE_F2: execute_command(TOPGEAR_MAC_COMMAND_SAVE_SNAPSHOT); return;
+        case SDL_SCANCODE_F3: execute_command(TOPGEAR_MAC_COMMAND_LOAD_SNAPSHOT); return;
+        case SDL_SCANCODE_F4: execute_command(TOPGEAR_MAC_COMMAND_SETTINGS); return;
+        case SDL_SCANCODE_F5: execute_command(TOPGEAR_MAC_COMMAND_CONTROLS); return;
+        case SDL_SCANCODE_F6: execute_command(TOPGEAR_MAC_COMMAND_AUDIO_SETTINGS); return;
+        case SDL_SCANCODE_F7: execute_command(TOPGEAR_MAC_COMMAND_RUN); return;
+        case SDL_SCANCODE_F8: execute_command(TOPGEAR_MAC_COMMAND_SCREENSHOT); return;
+        case SDL_SCANCODE_1:
+            if (!key->repeat) execute_command(TOPGEAR_MAC_COMMAND_SAVE_CURRENT_SNAPSHOT);
             return;
-        case SDL_SCANCODE_F7:
-            if (!g_game) browse_for_rom();
+        case SDL_SCANCODE_2:
+            if (!key->repeat) execute_command(TOPGEAR_MAC_COMMAND_LOAD_CURRENT_SNAPSHOT);
             return;
-        case SDL_SCANCODE_F8: capture_screenshot(); return;
-        case SDL_SCANCODE_F11: toggle_fullscreen(); return;
-        case SDL_SCANCODE_1: if (!key->repeat) save_snapshot(); return;
-        case SDL_SCANCODE_2: if (!key->repeat) load_snapshot(); return;
         default: break;
     }
-    if (!g_game || g_paused) return;
+    if (!g_game || g_paused || gamepad_gameplay_active()) return;
     mask = key_to_input(key->scancode);
     if (mask)
         topgear_input_latch_press(&g_keyboard_input, mask,
@@ -1310,6 +1325,10 @@ static void handle_key_down(const SDL_KeyboardEvent *key) {
 }
 
 static void handle_event(const SDL_Event *event) {
+    if (event->type == g_command_event) {
+        execute_command(event->user.code);
+        return;
+    }
     switch (event->type) {
         case SDL_EVENT_QUIT:
             g_quit = 1;
@@ -1325,25 +1344,25 @@ static void handle_event(const SDL_Event *event) {
             break;
         case SDL_EVENT_WINDOW_FOCUS_LOST:
             topgear_input_latch_reset(&g_keyboard_input);
-            if (g_settings.pause_on_focus_loss && g_game && !g_paused)
-                pause_game("Paused because the window lost focus.");
+            if (g_settings.pause_on_focus_loss && g_game && !g_paused &&
+                !topgear_mac_ui_modal_active())
+                pause_game("Paused because the launcher lost keyboard focus.");
             break;
         case SDL_EVENT_DROP_FILE:
-            if (event->drop.data) {
-                g_startup_prompt_pending = 0;
-                load_rom(event->drop.data);
-            }
+            if (event->drop.data && !g_game) select_rom(event->drop.data, 1);
+            else if (event->drop.data)
+                set_status("Top Gear is already loaded. Quit and reopen the app to change the ROM.");
             break;
         case SDL_EVENT_GAMEPAD_ADDED:
-            open_first_gamepad();
+            if (!g_gamepad && current_gamepad())
+                set_status("Gamepad connected: %s", SDL_GetGamepadName(g_gamepad));
             break;
         case SDL_EVENT_GAMEPAD_REMOVED:
-            if (g_gamepad &&
-                SDL_GetGamepadID(g_gamepad) == event->gdevice.which) {
+            if (g_gamepad && SDL_GetGamepadID(g_gamepad) == event->gdevice.which) {
                 SDL_CloseGamepad(g_gamepad);
                 g_gamepad = NULL;
                 set_status("Gamepad disconnected.");
-                open_first_gamepad();
+                (void)current_gamepad();
             }
             break;
         default:
@@ -1364,10 +1383,6 @@ static void pump_events(void) {
 static void run_loop(void) {
     while (!g_quit) {
         pump_events();
-        if (g_startup_prompt_pending && !g_game) {
-            g_startup_prompt_pending = 0;
-            browse_for_rom();
-        }
         if (!g_game || g_paused) {
             present();
             (void)SDL_WaitEventTimeout(NULL, 100);
@@ -1396,9 +1411,12 @@ static void run_loop(void) {
                 g_next_deadline = now;
             }
         } else {
-            /* Unlocked: audio remains the safety throttle. */
-            if (g_audio.stream && g_audio.playing &&
-                audio_queued_frames() > g_audio.target_frames + AUDIO_RATE / 30u) {
+            /* Unlocked: audio remains the safety throttle so a benchmark
+               cannot overwrite queued PCM. */
+            if (topgear_mac_audio_output_is_open(&g_audio) && g_audio.playing &&
+                topgear_mac_audio_output_queued_frames(&g_audio) >
+                    g_audio.target_latency_frames +
+                    (uint32_t)(g_audio.device_sample_rate / 30)) {
                 SDL_DelayNS(SDL_NS_PER_MS);
                 continue;
             }
@@ -1411,7 +1429,7 @@ static void run_loop(void) {
 }
 
 static void shutdown_launcher(void) {
-    pause_audio();
+    topgear_mac_audio_output_pause(&g_audio);
     if (g_game) {
         (void)flush_time_trial_data(1);
         (void)flush_player_settings();
@@ -1428,7 +1446,6 @@ static void shutdown_launcher(void) {
 }
 
 int main(int argc, char **argv) {
-    char rom_path[PATH_CAPACITY];
     char mappings[PATH_CAPACITY];
     (void)SDL_SetAppMetadata(APP_TITLE, TOPGEAR_APP_VERSION,
                              "io.github.pablovsouza.topgear-static-recomp");
@@ -1439,13 +1456,15 @@ int main(int argc, char **argv) {
     }
     initialize_paths();
     initialize_pacing();
-    settings_load(&g_settings, g_settings_path);
-    save_settings();
+    topgear_mac_audio_output_initialize(&g_audio);
+    if (!topgear_mac_settings_load(&g_settings, g_settings_path))
+        save_settings();
     if (join_path(mappings, sizeof(mappings), g_resources_directory,
                   "gamecontrollerdb.txt") && path_is_file(mappings))
         (void)SDL_AddGamepadMappingsFromFile(mappings);
+    g_command_event = SDL_RegisterEvents(1);
 
-    if (!SDL_CreateWindowAndRenderer(APP_TITLE, 1024, 768,
+    if (!SDL_CreateWindowAndRenderer(APP_TITLE, 1024, 820,
                                      SDL_WINDOW_RESIZABLE |
                                      SDL_WINDOW_HIGH_PIXEL_DENSITY,
                                      &g_window, &g_renderer)) {
@@ -1454,8 +1473,7 @@ int main(int argc, char **argv) {
         SDL_Quit();
         return 1;
     }
-    SDL_SetWindowMinimumSize(g_window, (int)TOPGEAR_APP_FRAME_WIDTH,
-                             (int)TOPGEAR_APP_FRAME_HEIGHT);
+    SDL_SetWindowMinimumSize(g_window, 512, 448);
     (void)SDL_SetRenderVSync(g_renderer, 0);
     (void)SDL_SetRenderDrawBlendMode(g_renderer, SDL_BLENDMODE_BLEND);
     /* The core's BGRA bytes are XRGB8888 on little-endian hosts. */
@@ -1471,20 +1489,42 @@ int main(int argc, char **argv) {
     }
     (void)SDL_SetTextureScaleMode(g_texture, SDL_SCALEMODE_NEAREST);
     (void)SDL_SetTextureBlendMode(g_texture, SDL_BLENDMODE_NONE);
-    open_first_gamepad();
+    topgear_mac_ui_install_menus(post_command, validate_command);
+    /* Device discovery does not choose the input source; the keyboard stays
+       active until Gamepad is selected in Controller Bindings. */
+    (void)current_gamepad();
 
     /* A ROM passed on the command line wins, then the remembered path, then
-       the first .sfc in the Rom folder. Otherwise ask after the first event
-       pump so a ROM opened from Finder can arrive first. */
-    rom_path[0] = '\0';
+       the first .sfc in the Rom folder. */
     if (argc > 1 && path_is_file(argv[1]))
-        (void)snprintf(rom_path, sizeof(rom_path), "%s", argv[1]);
+        (void)snprintf(g_selected_rom, sizeof(g_selected_rom), "%s", argv[1]);
     else if (path_is_file(g_settings.rom_path))
-        (void)snprintf(rom_path, sizeof(rom_path), "%s", g_settings.rom_path);
+        (void)snprintf(g_selected_rom, sizeof(g_selected_rom), "%s",
+                       g_settings.rom_path);
     else
-        (void)find_sfc_rom(rom_path, sizeof(rom_path));
-    if (rom_path[0]) load_rom(rom_path);
-    else g_startup_prompt_pending = 1;
+        (void)find_sfc_rom(g_selected_rom, sizeof(g_selected_rom));
+    present();
+
+    if (!g_settings.welcome_shown) {
+        topgear_mac_ui_information("Welcome",
+                                   "Welcome to Top Gear (SNES) Static Recompilation",
+                                   k_welcome_text);
+        g_settings.welcome_shown = 1;
+        if (!topgear_mac_settings_save(&g_settings, g_settings_path)) {
+            g_settings.welcome_shown = 0;
+            set_status("Welcome closed, but its one-time setting could not be saved; it will appear again next launch.");
+        }
+    }
+    if (g_selected_rom[0]) {
+        if (g_settings.auto_run_on_load) {
+            set_status("ROM found. Loading and starting Top Gear.");
+            start_rom_load(1);
+        } else {
+            set_status("ROM found. Choose Run or press F7 to start.");
+        }
+    } else {
+        set_status("Choose File > Open ROM to select the required Top Gear ROM.");
+    }
 
     run_loop();
     shutdown_launcher();

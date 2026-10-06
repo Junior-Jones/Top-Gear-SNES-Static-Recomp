@@ -51,22 +51,41 @@ static-audio ownership and purity, integrity manifests, exact-ROM smoke tests,
 deterministic PCM continuation, and scripted 60-, 120- and 180-second routes.
 
 macOS frontend
-frontend/macos/topgear_app_macos.c is an SDL3 launcher built as Top Gear.app.
-It links the same static core, topgear_app_core, Data stores and input latch
-as Windows; topgear_app_core's background settings writers use pthreads on
-POSIX hosts. SDL renders the 256x224 core frame through Metal at 4:3 by
-default or with integer scaling. Core Audio output uses an SDL audio stream
-fed with native 32,040 Hz PCM; SDL converts to the device rate, a small
-playback-rate correction holds the queue near two frames (plus the optional
-0-40 ms latency), and a runaway backlog is cleared rather than played late.
-Frame pacing uses the same NTSC deadline and late-frame rebase rules as the
-Windows host. Keyboard and gamepad (SDL, gamecontrollerdb.txt) inputs are
-merged for player one and configured in settings.ini. Inside the bundle,
-Rom, Data, Saves, Screenshots, Logs and settings.ini live in
-~/Library/Application Support/Top Gear Definitive Edition; Data is seeded
+frontend/macos/topgear_app_macos.c is the launcher for Top Gear.app. It links
+the same static core, topgear_app_core, Data stores and input latch as
+Windows; topgear_app_core's background settings writers use pthreads on
+POSIX hosts. SDL3 provides the window, Metal presentation, Core Audio device,
+keyboard and gamepad input. topgear_mac_ui.m provides native AppKit menus and
+the Settings, Controller Bindings, Audio Settings, Profile, Leaderboard,
+Save/Load Snapshot, Welcome and About windows; they use standard controls,
+so VoiceOver reads them, and every window pauses the game while it is open.
+
+Rendering follows the Windows rules: 4:3 fit by default or a 1x-4x integer
+scale, with optional full screen when Play starts that is left again when
+the game pauses. F8 saves the core frame in a window and the displayed screen
+in full screen.
+
+topgear_audio_output_sdl.c is the Windows Jungle Strike/Mesen-derived audio
+manager with the DirectSound ring replaced by an SDL audio stream bound to
+the selected device. The project resampler converts 32,040 Hz to the chosen
+output rate; priming at half the target latency, drift correction with its
+tolerance, maximum correction, averaging window and integral term, recovery
+from stale audio, volume and resume fade follow the same code paths. SDL
+never resamples. Realign-on-underrun has no macOS equivalent because an SDL
+stream cannot be overwritten behind its read position.
+
+topgear_mac_settings.c keeps settings.ini with the Windows section and key
+names and the same defaults and clamping; keyboard bindings are stored as SDL
+key names. As on Windows, one input source (keyboard or gamepad) supplies
+player one and the keyboard takes over while no gamepad is connected.
+
+Inside the bundle, Rom, Data, Saves, Screenshots, Logs and settings.ini live
+in ~/Library/Application Support/Top Gear Definitive Edition; Data is seeded
 from the bundle's clean-install records on first run and committed with
 F_FULLFSYNC and an atomic rename. A loose (non-bundle) executable keeps the
 portable layout beside itself. Static-core failures write the same
-diagnostic log and stop fail-closed. Not yet ported: the Profile,
-Leaderboard, Controls and Audio Settings dialogs (the in-game menus and
-settings.ini cover their functions) and full-screen screenshots.
+diagnostic log and stop fail-closed.
+
+CTest adds the macOS settings and audio-output contract tests (the latter on
+SDL's dummy audio driver). With -DTOPGEAR_MAC_UI_SMOKE_TEST=ON it also opens
+and closes every AppKit window, which requires a logged-in GUI session.

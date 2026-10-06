@@ -1,5 +1,5 @@
 {
-  "file_count": 444,
+  "file_count": 453,
   "files": [
     {
       "bytes": 19,
@@ -7,9 +7,9 @@
       "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
     },
     {
-      "bytes": 1173,
+      "bytes": 1214,
       "path": ".github/workflows/macos-ci.yml",
-      "sha256": "bddf4dbf069f68dd22442424b509afc9e66f014e9d0123f46382952b138cf860"
+      "sha256": "7c7377f8956e12ef7895b076a507ca0a8f40e68cfb393be9e4892b96e787f6cb"
     },
     {
       "bytes": 963,
@@ -77,9 +77,9 @@
       "sha256": "e5de8de8230b70e06048bf5468e104fde74f6766ba46ead9d7f5fbda009e23d9"
     },
     {
-      "bytes": 4112,
+      "bytes": 5094,
       "path": "Docs/Frontend Architecture.txt",
-      "sha256": "9b1fd71fb0b635494e4257ac5a1260b28768d8af888305106c45cfe47bbe7189"
+      "sha256": "158090925ffaddc8a47651dbcdd44b5f97c89c7291574cc834f328e6fa622789"
     },
     {
       "bytes": 5995,
@@ -217,9 +217,9 @@
       "sha256": "a0ad77ec5441dd32d0640435feb0ac81d552b0280ffc329c239ee735c75beeb3"
     },
     {
-      "bytes": 7471,
+      "bytes": 7620,
       "path": "README.txt",
-      "sha256": "9900981742459f2c2383cd046ca08e38c5d47870d24f8c9197f01b4b563ebdfe"
+      "sha256": "22ccecc1919ff6b71710bd5b62079b9363434356d18071a5f87f0892ad1c6af6"
     },
     {
       "bytes": 18,
@@ -297,19 +297,64 @@
       "sha256": "60fbc1433b715c4376344abb6461efb8aacff4e23c835aed127cce0326f072ae"
     },
     {
-      "bytes": 2417,
+      "bytes": 3221,
       "path": "frontend/macos/Release-README.txt",
-      "sha256": "a4c086591f70b10587818485f7e0adf8e0bd12d1435e8acee6e0c765b4fad74a"
+      "sha256": "d1eca80957d3217419784f03b8154428c74841cd6398e22b19abcd3485109559"
     },
     {
-      "bytes": 2655,
+      "bytes": 4804,
       "path": "frontend/macos/TopGearMacLauncher.cmake",
-      "sha256": "cd1757bc6e0e1d26dec85118655159d755b8028a6de5ed8a38488be6742d5531"
+      "sha256": "7a1cb69b920e7ea24395e92262583bc3e617d372a391c8cf88ec60f2278d5bf5"
     },
     {
-      "bytes": 57640,
+      "bytes": 59909,
       "path": "frontend/macos/topgear_app_macos.c",
-      "sha256": "198407e8fea35a958a986e4c442a2bee02dd9b9f338b81a7f8fd9fba28a9cc03"
+      "sha256": "910fee9614c0e903eff0bee8846b2b3398299f32730870259e336f4c6dced53b"
+    },
+    {
+      "bytes": 15964,
+      "path": "frontend/macos/topgear_audio_output_sdl.c",
+      "sha256": "3ec2de957e2d536b6989aae907cd8c4a0db2d364de71694415f09b117b70204b"
+    },
+    {
+      "bytes": 3801,
+      "path": "frontend/macos/topgear_audio_output_sdl.h",
+      "sha256": "2c65439fa38c8cd8b493bd6c9810eac3be8d9c56de1a28a338404a0854438aab"
+    },
+    {
+      "bytes": 4071,
+      "path": "frontend/macos/topgear_mac_audio_output_contract_test.c",
+      "sha256": "6e48a5dc3550a2948c056fcbaf5d4a7c4ef73563f176e062ea9de0fc624f63e5"
+    },
+    {
+      "bytes": 23182,
+      "path": "frontend/macos/topgear_mac_settings.c",
+      "sha256": "401a49da27b5da4b89035e9b92e676f43e4f2873f9a4f3ef2da7e0b08652bc45"
+    },
+    {
+      "bytes": 5385,
+      "path": "frontend/macos/topgear_mac_settings.h",
+      "sha256": "bc8c2cc305bb6ff759c0ef14361f0d83c8ea0a19d91c0c6ced62cf3f3a311f89"
+    },
+    {
+      "bytes": 8484,
+      "path": "frontend/macos/topgear_mac_settings_contract_test.c",
+      "sha256": "f3a10830c7ab13e655e81dd4d3f3786eec7d1ab7a872cb17376d68e2fbaa2f90"
+    },
+    {
+      "bytes": 3899,
+      "path": "frontend/macos/topgear_mac_ui.h",
+      "sha256": "c2f49aa1a07d19775df8f4edf89f7b2d6486f5d87b61418aa776a6a34b40f730"
+    },
+    {
+      "bytes": 72739,
+      "path": "frontend/macos/topgear_mac_ui.m",
+      "sha256": "de7f93415e662baf4cc1d983706c90a7e5e7dff4d0644fbbee8acd3d50878b95"
+    },
+    {
+      "bytes": 4592,
+      "path": "frontend/macos/topgear_mac_ui_smoke.m",
+      "sha256": "19e53a278699cf977639d562a220d580c2331ac9ef1815023f53169b0d54a1aa"
     },
     {
       "bytes": 2777,
@@ -2222,7 +2267,7 @@
       "sha256": "51605bc8a16e478811fa6197a6bd463ca66022fbe1708d2461e299e8b1f904f2"
     }
   ],
-  "inventory_sha256": "0130c880bd713d225b2ac0fa033505cd597776990f188e70f27ad60cd02c141e",
+  "inventory_sha256": "8a7538d571aa9866105d1aa83c4b33e5c3aa371d5288f1f2fdfd22175544c34b",
   "project_version": "1.2.0",
   "schema": "topgear-source-manifest-v1"
 }

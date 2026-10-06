@@ -3,60 +3,75 @@ Launcher for macOS 11 or newer (Apple silicon and Intel)
 
 Getting started
 ---------------
-Open Top Gear.app. On first launch, choose your Top Gear (USA) ROM in the file
-dialog, or drop the .sfc file onto the window or the Dock icon. The verified
-path is remembered for later launches.
+Open Top Gear.app. Choose File > Open ROM (Command-O) and select your
+Top Gear (USA) ROM, then choose File > Run (F7). You can also drop the .sfc
+file onto the window or the Dock icon, or place it in the Rom folder below.
+The selected path is remembered for later launches.
 
 Required ROM size: 524,288 bytes
 SHA-256: ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788
 
-Saved data
+Game modes
 ----------
-The app stores everything in:
+Career has revised race and championship qualification rules, three continues
+for a failed race, and difficulty-specific passwords. Career and Rally share
+their two-player setup. Rally selects and previews eight tracks, uses a harder
+finishing target in each of its first seven races, and has no continues.
+
+Time Trial is a solo mode with no CPU cars. Its results screen provides
+Leaderboard, Retry, Tracks, Cars and Main Menu. The Top 5 records total time,
+the best three sectors and lap times for each track, car and gearbox.
+
+See VERSION.txt for the full rules and complete change list.
+
+Launcher and saved data
+-----------------------
+The Settings menu provides Settings, Controller Bindings (keyboard or
+USB/Bluetooth gamepad, with key and button capture), Audio Settings, Profile
+(the shared Career/Rally setup or the separate Time Trial setup) and
+Leaderboard (the saved Time Trial Top 5, available without a loaded ROM).
+
+The app stores its data in:
 
   ~/Library/Application Support/Top Gear Definitive Edition/
 
-  Rom          Optional: a .sfc placed here is found automatically
+  Rom          A .sfc placed here is found automatically
   Data         Profiles, game options, music playlist and Time Trial records
                (the same file formats as the Windows release, so a Windows
                Data folder can be copied here)
   Saves        Full-machine snapshots (.scsnap)
-  Screenshots  F8 captures
+  Screenshots  Game-frame and full-screen captures
   Logs         Static-core failure reports
-  settings.ini Launcher settings and key/gamepad bindings
+  settings.ini Launcher settings
 
-Choose "Show Data Folder" (Cmd+D) to open this folder in Finder.
-
-Controls
---------
-Keyboard defaults:   Arrows = D-pad    D = B    F = A    A = Y    S = X
-                     E = L    R = R    G = Start    T = Select
-Gamepads use the SNES layout: bottom = B, right = A, left = Y, top = X,
-shoulders = L/R, Start and Back/Select.
-
-Keyboard and gamepad input are both active. Rebind them in settings.ini
-([Keyboard] uses SDL key names such as "Left", "Z" or "Return"; [Gamepad] uses
-dpup, dpdown, dpleft, dpright, lsup, lsdown, lsleft, lsright, south, east,
-west, north, lshoulder, rshoulder, ltrigger, rtrigger, start, back, lstick,
-rstick). Edit settings.ini while the app is closed.
+File > Show Data Folder (Command-D) opens this folder in Finder.
 
 Launcher shortcuts
 ------------------
-Escape          Pause or resume
-Cmd+O           Open a ROM
-Cmd+R           Reset the game
-Cmd+F / F11     Toggle full screen
-Cmd+1 ... Cmd+5 Select the snapshot slot
-1               Save the current snapshot slot
-2               Load the current snapshot slot
-F8              Capture the current game frame
-Cmd+I           Toggle integer scaling (default is 4:3)
-Cmd+D           Show the Data folder in Finder
-F1              Show this shortcut list
-Cmd+Q           Quit
+Escape            Switch between the game and the launcher (pause)
+1                 Save the current snapshot slot
+2                 Load the current snapshot slot
+F1                Welcome and shortcut guide
+F2                Open the Save Snapshot window
+F3                Open the Load Snapshot window
+F4                Settings (also Command-Comma)
+F5                Controls
+F6                Audio settings
+F7                Run the selected ROM
+F8                Capture the current game frame (the whole displayed screen
+                  in full screen)
+Command-O         Open a ROM
+Command-R         Reset the ROM
+Control-Command-F Toggle full screen
+Command-D         Show the data folder
+Command-Q         Quit
 
-On most Mac keyboards, hold Fn to use F1, F8 and F11.
+On most Mac keyboards, hold Fn to use the F keys.
 
-settings.ini [Audio] provides Enabled, Volume (0-100) and LatencyMs (0-40).
-[General] provides IntegerScale, PauseOnFocusLoss, FullScreenOnPlay,
-ShowFpsCounter and NtscFrameLock.
+Audio
+-----
+Audio Settings provides the same controls as the Windows launcher: output
+device, volume, output rate, resampler, optional 0-40 ms extra latency,
+safety prebuffer, automatic recovery, drift correction and resume fade, plus
+the last live output diagnostics. The static core always produces native
+32,040 Hz audio; only speaker output is resampled.
