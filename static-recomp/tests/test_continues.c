@@ -21,7 +21,7 @@ int main(int argc,char **argv){
   for(n=0;n<(mode?2u:3u);n++)CHECK(press(0x0400));CHECK(press(0x0080)&&frames(1900,0));
   CHECK(c->mod_continues_remaining==3&&c->mod_attempt_live&&c->hdma_enable_mask==0x7F);
   course=c->wram[0x1F06];index=c->mod_rally_race_index;
-  for(n=0;n<20;n++)c->wram[0x1F4E+n]=(uint8_t)(20-n);tg_mod_attempt_race(c);memcpy(points,c->wram+0x1F4E,20);
+  for(n=0;n<20;n++)c->wram[0x1F4E + n]=(uint8_t)(20-n);tg_mod_attempt_race(c);memcpy(points,c->wram+0x1F4E,20);
   snprintf(name,sizeof(name),"%s-solo-panel",mode?"rally":"career");CHECK(shot(name));CHECK(topgear_recomp_snapshot_save(c,live,error,sizeof(error)));
   for(k=0;k<4;k++){
    CHECK(fail_race());CHECK(c->mod_continues_remaining==3-k);snprintf(name,sizeof(name),"%s-continues-%u",mode?"rally":"career",3-k);CHECK(shot(name));

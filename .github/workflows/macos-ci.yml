@@ -1,0 +1,44 @@
+name: macOS CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos-build-test:
+    name: macos-build-test
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Configure universal Release
+        run: >
+          cmake -S . -B "$RUNNER_TEMP/static-recomp-build"
+          -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release
+          "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+
+      - name: Build Release
+        run: cmake --build "$RUNNER_TEMP/static-recomp-build" --parallel
+
+      - name: Run ROM-free tests
+        run: ctest --test-dir "$RUNNER_TEMP/static-recomp-build" --output-on-failure
+
+      - name: Verify app bundle
+        run: |
+          app="$RUNNER_TEMP/static-recomp-build/release/Top Gear.app"
+          plutil -lint "$app/Contents/Info.plist"
+          lipo -verify_arch arm64 x86_64 "$app/Contents/MacOS/Top Gear"

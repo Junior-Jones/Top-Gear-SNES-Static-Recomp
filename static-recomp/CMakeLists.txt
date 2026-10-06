@@ -79,10 +79,19 @@ set_source_files_properties(
 # The snapshot format intentionally serializes the static S-SMP object image and
 # restores its ARAM pointer explicitly. GCC's class-memaccess diagnostic is not
 # applicable to this build-owned snapshot ABI; keep all other warnings strict.
+# Clang names the same diagnostic nontrivial-memcall; Apple's toolchain reports
+# itself as AppleClang, so both Clang identities must be matched.
 set_source_files_properties(
     static-audio/topgear-bapu-aot/sc_static_apu.cpp
     PROPERTIES COMPILE_OPTIONS
-        "$<$<CXX_COMPILER_ID:GNU>:-Wno-class-memaccess>;$<$<CXX_COMPILER_ID:Clang>:-Wno-nested-anon-types>")
+        "$<$<CXX_COMPILER_ID:GNU>:-Wno-class-memaccess>;$<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-nested-anon-types;-Wno-nontrivial-memcall>")
+# The 32-phase DSP schedule keeps one hardware phase per line, so a guarded
+# step is followed by its case's break on the same line. Clang reads that
+# layout as misleading indentation; the control flow is intentional.
+set_source_files_properties(
+    static-audio/topgear-project-dsp/topgear_dsp.c
+    PROPERTIES COMPILE_OPTIONS
+        "$<$<C_COMPILER_ID:Clang,AppleClang>:-Wno-misleading-indentation>")
 
 if(BUILD_TESTING)
     function(topgear_add_core_test target source needs_internal)
@@ -138,7 +147,8 @@ if(BUILD_TESTING)
     target_link_libraries(topgear-voice9 PRIVATE topgear-static-recomp)
     add_test(NAME topgear-voice9 COMMAND topgear-voice9)
 
-    find_package(Python3 COMPONENTS Interpreter QUIET)
+    # The audio generator relies on Path.write_text(newline=...), new in 3.10.
+    find_package(Python3 3.10 COMPONENTS Interpreter QUIET)
     if(Python3_Interpreter_FOUND)
         get_filename_component(TOPGEAR_COMPILER_BIN_DIR
             "${CMAKE_CXX_COMPILER}" DIRECTORY)

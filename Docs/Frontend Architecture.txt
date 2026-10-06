@@ -49,3 +49,24 @@ CTest covers the public and diagnostics APIs, generated dispatch, renderer
 instances, input/frontend settings, audio FIFO/output/resampling, snapshots,
 static-audio ownership and purity, integrity manifests, exact-ROM smoke tests,
 deterministic PCM continuation, and scripted 60-, 120- and 180-second routes.
+
+macOS frontend
+frontend/macos/topgear_app_macos.c is an SDL3 launcher built as Top Gear.app.
+It links the same static core, topgear_app_core, Data stores and input latch
+as Windows; topgear_app_core's background settings writers use pthreads on
+POSIX hosts. SDL renders the 256x224 core frame through Metal at 4:3 by
+default or with integer scaling. Core Audio output uses an SDL audio stream
+fed with native 32,040 Hz PCM; SDL converts to the device rate, a small
+playback-rate correction holds the queue near two frames (plus the optional
+0-40 ms latency), and a runaway backlog is cleared rather than played late.
+Frame pacing uses the same NTSC deadline and late-frame rebase rules as the
+Windows host. Keyboard and gamepad (SDL, gamecontrollerdb.txt) inputs are
+merged for player one and configured in settings.ini. Inside the bundle,
+Rom, Data, Saves, Screenshots, Logs and settings.ini live in
+~/Library/Application Support/Top Gear Definitive Edition; Data is seeded
+from the bundle's clean-install records on first run and committed with
+F_FULLFSYNC and an atomic rename. A loose (non-bundle) executable keeps the
+portable layout beside itself. Static-core failures write the same
+diagnostic log and stop fail-closed. Not yet ported: the Profile,
+Leaderboard, Controls and Audio Settings dialogs (the in-game menus and
+settings.ini cover their functions) and full-screen screenshots.

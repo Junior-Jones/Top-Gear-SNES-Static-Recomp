@@ -7,7 +7,78 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <pthread.h>
+#include <stdatomic.h>
+#include <time.h>
+#endif
+
+/* Durable settings writes run on a short-lived worker thread. The shim keeps
+   the Win32 thread semantics and gives POSIX hosts the same poll/join shape. */
+typedef unsigned (*TopGearWriterProc)(void *);
+typedef struct TopGearWriter {
+#ifdef _WIN32
+    HANDLE thread;
+#else
+    pthread_t thread;
+    atomic_int finished;
+#endif
+    TopGearWriterProc proc;
+    void *argument;
+    unsigned result;
+} TopGearWriter;
+
+#ifdef _WIN32
+static DWORD WINAPI writer_trampoline(void *opaque) {
+    TopGearWriter *writer=(TopGearWriter *)opaque;
+    writer->result=writer->proc(writer->argument);
+    return writer->result;
+}
+#else
+static void *writer_trampoline(void *opaque) {
+    TopGearWriter *writer=(TopGearWriter *)opaque;
+    writer->result=writer->proc(writer->argument);
+    atomic_store_explicit(&writer->finished,1,memory_order_release);
+    return NULL;
+}
+#endif
+
+static TopGearWriter *writer_start(TopGearWriterProc proc,void *argument) {
+    TopGearWriter *writer=(TopGearWriter *)calloc(1u,sizeof(*writer));
+    if(!writer)return NULL;
+    writer->proc=proc;writer->argument=argument;writer->result=1u;
+#ifdef _WIN32
+    writer->thread=CreateThread(NULL,0u,writer_trampoline,writer,0u,NULL);
+    if(!writer->thread){free(writer);return NULL;}
+#else
+    atomic_init(&writer->finished,0);
+    if(pthread_create(&writer->thread,NULL,writer_trampoline,writer)!=0){free(writer);return NULL;}
+#endif
+    return writer;
+}
+
+/* Returns zero while the worker is still running and wait is zero. Otherwise
+   joins and releases the worker and reports its result (zero is success). */
+static int writer_finish(TopGearWriter **slot,int wait,unsigned *result) {
+    TopGearWriter *writer=*slot;
+#ifdef _WIN32
+    DWORD code=1u;
+    if(WaitForSingleObject(writer->thread,wait?INFINITE:0u)==WAIT_TIMEOUT)return 0;
+    if(!GetExitCodeThread(writer->thread,&code))code=1u;
+    CloseHandle(writer->thread);
+    *result=(unsigned)code;
+#else
+    if(!wait&&!atomic_load_explicit(&writer->finished,memory_order_acquire))return 0;
+    if(pthread_join(writer->thread,NULL)!=0)writer->result=1u;
+    *result=writer->result;
+#endif
+    free(writer);*slot=NULL;
+    return 1;
+}
+#define WRITER_POLL 0
+#define WRITER_WAIT 1
 
 struct TopGearApp {
     TopGearRecomp *core;
@@ -15,8 +86,8 @@ struct TopGearApp {
     uint8_t time_trial_run_staged;
     uint8_t player_settings_cache[TOPGEAR_PLAYER_SETTINGS_SIZE];
     int player_settings_load_failed;
-    HANDLE player_settings_writer;
-    HANDLE music_writer;
+    TopGearWriter *player_settings_writer;
+    TopGearWriter *music_writer;
     int music_load_failed;
     uint8_t music_cache[TOPGEAR_MUSIC_STATE_SIZE],music_write_bytes[TOPGEAR_MUSIC_STATE_SIZE];
     char music_path[4096];
@@ -28,29 +99,25 @@ struct TopGearApp {
 
 /* The worker owns only an immutable exported record, never the live core.
    The game thread coalesces edits while a durable replacement is in flight. */
-static DWORD WINAPI write_player_settings_worker(void *opaque) {
+static unsigned write_player_settings_worker(void *opaque) {
     TopGearApp *app=(TopGearApp *)opaque;
     return topgear_player_settings_write_bytes(app->player_settings_write_path,
         app->player_settings_write_bytes)?0u:1u;
 }
-static int finish_player_settings_write(TopGearApp *app,DWORD wait) {
-    DWORD result=1u;
+static int finish_player_settings_write(TopGearApp *app,int wait) {
+    unsigned result=1u;
     if(!app->player_settings_writer)return 1;
-    if(WaitForSingleObject(app->player_settings_writer,wait)==WAIT_TIMEOUT)return 1;
-    if(!GetExitCodeThread(app->player_settings_writer,&result))result=1u;
-    CloseHandle(app->player_settings_writer);app->player_settings_writer=NULL;
+    if(!writer_finish(&app->player_settings_writer,wait,&result))return 1;
     if(!result)memcpy(app->player_settings_cache,app->player_settings_write_bytes,
         TOPGEAR_PLAYER_SETTINGS_SIZE);
     return result==0u;
 }
 
 
-static DWORD WINAPI write_music_worker(void *opaque){TopGearApp *a=(TopGearApp*)opaque;return topgear_settings_write_record(a->music_path,a->music_write_bytes,TOPGEAR_MUSIC_STATE_SIZE)?0u:1u;}
-static int finish_music_write(TopGearApp *a,DWORD wait){
-    DWORD result=1u;if(!a->music_writer)return 1;
-    if(WaitForSingleObject(a->music_writer,wait)==WAIT_TIMEOUT)return 1;
-    if(!GetExitCodeThread(a->music_writer,&result))result=1u;
-    CloseHandle(a->music_writer);a->music_writer=NULL;
+static unsigned write_music_worker(void *opaque){TopGearApp *a=(TopGearApp*)opaque;return topgear_settings_write_record(a->music_path,a->music_write_bytes,TOPGEAR_MUSIC_STATE_SIZE)?0u:1u;}
+static int finish_music_write(TopGearApp *a,int wait){
+    unsigned result=1u;if(!a->music_writer)return 1;
+    if(!writer_finish(&a->music_writer,wait,&result))return 1;
     if(!result)memcpy(a->music_cache,a->music_write_bytes,TOPGEAR_MUSIC_STATE_SIZE);return result==0u;
 }
 static int music_path(TopGearApp *a,const char *settings){
@@ -63,10 +130,10 @@ static int save_music(TopGearApp *a){
     uint8_t b[TOPGEAR_MUSIC_STATE_SIZE];
     if(a->music_load_failed)return 0;
     if(!a->music_path[0])return 1;
-    if(!finish_music_write(a,0u))return 0;if(a->music_writer)return 1;
+    if(!finish_music_write(a,WRITER_POLL))return 0;if(a->music_writer)return 1;
     if(!topgear_recomp_music_state_export(a->core,b,sizeof(b)))return 0;
     if(!memcmp(b,a->music_cache,sizeof(b)))return 1;
-    memcpy(a->music_write_bytes,b,sizeof(b));a->music_writer=CreateThread(NULL,0u,write_music_worker,a,0u,NULL);return a->music_writer!=NULL;
+    memcpy(a->music_write_bytes,b,sizeof(b));a->music_writer=writer_start(write_music_worker,a);return a->music_writer!=NULL;
 }
 static void copy_error(TopGearApp *app, char *error, size_t capacity,
                        const char *text) {
@@ -108,12 +175,12 @@ int topgear_app_create(TopGearApp **out, const uint8_t *rom, size_t size,
 
 void topgear_app_destroy(TopGearApp *app) {
     if (!app) return;
-    (void)finish_player_settings_write(app,INFINITE);
+    (void)finish_player_settings_write(app,WRITER_WAIT);
     /* Include the latest edits, even if the user closes during a write. */
     if(app->player_settings_write_path[0]&&!app->player_settings_load_failed)
         (void)topgear_player_settings_save_file(app->core,
             app->player_settings_write_path,app->player_settings_cache);
-    (void)finish_music_write(app,INFINITE);
+    (void)finish_music_write(app,WRITER_WAIT);
     if(app->music_path[0]&&!app->music_load_failed){
         uint8_t music[TOPGEAR_MUSIC_STATE_SIZE];
         if(topgear_recomp_music_state_export(app->core,music,sizeof(music))&&memcmp(music,app->music_cache,sizeof(music)))
@@ -140,11 +207,19 @@ int topgear_app_reset(TopGearApp *app, char *error, size_t capacity) {
 
 int topgear_app_player_settings_load(TopGearApp *app,const char *path){
     if(!app)return 0;
-    (void)finish_player_settings_write(app,INFINITE);
+    (void)finish_player_settings_write(app,WRITER_WAIT);
     app->player_settings_load_failed=!topgear_player_settings_load_file(app->core,path,app->player_settings_cache);
-    (void)finish_music_write(app,INFINITE);
+    (void)finish_music_write(app,WRITER_WAIT);
     app->music_load_failed=!music_path(app,path)||!topgear_music_state_load_file(app->core,app->music_path,app->music_cache);
-    if(!app->music_load_failed&&!app->music_cache[0]){LARGE_INTEGER ticks;QueryPerformanceCounter(&ticks);topgear_recomp_music_state_seed(app->core,(uint32_t)ticks.QuadPart^(uint32_t)(ticks.QuadPart>>32));}
+    if(!app->music_load_failed&&!app->music_cache[0]){
+#ifdef _WIN32
+        LARGE_INTEGER ticks;QueryPerformanceCounter(&ticks);topgear_recomp_music_state_seed(app->core,(uint32_t)ticks.QuadPart^(uint32_t)(ticks.QuadPart>>32));
+#else
+        struct timespec now;uint64_t ticks=0u;
+        if(clock_gettime(CLOCK_MONOTONIC,&now)==0)ticks=(uint64_t)now.tv_sec*1000000000u+(uint64_t)now.tv_nsec;
+        topgear_recomp_music_state_seed(app->core,(uint32_t)ticks^(uint32_t)(ticks>>32));
+#endif
+    }
     return !app->player_settings_load_failed&&!app->music_load_failed;
 }
 int topgear_app_player_settings_save(TopGearApp *app,const char *path){
@@ -153,7 +228,7 @@ int topgear_app_player_settings_save(TopGearApp *app,const char *path){
     if(!app||!path||app->player_settings_load_failed)return 0;
     if(!app->music_path[0]&&!music_path(app,path))return 0;
     if(!save_music(app))return 0;
-    if(!finish_player_settings_write(app,0u))return 0;
+    if(!finish_player_settings_write(app,WRITER_POLL))return 0;
     if(app->player_settings_writer)return 1;
     if(!topgear_recomp_player_settings_export(app->core,bytes,sizeof(bytes)))return 1;
     if(!memcmp(bytes,app->player_settings_cache,sizeof(bytes)))return 1;
@@ -161,7 +236,7 @@ int topgear_app_player_settings_save(TopGearApp *app,const char *path){
     if(length>=sizeof(app->player_settings_write_path))return 0;
     memcpy(app->player_settings_write_path,path,length+1u);
     memcpy(app->player_settings_write_bytes,bytes,sizeof(bytes));
-    app->player_settings_writer=CreateThread(NULL,0u,write_player_settings_worker,app,0u,NULL);
+    app->player_settings_writer=writer_start(write_player_settings_worker,app);
     return app->player_settings_writer!=NULL;
 }
 
@@ -345,7 +420,7 @@ int topgear_app_profile_write(TopGearApp *a,unsigned bank,const TopGearPlayerPro
     TopGearPlayerProfile old;
     uint8_t bytes[TOPGEAR_PLAYER_SETTINGS_SIZE];
     if(!a||!p||!path||!topgear_recomp_profile_read(a->core,bank,&old)||
-       !finish_player_settings_write(a,INFINITE)||
+       !finish_player_settings_write(a,WRITER_WAIT)||
        !topgear_recomp_profile_write(a->core,bank,p))return 0;
     /* The regular menu export is intentionally unavailable while the ROM is
        outside the remodeled menus.  Profile is a launcher operation, so use
