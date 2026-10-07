@@ -151,7 +151,7 @@ if(BUILD_TESTING)
     endif()
 
     if(TOPGEAR_TEST_ROM)
-        find_package(Python3 COMPONENTS Interpreter QUIET)
+        find_package(Python3 3.10 COMPONENTS Interpreter QUIET)
         if(Python3_Interpreter_FOUND)
             add_test(NAME topgear-menu-summary-headless
                 COMMAND "${Python3_EXECUTABLE}" -B
@@ -172,7 +172,7 @@ if(BUILD_TESTING)
     endif()
 endif()
 
-if(WIN32)
+if(WIN32 OR APPLE)
 include(FetchContent)
 set(SDL_SHARED OFF CACHE BOOL "" FORCE)
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
@@ -186,7 +186,9 @@ FetchContent_Declare(topgear_sdl
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(topgear_sdl)
 FetchContent_GetProperties(topgear_sdl SOURCE_DIR TOPGEAR_SDL_SOURCE_DIR)
+endif()
 
+if(WIN32)
 add_executable(topgear-launcher WIN32
     frontend/windows/topgear_app_win32.c
     frontend/windows/topgear_app_core.c
@@ -293,7 +295,10 @@ add_custom_command(TARGET topgear-launcher POST_BUILD
 else()
     # Linux port: static core + headless runner are platform-neutral.
     # The graphical/audio launcher is a separate frontend port and is not
-    # required for core qualification.
+    # required for core qualification. macOS builds the SDL3 launcher below.
+    if(APPLE)
+        include(frontend/macos/TopGearMacLauncher.cmake)
+    endif()
     if(BUILD_TESTING)
         add_executable(topgear-audio-resampler-test
             frontend/windows/topgear_audio_resampler_test.c

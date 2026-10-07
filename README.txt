@@ -1,8 +1,8 @@
-Top Gear (SNES) Static Recompilation - Windows Source
+Top Gear (SNES) Static Recompilation - Windows and macOS Source
 Release 2.0.0 - Top Gear Definitive Edition
 
-This package contains the Top Gear-specific static core and its native Windows
-Launcher frontend. The ROM is not included.
+This package contains the Top Gear-specific static core, its native Windows
+Launcher frontend and an SDL3 macOS app. The ROM is not included.
 
 See VERSION.txt for the complete cumulative change list and Docs/CAREER-2.0.0.md for the new Career rules.
 
@@ -65,6 +65,23 @@ The build downloads and statically links SDL 3.4.10. Release builds also use
 the static Visual C++ runtime. Launcher.exe therefore does not require a
 separate SDL DLL or Visual C++ redistributable.
 
+macOS build
+Use CMake 3.20 or newer, the Xcode Command Line Tools and Python 3.10 or newer
+(only for the integrity and audio-authority tests):
+
+  cmake --preset macos
+  cmake --build --preset macos-release --target topgear-launcher-macos
+
+The preset builds a universal (Apple silicon and Intel) Release for macOS 11
+or newer in ../Build-macOS. The app is release/Top Gear.app; SDL 3.4.10 is
+statically linked, so it depends only on system frameworks. Run
+"ctest --preset macos-release" for the ROM-free tests. To add the exact-ROM
+tests, configure with -DTOPGEAR_TEST_ROM="/path/to/Top Gear (USA).sfc".
+The app has the same launcher features as Windows (native menus and Settings,
+Controller Bindings, Audio Settings, Profile, Leaderboard and Snapshot
+windows). frontend/macos/Release-README.txt (README.txt inside the app)
+covers shortcuts and the Application Support data folder.
+
 Tests
 CTest builds the ROM-free API, renderer-instance, hook, audio FIFO, DirectSound
 settings, Hermite resampler, generated dispatch, project-owned 32-phase DSP,
@@ -125,7 +142,7 @@ Frontend architecture
 Documentation
 Docs\Static Findings.txt is the maintained guide to the commentary and known
 game-specific data in the static core.
-Docs\Frontend Architecture.txt documents the Windows presentation, audio,
+Docs\Frontend Architecture.txt documents the Windows and macOS presentation, audio,
 input and portability boundaries.
 
 Licensing

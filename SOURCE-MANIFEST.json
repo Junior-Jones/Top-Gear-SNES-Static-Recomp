@@ -1,5 +1,5 @@
 {
-  "file_count": 439,
+  "file_count": 453,
   "files": [
     {
       "bytes": 19,
@@ -7,19 +7,24 @@
       "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
     },
     {
+      "bytes": 1214,
+      "path": ".github/workflows/macos-ci.yml",
+      "sha256": "7c7377f8956e12ef7895b076a507ca0a8f40e68cfb393be9e4892b96e787f6cb"
+    },
+    {
       "bytes": 963,
       "path": ".github/workflows/windows-ci.yml",
       "sha256": "23978364ad231e99b91787572c47aea8e453c6f78726ad046903b60960cd71e0"
     },
     {
-      "bytes": 16960,
+      "bytes": 17113,
       "path": "CMakeLists.txt",
-      "sha256": "b01512ed693537b6d3b298763533b510241b24e8cf2b84d815863d609d703c7f"
+      "sha256": "bf27834b42a7f0a3797e80d80e4a06103aaef17798749bb044a1b8f06bd86484"
     },
     {
-      "bytes": 688,
+      "bytes": 1323,
       "path": "CMakePresets.json",
-      "sha256": "9edc254bb2553e7f5412323c2305c738fa6e861e73e325105d9b819def82139b"
+      "sha256": "ec1298c916dea140bb43e8a879ebdd21c33e70bd15986f40954cd742bd449469"
     },
     {
       "bytes": 3835,
@@ -72,9 +77,9 @@
       "sha256": "e5de8de8230b70e06048bf5468e104fde74f6766ba46ead9d7f5fbda009e23d9"
     },
     {
-      "bytes": 2718,
+      "bytes": 5094,
       "path": "Docs/Frontend Architecture.txt",
-      "sha256": "48bce3853ceb341211d3994038beaad06116c047bc5cd119b952d24174a0217a"
+      "sha256": "158090925ffaddc8a47651dbcdd44b5f97c89c7291574cc834f328e6fa622789"
     },
     {
       "bytes": 5995,
@@ -212,9 +217,9 @@
       "sha256": "a0ad77ec5441dd32d0640435feb0ac81d552b0280ffc329c239ee735c75beeb3"
     },
     {
-      "bytes": 6698,
+      "bytes": 7620,
       "path": "README.txt",
-      "sha256": "24d56a43221f8dbd24cf5f6f701e8ab3ed9e5c26486496337dc875980da1e107"
+      "sha256": "22ccecc1919ff6b71710bd5b62079b9363434356d18071a5f87f0892ad1c6af6"
     },
     {
       "bytes": 18,
@@ -287,6 +292,71 @@
       "sha256": "7abf7febe03c0ae4a7506a85435f87bef652ef56ad283e00a964dd097900543d"
     },
     {
+      "bytes": 1638,
+      "path": "frontend/macos/Info.plist.in",
+      "sha256": "60fbc1433b715c4376344abb6461efb8aacff4e23c835aed127cce0326f072ae"
+    },
+    {
+      "bytes": 3221,
+      "path": "frontend/macos/Release-README.txt",
+      "sha256": "d1eca80957d3217419784f03b8154428c74841cd6398e22b19abcd3485109559"
+    },
+    {
+      "bytes": 4804,
+      "path": "frontend/macos/TopGearMacLauncher.cmake",
+      "sha256": "7a1cb69b920e7ea24395e92262583bc3e617d372a391c8cf88ec60f2278d5bf5"
+    },
+    {
+      "bytes": 59909,
+      "path": "frontend/macos/topgear_app_macos.c",
+      "sha256": "910fee9614c0e903eff0bee8846b2b3398299f32730870259e336f4c6dced53b"
+    },
+    {
+      "bytes": 15964,
+      "path": "frontend/macos/topgear_audio_output_sdl.c",
+      "sha256": "3ec2de957e2d536b6989aae907cd8c4a0db2d364de71694415f09b117b70204b"
+    },
+    {
+      "bytes": 3801,
+      "path": "frontend/macos/topgear_audio_output_sdl.h",
+      "sha256": "2c65439fa38c8cd8b493bd6c9810eac3be8d9c56de1a28a338404a0854438aab"
+    },
+    {
+      "bytes": 4071,
+      "path": "frontend/macos/topgear_mac_audio_output_contract_test.c",
+      "sha256": "6e48a5dc3550a2948c056fcbaf5d4a7c4ef73563f176e062ea9de0fc624f63e5"
+    },
+    {
+      "bytes": 23182,
+      "path": "frontend/macos/topgear_mac_settings.c",
+      "sha256": "401a49da27b5da4b89035e9b92e676f43e4f2873f9a4f3ef2da7e0b08652bc45"
+    },
+    {
+      "bytes": 5385,
+      "path": "frontend/macos/topgear_mac_settings.h",
+      "sha256": "bc8c2cc305bb6ff759c0ef14361f0d83c8ea0a19d91c0c6ced62cf3f3a311f89"
+    },
+    {
+      "bytes": 8484,
+      "path": "frontend/macos/topgear_mac_settings_contract_test.c",
+      "sha256": "f3a10830c7ab13e655e81dd4d3f3786eec7d1ab7a872cb17376d68e2fbaa2f90"
+    },
+    {
+      "bytes": 3899,
+      "path": "frontend/macos/topgear_mac_ui.h",
+      "sha256": "c2f49aa1a07d19775df8f4edf89f7b2d6486f5d87b61418aa776a6a34b40f730"
+    },
+    {
+      "bytes": 72739,
+      "path": "frontend/macos/topgear_mac_ui.m",
+      "sha256": "de7f93415e662baf4cc1d983706c90a7e5e7dff4d0644fbbee8acd3d50878b95"
+    },
+    {
+      "bytes": 4592,
+      "path": "frontend/macos/topgear_mac_ui_smoke.m",
+      "sha256": "19e53a278699cf977639d562a220d580c2331ac9ef1815023f53169b0d54a1aa"
+    },
+    {
       "bytes": 2777,
       "path": "frontend/windows/Release-README.txt",
       "sha256": "38db5a432ce0a6b70bdf226364e95f5497a801285b8c3daed6631afe397eed6a"
@@ -297,9 +367,9 @@
       "sha256": "d95aa70c89ec619fd691d3a0ed2639550a0b8bf6024ec6cb50b52d87c1bf3af2"
     },
     {
-      "bytes": 17141,
+      "bytes": 19442,
       "path": "frontend/windows/topgear_app_core.c",
-      "sha256": "6fee6eb7863b4b5ae9552ada38583eb831b47ea7eeaf2555dccd45ab600d035b"
+      "sha256": "ee8ace87df441e07116cc83f6c6bd29cd761057b94b35f24ebe9f1395b6f2e3f"
     },
     {
       "bytes": 3324,
@@ -382,9 +452,9 @@
       "sha256": "d867725f8187172edf31f6724b7d93cf61a0e3da720203430d42b92afcbd46ec"
     },
     {
-      "bytes": 23128,
+      "bytes": 23799,
       "path": "static-recomp/CMakeLists.txt",
-      "sha256": "1e07519311ea0744a61ddc11170598a94b8920cc47a80f8bfb11a5a45131080f"
+      "sha256": "da0640133c5f70e145104ac0e2fc5ca3bacc3fa4d2f6c308f0b8777f3559a896"
     },
     {
       "bytes": 27667,
@@ -1937,9 +2007,9 @@
       "sha256": "82eb54bf94239224a5c1d27885c6216a2df6d114331c1b14636dc007929792c3"
     },
     {
-      "bytes": 4658,
+      "bytes": 4660,
       "path": "static-recomp/tests/test_continues.c",
-      "sha256": "36906c1594c14fe9ef47c527295a9941e6059af4aa9a5d034c92b432121fb049"
+      "sha256": "20c99761afa51bbb3243ddf04cc24e4859c8d3ae4785b401fe85b099a6d11aef"
     },
     {
       "bytes": 5090,
@@ -2197,7 +2267,7 @@
       "sha256": "51605bc8a16e478811fa6197a6bd463ca66022fbe1708d2461e299e8b1f904f2"
     }
   ],
-  "inventory_sha256": "5cce35702271d6d1d0301a7971457d1050e600ce60011b5c8bf0823f6d9afe12",
+  "inventory_sha256": "8a7538d571aa9866105d1aa83c4b33e5c3aa371d5288f1f2fdfd22175544c34b",
   "project_version": "1.2.0",
   "schema": "topgear-source-manifest-v1"
 }
