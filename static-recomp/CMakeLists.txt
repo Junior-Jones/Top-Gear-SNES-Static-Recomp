@@ -382,6 +382,12 @@ target_sources(topgear-static-recomp PRIVATE $<TARGET_OBJECTS:topgear-tg0-engine
 
 if(BUILD_TESTING AND TOPGEAR_TEST_ROM)
  add_executable(topgear-definitive-features tests/test_definitive_features.c)
+  add_executable(topgear-bottom-screen tests/test_bottom_screen.c ../frontend/common/topgear_player_settings_file.c)
+  target_include_directories(topgear-bottom-screen PRIVATE internal generated ../frontend/common)
+  target_compile_definitions(topgear-bottom-screen PRIVATE _CRT_SECURE_NO_WARNINGS)
+  target_link_libraries(topgear-bottom-screen PRIVATE topgear-static-recomp)
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bottom-screen")
+  add_test(NAME topgear-bottom-screen COMMAND topgear-bottom-screen "${TOPGEAR_TEST_ROM}" "${CMAKE_CURRENT_BINARY_DIR}/bottom-screen")
  target_include_directories(topgear-definitive-features PRIVATE internal generated)
  target_compile_definitions(topgear-definitive-features PRIVATE _CRT_SECURE_NO_WARNINGS)
  target_link_libraries(topgear-definitive-features PRIVATE topgear-static-recomp)

@@ -2750,6 +2750,9 @@ int tg_v22_wram_epoch_semantic_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x007E2007u: /* A5 53 LDA $53 */
+  /* Reuse the native absent-camera path. Its HDMA terminator also sets
+     $B4, which the upper camera needs while entering/leaving a race. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0x200Bu;instance->instruction_count++;return 1;}
   if(!(instance->wram[0x02007u]==0xA5u && instance->wram[0x02008u]==0x53u))return tg_fail_frontier(instance,"Version 22 executable-WRAM instruction bytes changed outside the frozen epoch.","7E:2007");
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x53u) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);

@@ -471,6 +471,7 @@ int tg_v22_reentry_group_0061_step(struct TopGearRecomp *instance){
  (void)address;(void)base24;(void)word;(void)byte;
  key=tg_generated_context_key(instance);switch(key){
  case 0x00018568u: /* A5 53 LDA $53 */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0x8A85u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (uint32_t)((instance->cpu.d + 0x53u) & 0xFFFFu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

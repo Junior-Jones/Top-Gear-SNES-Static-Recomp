@@ -439,9 +439,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 1255411,
+      "bytes": 1255663,
       "path": "static-recomp/generated/topgear_v22_wram_epoch.c",
-      "sha256": "f70158e9e4af40eece1e3f88afcd270f1254f4eaf78c101a3b9b81df540f28c8"
+      "sha256": "b52c354f1f62afba09de07af751199326b0057aee540c2211ee0675c4c930e6c"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -787,21 +787,21 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 115316,
+      "bytes": 115505,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0033.c",
-      "sha256": "8f1947453973659cbbf655b2991e39a920a56c816858501ee4399830fa32895f"
+      "sha256": "d8152bbd629499d9032c87a043e51308bb87df9203c00f59ee4cd4df88bf8f54"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 114229,
+      "bytes": 115174,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0034.c",
-      "sha256": "92a7b0b405ff469a91321b29793b17ea9497976d1c48480e539fd55136422dfc"
+      "sha256": "0e9106ce9a5ae26b2b6d1b0a73d9283da763feefc94021cf612b793b2920e956"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 72323,
+      "bytes": 72512,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0035.c",
-      "sha256": "7292748544b0a42336d7ac4476d484e51f7c21bea23af79ef3fdf63289dacfae"
+      "sha256": "8008c4452eb7052372700ef5fbc6005fe61c4e16a5820c8fb5b03e02d214cac9"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -847,9 +847,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 126791,
+      "bytes": 126898,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0061.c",
-      "sha256": "1802e02d4595a406a2cb3d60d21efa6e850e9a5c4968c4a1584cd2ed7c1732d9"
+      "sha256": "508e82898100b3de527a8ecbe2fda6e313900cb9b31002a0f9e426ddef963203"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -1194,9 +1194,9 @@
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
     }
   ],
-  "inventory_sha256": "97acb66eca7acca794647108bb6c562a316cf2b7361dc541d281344e510c4bd9",
+  "inventory_sha256": "1012b98c1fdd081cd64ddf79a4c617787e9b5269f3538bf672ad9ea41f456a80",
   "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
-  "project_version": "1.2.0",
+  "project_version": "2.0.1",
   "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
   "schema": "topgear-generated-provenance-v1"
 }

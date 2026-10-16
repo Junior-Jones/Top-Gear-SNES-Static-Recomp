@@ -21,6 +21,8 @@ extern "C" {
 #define TOPGEAR_APP_PRESENTATION_FPS_DENOMINATOR 655171u
 
 typedef struct TopGearApp TopGearApp;
+int topgear_app_bottom_screen_enabled(const TopGearApp*);
+void topgear_app_set_bottom_screen_enabled(TopGearApp*,int);
 int topgear_app_player_settings_load(TopGearApp*,const char *utf8_path);
 /* Poll/queue a durable background save. Call each frame; destroy drains the
    worker and saves the latest edit. Zero reports a write/start failure. */

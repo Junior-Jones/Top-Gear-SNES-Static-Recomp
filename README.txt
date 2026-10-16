@@ -1,10 +1,10 @@
 Top Gear (SNES) Static Recompilation - Windows Source
-Release 2.0.0 - Top Gear Definitive Edition
+Release 2.0.1 - Top Gear Definitive Edition
 
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.
 
-See VERSION.txt for the complete cumulative change list and Docs/CAREER-2.0.0.md for the new Career rules.
+See VERSION.txt for the complete cumulative change list, Docs/BOTTOM-SCREEN-2.0.1.md for the new display setting, and Docs/CAREER-2.0.0.md for Career rules.
 
 What "fully static recompilation" means
 ----------------------------------------

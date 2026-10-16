@@ -993,6 +993,8 @@ int tg_v22_reentry_group_0033_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000CF33u: /* AD 5C 1E LDA $1E5C */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD003u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1E5Cu), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

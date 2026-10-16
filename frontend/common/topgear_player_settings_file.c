@@ -58,9 +58,9 @@ static int profile_settings_validate(const uint8_t *data,size_t size){
     uint32_t stored=0u;unsigned n,version;
     if(!data||size!=TOPGEAR_PLAYER_SETTINGS_SIZE||memcmp(data,"TGPS",4u))return 0;
     version=data[4];
-    if((version<1u||version>5u)||data[5]||data[6]||data[7]||
+    if((version<1u||version>6u)||data[5]||data[6]||data[7]||
        data[8]!=TOPGEAR_PLAYER_SETTINGS_SIZE||data[9]||data[10]||data[11]||
-       data[94]>1u||data[95]>(version==5u?11u:version==4u?7u:version==3u?3u:1u)||
+       data[94]>1u||(version==6u?((data[95]&~31u)!=0u||((data[95]>>2u)&3u)>2u):data[95]>(version==5u?11u:version==4u?7u:version==3u?3u:1u))||
        (version==1u&&data[95]))return 0;
     for(n=0u;n<4u;n++)stored|=(uint32_t)data[12u+n]<<(8u*n);
     if(stored!=profile_settings_checksum(data))return 0;

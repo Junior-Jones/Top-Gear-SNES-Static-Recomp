@@ -567,6 +567,8 @@ int tg_v22_reentry_group_0034_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000D026u: /* A9 26 0F LDA #$0F26 */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD049u;instance->instruction_count++;return 1;}
   word = 0x0F26u;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -719,6 +721,8 @@ int tg_v22_reentry_group_0034_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000D064u: /* A9 03 0F LDA #$0F03 */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD07Fu;instance->instruction_count++;return 1;}
   word = 0x0F03u;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -1157,6 +1161,8 @@ int tg_v22_reentry_group_0034_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000D119u: /* AD 02 1F LDA $1F02 */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD1B3u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1F02u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -1893,6 +1899,8 @@ int tg_v22_reentry_group_0034_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000D23Cu: /* AD 28 1F LDA $1F28 */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD2C5u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1F28u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);
@@ -2613,6 +2621,8 @@ int tg_v22_reentry_group_0034_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000D34Au: /* A0 00 00 LDY #$0000 */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD3CFu;instance->instruction_count++;return 1;}
   word = 0x0000u;
   tg_set_index16(instance, &instance->cpu.y, word);
   tg_set_nz16(instance, word);

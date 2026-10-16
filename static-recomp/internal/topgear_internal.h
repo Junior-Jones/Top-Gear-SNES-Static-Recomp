@@ -527,7 +527,9 @@ struct TopGearRecomp {
     uint8_t mod_audio_mute;
     uint8_t mod_audio_menu_level;
     uint8_t mod_audio_menu_context;
-    uint8_t mod_audio_reserved[2];
+    /* Zero preserves the default On in legacy snapshots. Two humans override. */
+    uint8_t mod_bottom_screen_off;
+    uint8_t mod_audio_reserved[1];
     uint8_t mod_music_title,mod_music_engine,mod_music_r_held,mod_music_race;
     uint8_t mod_music_mode,mod_music_sequence,mod_music_native_selector;
     uint32_t mod_music_rng;
@@ -779,5 +781,8 @@ void tg_v25_note_exec(struct TopGearRecomp *instance);
 void tg_sha256(const uint8_t *data, size_t length, uint8_t digest[32]);
 void tg_sha256_hex(const uint8_t *data, size_t length, char output[65]);
 uint32_t tg_crc32(const uint8_t *data, size_t length);
+
+int tg_mod_bottom_screen_off(const TopGearRecomp *instance);
+int tg_mod_bottom_screen_race_off(const TopGearRecomp *instance);
 
 #endif

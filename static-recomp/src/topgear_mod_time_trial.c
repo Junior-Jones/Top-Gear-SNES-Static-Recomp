@@ -27,6 +27,7 @@ void tg_mod_career_race_reset(TopGearRecomp *i){
 void tg_mod_career_panel_start(TopGearRecomp *i){
     unsigned t,n;
     i->mod_career_panel=1u;
+    if(tg_mod_bottom_screen_off(i))return;
     for(t=0;t<48;t++)for(n=0;n<32;n++)i->mod_time_trial_font_tiles[t][n]=i->vram[(0x100u+t)*32u+n];
     for(n=0;n<16;n++)i->mod_time_trial_font_palette[n]=(uint16_t)(i->cgram[n*2]|(i->cgram[n*2+1]<<8));
     i->mod_time_trial_font_valid=1u;
@@ -34,6 +35,7 @@ void tg_mod_career_panel_start(TopGearRecomp *i){
 }
 void tg_mod_career_frame(TopGearRecomp *i){
     unsigned slot,n,id,lap,sector,progress;uint16_t length,now;uint32_t distance[20]={0};uint8_t finish_rank[20];
+    if(tg_mod_bottom_screen_off(i))return;
     memset(finish_rank,255,sizeof(finish_rank));
     if(!i->mod_career_panel||i->mod_time_trial_active||i->mod_menu_remodel_active||i->mod_audio_menu_context||i->hdma_enable_mask!=0x7Fu||read16(i,0x1F04u))return;
     length=read16(i,0x200u);now=read16(i,0x1EAEu);if(length<3u)return;
@@ -295,6 +297,7 @@ static void continue_overlay(TopGearRecomp *i,unsigned y){
 }
 void tg_mod_time_trial_overlay_scanline(TopGearRecomp *i,unsigned y){
     char line[24],tm[12]; unsigned n; uint16_t now;
+    if(tg_mod_bottom_screen_race_off(i))return;
     uint32_t s1=0u,s2=0u,s3=0u;
     if(i&&i->mod_continue_screen>=2u&&i->mod_continue_screen<=4u){continue_overlay(i,y);return;}
     if(i&&!i->mod_time_trial_active){career_overlay(i,y);return;}
