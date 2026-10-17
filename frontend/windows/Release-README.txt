@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.0.0
+Top Gear Definitive Edition 2.0.1
 Launcher for Windows 10/11 x64
 
 Getting started
@@ -26,7 +26,14 @@ See VERSION.txt for the full rules and complete change list.
 
 Settings and audio
 ------------------
-Settings provides KPH/MPH, music mute, Career Music and Music Player.
+Settings provides KPH/MPH, music mute, Career Music, Music Player and Bottom Screen.
+Bottom Screen defaults to On. Off disables the lower race view and statistics
+in one-player Career, Rally and Time Trial, leaving that area black. Two-player
+Career and Rally force it On so Player 2 can see. Use Left/Right or A to change
+the option; the choice is saved with player settings and in settings.ini as
+[General] BottomScreen=1 (On) or BottomScreen=0 (Off). The generated config
+includes the default On key. Snapshot loads and resets preserve your current
+choice; loading an older saved race cannot turn the preference back On.
 Career Music offers Complete, Random and Classic. Complete plays all race
 songs in order. Random plays every race song once before reshuffling. Classic
 uses the original Top Gear race music. Title, qualifying and results songs are

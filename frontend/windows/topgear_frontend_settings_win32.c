@@ -95,6 +95,7 @@ static int keyboard_bindings_are_valid(
 void topgear_frontend_settings_win32_defaults(TopGearFrontendSettingsWin32 *s) {
     if (!s) return;
     memset(s, 0, sizeof(*s));
+    s->bottom_screen_enabled = 1;
     s->pause_on_focus_loss = 0;
     s->show_fps_counter = 0;
     s->ntsc_frame_lock = 1;
@@ -123,6 +124,8 @@ void topgear_frontend_settings_win32_load(TopGearFrontendSettingsWin32 *s,
     if (!s) return;
     topgear_frontend_settings_win32_defaults(s);
     if (!path || !*path) return;
+    {int bottom=(int)GetPrivateProfileIntW(L"General",L"BottomScreen",-1,path);
+     if(bottom==0||bottom==1){s->bottom_screen_enabled=bottom;s->bottom_screen_saved=1;}}
     s->integer_scale=GetPrivateProfileIntW(L"General",L"IntegerScale",0,path);
     s->pause_on_focus_loss=GetPrivateProfileIntW(L"General",L"PauseOnFocusLoss",0,path)!=0;
     s->auto_run_on_load=GetPrivateProfileIntW(L"General",L"AutoRunOnLoad",0,path)!=0;
@@ -171,6 +174,7 @@ int topgear_frontend_settings_win32_save(const TopGearFrontendSettingsWin32 *s,
                                          const wchar_t *path) {
     int i,ok=1; wchar_t key[32];
     if(!s||!path||!*path)return 0;
+    ok&=write_int(L"General",L"BottomScreen",s->bottom_screen_enabled,path);
     ok&=write_int(L"General",L"IntegerScale",s->integer_scale,path);
     ok&=write_int(L"General",L"PauseOnFocusLoss",s->pause_on_focus_loss,path);
     ok&=write_int(L"General",L"AutoRunOnLoad",s->auto_run_on_load,path);

@@ -106,13 +106,20 @@ int topgear_app_create(TopGearApp **out, const uint8_t *rom, size_t size,
     return 1;
 }
 
+int topgear_app_bottom_screen_enabled(const TopGearApp *app){return !app||topgear_recomp_bottom_screen_enabled(app->core);}
+void topgear_app_set_bottom_screen_enabled(TopGearApp *app,int enabled){if(app)topgear_recomp_set_bottom_screen_enabled(app->core,enabled);}
+
 void topgear_app_destroy(TopGearApp *app) {
     if (!app) return;
     (void)finish_player_settings_write(app,INFINITE);
     /* Include the latest edits, even if the user closes during a write. */
-    if(app->player_settings_write_path[0]&&!app->player_settings_load_failed)
-        (void)topgear_player_settings_save_file(app->core,
-            app->player_settings_write_path,app->player_settings_cache);
+    if(app->player_settings_write_path[0]&&!app->player_settings_load_failed){
+        uint8_t settings[TOPGEAR_PLAYER_SETTINGS_SIZE];
+        if((topgear_recomp_player_settings_export(app->core,settings,sizeof(settings))||
+            topgear_recomp_profile_record(app->core,settings,sizeof(settings)))&&
+           memcmp(settings,app->player_settings_cache,sizeof(settings)))
+            (void)topgear_player_settings_write_bytes(app->player_settings_write_path,settings);
+    }
     (void)finish_music_write(app,INFINITE);
     if(app->music_path[0]&&!app->music_load_failed){
         uint8_t music[TOPGEAR_MUSIC_STATE_SIZE];
@@ -124,8 +131,9 @@ void topgear_app_destroy(TopGearApp *app) {
 }
 
 int topgear_app_reset(TopGearApp *app, char *error, size_t capacity) {
-    uint8_t settings[TOPGEAR_PLAYER_SETTINGS_SIZE],music[TOPGEAR_MUSIC_STATE_SIZE];int have;
+    uint8_t settings[TOPGEAR_PLAYER_SETTINGS_SIZE],music[TOPGEAR_MUSIC_STATE_SIZE];int have,bottom;
     if(!app)return 0;
+    bottom=topgear_app_bottom_screen_enabled(app);
     (void)topgear_recomp_music_state_export(app->core,music,sizeof(music));
     have=topgear_recomp_player_settings_export(app->core,settings,sizeof(settings));
     if (!app || !topgear_recomp_reset(app->core, error, capacity)) return 0;
@@ -133,6 +141,7 @@ int topgear_app_reset(TopGearApp *app, char *error, size_t capacity) {
     if(have)(void)topgear_recomp_player_settings_import(app->core,settings,sizeof(settings));
     else if(app->player_settings_cache[0])
         (void)topgear_recomp_player_settings_import(app->core,app->player_settings_cache,sizeof(app->player_settings_cache));
+    topgear_app_set_bottom_screen_enabled(app,bottom);
     refresh_frame(app);
     copy_error(app, error, capacity, "");
     return 1;
@@ -155,7 +164,10 @@ int topgear_app_player_settings_save(TopGearApp *app,const char *path){
     if(!save_music(app))return 0;
     if(!finish_player_settings_write(app,0u))return 0;
     if(app->player_settings_writer)return 1;
-    if(!topgear_recomp_player_settings_export(app->core,bytes,sizeof(bytes)))return 1;
+    /* Canonical banks are stable while racing; options must still reach
+       disk after leaving a menu or changing a frontend preference. */
+    if(!topgear_recomp_player_settings_export(app->core,bytes,sizeof(bytes))&&
+       !topgear_recomp_profile_record(app->core,bytes,sizeof(bytes)))return 1;
     if(!memcmp(bytes,app->player_settings_cache,sizeof(bytes)))return 1;
     length=strlen(path);
     if(length>=sizeof(app->player_settings_write_path))return 0;
@@ -253,9 +265,11 @@ int topgear_app_snapshot_save(const TopGearApp *app, const char *path,
 }
 int topgear_app_snapshot_load(TopGearApp *app, const char *path,
                               char *error, size_t capacity) {
+    int bottom=topgear_app_bottom_screen_enabled(app);
     int ok = app && topgear_recomp_snapshot_load(app->core, path,
                                                   error, capacity);
-    if (ok) refresh_frame(app);
+    /* Loading race progress must not restore an older display preference. */
+    if (ok) {topgear_app_set_bottom_screen_enabled(app,bottom);refresh_frame(app);}
     return ok;
 }
 int topgear_app_sram_copy(const TopGearApp *app, void *dst, size_t capacity) {

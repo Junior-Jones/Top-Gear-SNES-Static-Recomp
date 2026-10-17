@@ -1,5 +1,5 @@
 {
-  "file_count": 439,
+  "file_count": 443,
   "files": [
     {
       "bytes": 19,
@@ -12,9 +12,14 @@
       "sha256": "23978364ad231e99b91787572c47aea8e453c6f78726ad046903b60960cd71e0"
     },
     {
-      "bytes": 16960,
+      "bytes": 877,
+      "path": ".recomp.json",
+      "sha256": "ad219b6ac742990d61c9b845666414cf3ca9171d65ed6797af957e0bd6876cfc"
+    },
+    {
+      "bytes": 17918,
       "path": "CMakeLists.txt",
-      "sha256": "b01512ed693537b6d3b298763533b510241b24e8cf2b84d815863d609d703c7f"
+      "sha256": "a258dac57d7b31537188c9b74f7a58c1a18ce899884d7c33253376c68fc51ee9"
     },
     {
       "bytes": 688,
@@ -22,9 +27,9 @@
       "sha256": "9edc254bb2553e7f5412323c2305c738fa6e861e73e325105d9b819def82139b"
     },
     {
-      "bytes": 3835,
+      "bytes": 3905,
       "path": "Data/README.txt",
-      "sha256": "7ead57275fb8cb87a6a2e859256376d690167d25814d70751cbdadd9f8ff59f7"
+      "sha256": "52d60aab9483d4e523995368dde36d31ede05513fc3500adb1977fc724fb88ab"
     },
     {
       "bytes": 96,
@@ -40,6 +45,11 @@
       "bytes": 30230,
       "path": "Data/track-catalog.json",
       "sha256": "cc6244dd6b2c829eab0677e2ca2774d9d168c4698c3235b11b8f6caaea7d0f62"
+    },
+    {
+      "bytes": 3861,
+      "path": "Docs/BOTTOM-SCREEN-2.0.1.md",
+      "sha256": "546376e3db6f98ce97c6520b4ca8889cba92cc1a014bde91217e451020761341"
     },
     {
       "bytes": 7041,
@@ -212,9 +222,9 @@
       "sha256": "a0ad77ec5441dd32d0640435feb0ac81d552b0280ffc329c239ee735c75beeb3"
     },
     {
-      "bytes": 6698,
+      "bytes": 6748,
       "path": "README.txt",
-      "sha256": "24d56a43221f8dbd24cf5f6f701e8ab3ed9e5c26486496337dc875980da1e107"
+      "sha256": "1f05dbc7c979764a1942c5ec6343ad50fc844745c446fc896fbb2e559d42119a"
     },
     {
       "bytes": 18,
@@ -227,9 +237,9 @@
       "sha256": "58aa7f15217cd91b15fd2ff404668e90065c5116e7c120de9a616ca21ae8b280"
     },
     {
-      "bytes": 6080,
+      "bytes": 351,
       "path": "VERSION.txt",
-      "sha256": "3f26d7566944a4be5b9598f42d663afe14c2a3b84f68bbff6158cb26994bbb1e"
+      "sha256": "b26cd6325858f6107872050a15477c5c8c818aa860fa5399232f2b55c13708a0"
     },
     {
       "bytes": 1363,
@@ -242,9 +252,9 @@
       "sha256": "7192528f988f86067e27cc6ad86f58c0460cca7fdabbb44e72c9aebf883fdc6e"
     },
     {
-      "bytes": 7381,
+      "bytes": 7441,
       "path": "frontend/common/topgear_player_settings_file.c",
-      "sha256": "554252118a8092bbe23bd320878be40a6719466486afd70bec6c144f0c1d2c2d"
+      "sha256": "4b2b07ac8ce95a1e18929f57e07e14ab3ea4470067320ed24f7da7e978e3c331"
     },
     {
       "bytes": 1222,
@@ -287,29 +297,29 @@
       "sha256": "7abf7febe03c0ae4a7506a85435f87bef652ef56ad283e00a964dd097900543d"
     },
     {
-      "bytes": 2777,
+      "bytes": 3332,
       "path": "frontend/windows/Release-README.txt",
-      "sha256": "38db5a432ce0a6b70bdf226364e95f5497a801285b8c3daed6631afe397eed6a"
+      "sha256": "ac6623ad499210773b930f2a85b8760e1d58413a05bf832f15a0280bdb1a8482"
     },
     {
       "bytes": 824,
       "path": "frontend/windows/launcher_version.rc",
-      "sha256": "d95aa70c89ec619fd691d3a0ed2639550a0b8bf6024ec6cb50b52d87c1bf3af2"
+      "sha256": "f9cbd89da1b2330738071c21852110d48a1217173ac140cc16491ea05be07c54"
     },
     {
-      "bytes": 17141,
+      "bytes": 18192,
       "path": "frontend/windows/topgear_app_core.c",
-      "sha256": "6fee6eb7863b4b5ae9552ada38583eb831b47ea7eeaf2555dccd45ab600d035b"
+      "sha256": "7f381c4b2f1821eb1c87e2b1c271bfebeeba49d6362b11110b9f3409099bd306"
     },
     {
-      "bytes": 3324,
+      "bytes": 3443,
       "path": "frontend/windows/topgear_app_core.h",
-      "sha256": "2b13fe7d9ddfa13d85fdc7509f118469e589c880aea0d9689c4b62c160fbd77f"
+      "sha256": "1ff4c6af419f53b7e3c329669a7337439b0fbbe99b5c71971bc7817607569a0a"
     },
     {
-      "bytes": 170480,
+      "bytes": 171081,
       "path": "frontend/windows/topgear_app_win32.c",
-      "sha256": "edf1842daf28eaa5aae9c1bc3163b6249490d2fb215247b57242cd213844e702"
+      "sha256": "ec78463f2217ba0625fef9d4c146654b148adb8ca20c7072c1b30a579aefc40a"
     },
     {
       "bytes": 38610,
@@ -342,19 +352,19 @@
       "sha256": "aa1339ccc97ed212d5cc333f133ee9b4a37d7535269d4b1c92bf6e8d93e2fdef"
     },
     {
-      "bytes": 2492,
+      "bytes": 2797,
       "path": "frontend/windows/topgear_frontend_settings_contract_test.c",
-      "sha256": "54c9e2f8e61bc668c8043be8a0324eb3226d5a55e842a33ac8569d5b0419c561"
+      "sha256": "44a65c0312e00ffe89ffa0c29ea7b981cc2fa1aff49ec1639bc62d8b0853d4f7"
     },
     {
-      "bytes": 34215,
+      "bytes": 34496,
       "path": "frontend/windows/topgear_frontend_settings_win32.c",
-      "sha256": "8432fce884d5a26a8c6f22f429a3c50d8591fb44ef84cf900f0deb50d37ba43a"
+      "sha256": "356441054f602e9e4b26e5d2ec43981857ac803f687290672d0da5687d0683a4"
     },
     {
-      "bytes": 2252,
+      "bytes": 2312,
       "path": "frontend/windows/topgear_frontend_settings_win32.h",
-      "sha256": "6a227866e398555b509de9ea7000d6524af7594434121e569f3fbf768678026d"
+      "sha256": "f96f3a3080a3da55b2f5bc7fa4ec7cb77ae02bb798c291b95290a9347041ed2f"
     },
     {
       "bytes": 8526,
@@ -382,9 +392,9 @@
       "sha256": "d867725f8187172edf31f6724b7d93cf61a0e3da720203430d42b92afcbd46ec"
     },
     {
-      "bytes": 23128,
+      "bytes": 23706,
       "path": "static-recomp/CMakeLists.txt",
-      "sha256": "1e07519311ea0744a61ddc11170598a94b8920cc47a80f8bfb11a5a45131080f"
+      "sha256": "c3acedf3e10e431ac8db4947c0ce69398782d531c2cea5b2718af2212d410a5e"
     },
     {
       "bytes": 27667,
@@ -752,9 +762,9 @@
       "sha256": "c0e4710f8702153035a1e5044777be2acad6233367d82f7a17dd6a0b2eeba891"
     },
     {
-      "bytes": 1255411,
+      "bytes": 1255663,
       "path": "static-recomp/generated/topgear_v22_wram_epoch.c",
-      "sha256": "f70158e9e4af40eece1e3f88afcd270f1254f4eaf78c101a3b9b81df540f28c8"
+      "sha256": "b52c354f1f62afba09de07af751199326b0057aee540c2211ee0675c4c930e6c"
     },
     {
       "bytes": 271,
@@ -1042,19 +1052,19 @@
       "sha256": "ddc7366dcc5e58b1b8c25872465b51b4bc18d3eb2254b5d1d0a4393a01d1e3d3"
     },
     {
-      "bytes": 115316,
+      "bytes": 115505,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0033.c",
-      "sha256": "8f1947453973659cbbf655b2991e39a920a56c816858501ee4399830fa32895f"
+      "sha256": "d8152bbd629499d9032c87a043e51308bb87df9203c00f59ee4cd4df88bf8f54"
     },
     {
-      "bytes": 114229,
+      "bytes": 115174,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0034.c",
-      "sha256": "92a7b0b405ff469a91321b29793b17ea9497976d1c48480e539fd55136422dfc"
+      "sha256": "0e9106ce9a5ae26b2b6d1b0a73d9283da763feefc94021cf612b793b2920e956"
     },
     {
-      "bytes": 72323,
+      "bytes": 72512,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0035.c",
-      "sha256": "7292748544b0a42336d7ac4476d484e51f7c21bea23af79ef3fdf63289dacfae"
+      "sha256": "8008c4452eb7052372700ef5fbc6005fe61c4e16a5820c8fb5b03e02d214cac9"
     },
     {
       "bytes": 77514,
@@ -1092,9 +1102,9 @@
       "sha256": "4ad8e5cc1ea7d81e5405fc45f51634694df65aa965f53e2da3999d4920545d00"
     },
     {
-      "bytes": 126791,
+      "bytes": 126898,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0061.c",
-      "sha256": "1802e02d4595a406a2cb3d60d21efa6e850e9a5c4968c4a1584cd2ed7c1732d9"
+      "sha256": "508e82898100b3de527a8ecbe2fda6e313900cb9b31002a0f9e426ddef963203"
     },
     {
       "bytes": 132133,
@@ -1262,9 +1272,9 @@
       "sha256": "966fe404803af6c12a61f1378d707d73d898a220458506d59f0939c1f71670e1"
     },
     {
-      "bytes": 77210,
+      "bytes": 77495,
       "path": "static-recomp/include/topgear_static_recomp.h",
-      "sha256": "cdfc60237718ae34ae25cbfb69236ebc7f61158effbbcb6cd399327f4d132f10"
+      "sha256": "fccfbbcdcfca262aa0c4c95f588726a8eddabf82fcc9d59e059aa0064b18531b"
     },
     {
       "bytes": 650,
@@ -1272,9 +1282,9 @@
       "sha256": "6b392a51161ae604f95f7e8512806c083756644046cf06430a86d573d4a08b1d"
     },
     {
-      "bytes": 34807,
+      "bytes": 35052,
       "path": "static-recomp/internal/topgear_internal.h",
-      "sha256": "028e4c9289229cd510467cb785b30a7e33c1024a46416c12d3ad8a49b6845c9b"
+      "sha256": "fc321240a8d65056f94876f0ef7e4e987e07c3958264c9bef7c68c3f32fd0b80"
     },
     {
       "bytes": 464,
@@ -1317,9 +1327,9 @@
       "sha256": "9bb7ac78c481e27360d46e46f279ac05fde1c6a16c9ebb4af650493e4492e748"
     },
     {
-      "bytes": 64126,
+      "bytes": 65915,
       "path": "static-recomp/src/topgear_mod_menu_remodel.c",
-      "sha256": "4685022d9c827cca5103dad807bbd57bcb14f79f65f644ed243f576bee7ef96e"
+      "sha256": "8e06f30b81b4bd7c973c25919bf6a0dd3e80b6f6b6efc7384406045710815930"
     },
     {
       "bytes": 7722,
@@ -1332,9 +1342,9 @@
       "sha256": "b00c17d4fd4bef2e33f85b1a94939ec9b029bcdec44d6766c0fa0874c16eb0cb"
     },
     {
-      "bytes": 20098,
+      "bytes": 20232,
       "path": "static-recomp/src/topgear_mod_time_trial.c",
-      "sha256": "54770ff733da5e11213bb37bc251569356f20e872ae6c54f068faa5f55b45092"
+      "sha256": "7bd0f7ae6877510ee18976226e2a71d7bf24195b317869252c7143406861fb81"
     },
     {
       "bytes": 25116,
@@ -1367,9 +1377,9 @@
       "sha256": "e30382b9f9f7ce1e88ba10c2e5c4edfdf6b5a8add0bce4290e5c323c6ece3aec"
     },
     {
-      "bytes": 20088,
+      "bytes": 20481,
       "path": "static-recomp/src/topgear_v22_video.c",
-      "sha256": "c7fb72d66974a27d93724d4c8b85a0b89ed332ac3ddbf1818a00f8177c39c37d"
+      "sha256": "3145c63c0a8f9668d38b4517789d96700003dd50f2217a9e9013e3fec7aee7aa"
     },
     {
       "bytes": 22554,
@@ -1932,6 +1942,11 @@
       "sha256": "a865435db170604d03074039473541c4a105e9e2ceb61628e8c11562d9b3cce3"
     },
     {
+      "bytes": 8488,
+      "path": "static-recomp/tests/test_bottom_screen.c",
+      "sha256": "786257662387265aed1acd7ad38e945308228010ee39d3936b4c26bb9612ebff"
+    },
+    {
       "bytes": 16208,
       "path": "static-recomp/tests/test_career_v2.c",
       "sha256": "82eb54bf94239224a5c1d27885c6216a2df6d114331c1b14636dc007929792c3"
@@ -1942,9 +1957,9 @@
       "sha256": "36906c1594c14fe9ef47c527295a9941e6059af4aa9a5d034c92b432121fb049"
     },
     {
-      "bytes": 5090,
+      "bytes": 5189,
       "path": "static-recomp/tests/test_definitive_features.c",
-      "sha256": "31ff6a196910d233fca2076371ab3bb11293c311d384057115f02fb09e0e2b6b"
+      "sha256": "c0e4e0175068063ce4e6f294adb792993e7ab83aa25dc80a08bd0f643b1901d9"
     },
     {
       "bytes": 356,
@@ -1989,7 +2004,7 @@
     {
       "bytes": 11125,
       "path": "static-recomp/tests/test_mode_settings_results.c",
-      "sha256": "759ae6c04dfe5ee75a1ac58efcbfa0031e49ebf78dfc134cac874e19d1e95303"
+      "sha256": "d031fd0878f94762f92250955c045e5749aada0285e8afefc895d99457532539"
     },
     {
       "bytes": 7087,
@@ -2097,6 +2112,11 @@
       "sha256": "3e77ba748f5de811762f482213b9e20624e38b125c608c5eac72666be67d9d01"
     },
     {
+      "bytes": 2901,
+      "path": "tests/test_bottom_screen_persistence_win32.c",
+      "sha256": "802195fb07a2142bb4d091180ab133018253eff13701a963a0c0f3eb2d304cfd"
+    },
+    {
       "bytes": 1661,
       "path": "tests/test_controls_dialog.c",
       "sha256": "717e4ab9762d80bca1db2a74fd113c4413e463b49375b47793b1851e4364fa91"
@@ -2122,9 +2142,9 @@
       "sha256": "e4c26cbbdd87160856c80fe36105ed46a939061ac7e501b06a86dff83bfb7830"
     },
     {
-      "bytes": 47325,
+      "bytes": 47635,
       "path": "tests/test_time_trial_journey.c",
-      "sha256": "95fffe84d97c4a0d63d778bbda0d967faa3c97695e1622d972f6a6cc11b09fa1"
+      "sha256": "ee71d6c2501e385d63c9a5d8e39d5f8318d41dd3eaefc586710d11d133875064"
     },
     {
       "bytes": 26452,
@@ -2194,10 +2214,10 @@
     {
       "bytes": 5732,
       "path": "tools/integrity_manifests.py",
-      "sha256": "51605bc8a16e478811fa6197a6bd463ca66022fbe1708d2461e299e8b1f904f2"
+      "sha256": "48f7e000fb70e66871ed711743cadcbf362f73b6a7b4823d86b02e42aa818854"
     }
   ],
-  "inventory_sha256": "5cce35702271d6d1d0301a7971457d1050e600ce60011b5c8bf0823f6d9afe12",
-  "project_version": "1.2.0",
+  "inventory_sha256": "cf9c99b21afd364fb698bb75a492d2b4e0dd1b3dc27ca14c96ed72ea6de9665c",
+  "project_version": "2.0.1",
   "schema": "topgear-source-manifest-v1"
 }

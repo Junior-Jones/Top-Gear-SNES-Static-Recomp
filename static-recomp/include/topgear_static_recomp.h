@@ -1870,6 +1870,10 @@ int topgear_recomp_music_state_export(TopGearRecomp*,void*,size_t);
 int topgear_recomp_music_state_import(TopGearRecomp*,const void*,size_t);
 void topgear_recomp_music_state_seed(TopGearRecomp*,uint32_t);
 #define TOPGEAR_PLAYER_SETTINGS_SIZE 96u
+/* Saved one-player preference; two-player visibility is enforced separately.
+   Frontends preserve this preference when restoring gameplay snapshots. */
+int topgear_recomp_bottom_screen_enabled(const TopGearRecomp*);
+void topgear_recomp_set_bottom_screen_enabled(TopGearRecomp*,int);
 int topgear_recomp_player_settings_export(TopGearRecomp*,void*,size_t);
 int topgear_recomp_player_settings_import(TopGearRecomp*,const void*,size_t);
 int topgear_recomp_set_audio_backend(TopGearRecomp*,enum TopGearAudioBackend,char*,size_t);

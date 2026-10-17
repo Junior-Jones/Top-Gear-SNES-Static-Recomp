@@ -561,9 +561,9 @@ int main(int argc,char **argv) {
         }
         return 0;
     }
-    if(argc!=7&&argc!=8){fprintf(stderr,"usage: %s ROM OUTPUT_DIR DATA_FILE COURSE CAR GEARBOX(auto|manual) [--runs=N | NATURAL_COMPLETED_SNAPSHOT]\n",argv[0]);return 2;}
+    if(argc!=7&&argc!=8){fprintf(stderr,"usage: %s ROM OUTPUT_DIR DATA_FILE COURSE CAR GEARBOX(auto|manual) [--runs=N | --bottom-screen-off | NATURAL_COMPLETED_SNAPSHOT]\n",argv[0]);return 2;}
     if(argc==8&&!strncmp(argv[7],"--runs=",7u)){target_runs=(unsigned)strtoul(argv[7]+7u,NULL,10);if(target_runs<2u||target_runs>1000u)return 2;}
-    resume_snapshot=argc==8&&strncmp(argv[7],"--runs=",7u)!=0;
+    resume_snapshot=argc==8&&strncmp(argv[7],"--runs=",7u)!=0&&strcmp(argv[7],"--bottom-screen-off")!=0;
     course=(unsigned)strtoul(argv[4],NULL,10);car=(unsigned)strtoul(argv[5],NULL,10);
     manual=strcmp(argv[6],"manual")==0;
     if(course>=32u||car>=4u||(strcmp(argv[6],"auto")!=0&&!manual)){fprintf(stderr,"invalid scenario\n");return 2;}
@@ -571,6 +571,9 @@ int main(int argc,char **argv) {
     if(!load_file(argv[1],&rom,&rom_size)||!ensure_directory(argv[2]))return 2;
     if(rom_size!=524288u||read_le16(rom,0x5EA4u+course*2u)!=expected_laps){fprintf(stderr,"ROM lap catalog mismatch\n");return 2;}
     if(!topgear_recomp_create(&core,rom,rom_size,error,sizeof(error))){fprintf(stderr,"create failed: %s\n",error);free(rom);return 1;}free(rom);
+    /* Test configuration only: menu input/debounce is covered separately by
+       topgear-bottom-screen. The existing natural driver owns all race input. */
+    if(argc==8&&!strcmp(argv[7],"--bottom-screen-off"))core->mod_bottom_screen_off=1u;
     topgear_time_trial_store_init(&store);
     if(load_file(argv[3],&existing,&existing_size)){
         if(!topgear_time_trial_store_import(&store,existing,existing_size,error,sizeof(error))){fprintf(stderr,"existing Data import failed: %s\n",error);free(existing);topgear_recomp_destroy(core);return 1;}

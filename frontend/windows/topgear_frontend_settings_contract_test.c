@@ -29,6 +29,9 @@ int main(void) {
     CHECK(settings.ntsc_frame_lock == 1);
     CHECK(settings.pause_on_focus_loss == 0);
     CHECK(settings.input_source == TOPGEAR_INPUT_SOURCE_KEYBOARD);
+    CHECK(settings.bottom_screen_enabled == 1);
+    CHECK(topgear_frontend_settings_win32_save(&settings,path));
+    CHECK(GetPrivateProfileIntW(L"General",L"BottomScreen",-1,path)==1);
 
     settings.show_fps_counter = 1;
     settings.ntsc_frame_lock = 0;
@@ -39,6 +42,7 @@ int main(void) {
     settings.snapshot_slot = 4;
     settings.input_source = TOPGEAR_INPUT_SOURCE_GAMEPAD;
     settings.welcome_shown = 1;
+    settings.bottom_screen_enabled = 0;
     for (index = 0; index < TOPGEAR_WIN_BINDING_COUNT; ++index) {
         settings.bindings[index] = (UINT)('A' + index);
         settings.gamepad_bindings[index] = SC_GAMEPAD_DPAD_UP + index;
@@ -55,6 +59,7 @@ int main(void) {
     CHECK(loaded.snapshot_slot == 4);
     CHECK(loaded.input_source == TOPGEAR_INPUT_SOURCE_GAMEPAD);
     CHECK(loaded.welcome_shown == 1);
+    CHECK(loaded.bottom_screen_saved == 1&&loaded.bottom_screen_enabled == 0);
     for (index = 0; index < TOPGEAR_WIN_BINDING_COUNT; ++index) {
         CHECK(loaded.bindings[index] == (UINT)('A' + index));
         CHECK(loaded.gamepad_bindings[index] == SC_GAMEPAD_DPAD_UP + index);

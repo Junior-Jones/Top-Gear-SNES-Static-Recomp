@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(TopGearSNESStaticRecomp VERSION 2.0.0 LANGUAGES C CXX)
+project(TopGearSNESStaticRecomp VERSION 2.0.1 LANGUAGES C CXX)
 
 include(CTest)
 set(TOPGEAR_TEST_ROM "" CACHE FILEPATH
@@ -308,6 +308,12 @@ else()
 endif()
 
 if(BUILD_TESTING AND WIN32 AND TOPGEAR_TEST_ROM)
+ add_executable(topgear-bottom-screen-persistence tests/test_bottom_screen_persistence_win32.c frontend/windows/topgear_app_core.c frontend/common/topgear_time_trial_store.c frontend/common/topgear_player_settings_file.c frontend/windows/topgear_frontend_settings_win32.c third_party/topgear-gamepad/topgear_gamepad_input_win32.c)
+ target_include_directories(topgear-bottom-screen-persistence PRIVATE frontend/windows frontend/common third_party/topgear-gamepad)
+ target_compile_definitions(topgear-bottom-screen-persistence PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-bottom-screen-persistence PRIVATE topgear-static-recomp SDL3::SDL3-static user32 comctl32)
+ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bottom-screen-persistence")
+ add_test(NAME topgear-bottom-screen-persistence COMMAND topgear-bottom-screen-persistence "${TOPGEAR_TEST_ROM}" "${CMAKE_BINARY_DIR}/bottom-screen-persistence")
  get_target_property(PROFILE_TEST_SOURCES topgear-launcher SOURCES)
  list(REMOVE_ITEM PROFILE_TEST_SOURCES frontend/windows/topgear_app_win32.c frontend/windows/launcher_version.rc)
  add_executable(topgear-profile-dialog-test tests/test_profile_dialog.c ${PROFILE_TEST_SOURCES})

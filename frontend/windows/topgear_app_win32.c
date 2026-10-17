@@ -545,7 +545,13 @@ static int load_time_trial_data_win32(TopGearApp *game) {
 }
 
 static int flush_player_settings_win32(void) {
+    int bottom;
     if(!g_game||!g_player_settings_path[0])return 1;
+    bottom=topgear_app_bottom_screen_enabled(g_game);
+    if(!g_frontend_settings.bottom_screen_saved||bottom!=g_frontend_settings.bottom_screen_enabled){
+        if(!WritePrivateProfileStringW(L"General",L"BottomScreen",bottom?L"1":L"0",g_settings_ini_path))return 0;
+        g_frontend_settings.bottom_screen_enabled=bottom;g_frontend_settings.bottom_screen_saved=1;
+    }
     return ensure_directory_tree(g_data_directory)&&
         topgear_app_player_settings_save(g_game,g_player_settings_path);
 }
@@ -3624,7 +3630,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                         static const wchar_t about[] =
                             L"F1 - Open the Welcome window\r\n\r\n"
                             L"Top Gear (SNES) Static Recompilation\r\n"
-                            L"Version 2.0.0\r\n\r\n"
+                            L"Version 2.0.1\r\n\r\n"
                             L"Title: Top Gear\r\n"
                             L"Region: USA NTSC\r\n"
                             L"File type: .sfc";
@@ -3739,6 +3745,9 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             g_game = result->game;
             (void)load_time_trial_data_win32(g_game);
             (void)topgear_app_player_settings_load(g_game,g_player_settings_path);
+            if(g_frontend_settings.bottom_screen_saved)
+                topgear_app_set_bottom_screen_enabled(g_game,g_frontend_settings.bottom_screen_enabled);
+            (void)flush_player_settings_win32();
             g_loaded_snapshot_slot = -1;
             g_sram_last_flush_frame = 0u;
             g_audio_last_fifo_dropped = 0u;

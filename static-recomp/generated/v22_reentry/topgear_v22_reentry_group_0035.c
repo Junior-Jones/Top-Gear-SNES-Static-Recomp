@@ -525,6 +525,8 @@ int tg_v22_reentry_group_0035_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0000D51Au: /* A0 00 00 LDY #$0000 */
+  /* Bottom Screen Off: skip lower HUD presentation, retain shared race state. */
+  if(tg_mod_bottom_screen_off(instance)){instance->cpu.pc=0xD665u;instance->instruction_count++;return 1;}
   word = 0x0000u;
   tg_set_index16(instance, &instance->cpu.y, word);
   tg_set_nz16(instance, word);

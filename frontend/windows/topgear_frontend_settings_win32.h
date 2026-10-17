@@ -18,6 +18,8 @@ typedef enum TopGearWinBindingAction {
 } TopGearWinBindingAction;
 
 typedef struct TopGearFrontendSettingsWin32 {
+    int bottom_screen_enabled;
+    int bottom_screen_saved;
     int integer_scale;
     int pause_on_focus_loss;
     int auto_run_on_load;

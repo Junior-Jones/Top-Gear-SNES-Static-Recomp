@@ -165,6 +165,11 @@ int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
         i->mod_menu_remodel_dirty=1u;
         tg_mod_menu_remodel_draw_if_dirty(i);
     }
+    /* No object evaluation, tile fetch, pixel composition or overlay for
+       the disabled viewport. Menus/results use the complete frame. */
+    if(y>=108u&&tg_mod_bottom_screen_race_off(i)){
+        memset(i->mode1_frame+y*512u,0,512u);return 1;
+    }
     objline(i,y,opal,opri);
     for(x=0;x<256u;x++){
         TgPixel mp,sp;uint16_t color,add=i->ppu_fixed_color;uint8_t inid=regv(i,0x2100u),main=regv(i,0x212cu)&0x1fu,sub=regv(i,0x212du)&0x1fu,mw=regv(i,0x212eu)&0x1fu,swm=regv(i,0x212fu)&0x1fu,cgw=regv(i,0x2130u),cga=regv(i,0x2131u);unsigned br=inid&15u;int blank=(inid&0x80u)!=0,cw,clip,prevent,math;
@@ -193,6 +198,9 @@ int topgear_recomp_v22_render_current_frame(TopGearRecomp *i,TopGearV22VideoInfo
         unsigned mode=regv(i,0x2105u)&7u;
         uint8_t inid=regv(i,0x2100u),main=regv(i,0x212cu)&0x1fu,sub=regv(i,0x212du)&0x1fu,mw=regv(i,0x212eu)&0x1fu,swm=regv(i,0x212fu)&0x1fu,cgw=regv(i,0x2130u),cga=regv(i,0x2131u);
         unsigned br=inid&15u;int blank=(inid&0x80u)!=0;
+        if(y>=108u&&tg_mod_bottom_screen_race_off(i)){
+            memset(i->mode1_frame+y*512u,0,512u);seen[0]|=1u;continue;
+        }
         objline(i,y,opal,opri);
         for(x=0;x<256;x++){
             TgPixel mp,sp;uint16_t color,add=i->ppu_fixed_color;int cw,clip,prevent,math;
