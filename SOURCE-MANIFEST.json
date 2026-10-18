@@ -2374,7 +2374,7 @@
     {
       "bytes": 891,
       "path": "static-recomp/tests/test_snapshot_contract.c",
-      "sha256": "ddd1f7948c5cb606f87bf1583deaaa59b6f7a259d3f198b55776754d92f76a61"
+      "sha256": "84d71cd313e1f78adaeb54c208f02ded0bbca62ae5152b52fa671de12ebf6c4b"
     },
     {
       "bytes": 4046,
@@ -2517,7 +2517,7 @@
       "sha256": "2dd4af1e07e9cd301c7cafe8c9babddfd044421a88234b46146fe1e1df7aaae9"
     }
   ],
-  "inventory_sha256": "136458b898dd0285649f794817b5a3ffb353177a98d65f1cc0b60906898def5d",
+  "inventory_sha256": "75188e37590ff48437af6aeec0df1944ebc40bee73ae09ee738f7b7edc38a18f",
   "project_version": "2.1.0",
   "schema": "topgear-source-manifest-v1"
 }
