@@ -1,0 +1,29 @@
+Top Gear Definitive Edition 2.1.0 - saving settings
+
+Change an option in the in-game Settings menu. The launcher saves changes
+automatically; there is no Save button. Back only returns to the main menu.
+You do not need to start or finish a race to save an option.
+
+The portable game keeps these files beside Launcher.exe:
+  settings.ini                Launcher preferences and the screen/CPU options
+  Data/player-settings.dat    Player setup and in-game options
+
+Screen and CPU options use these keys in [General] in settings.ini:
+  BottomScreen=1              On (fresh-install default)
+  CenterScreen=0              Off (fresh-install default)
+  ExtraCPUDrivers=1           On (fresh-install default)
+
+Use 1 for On and 0 for Off. Normal menu changes update both the INI and the
+player-settings record automatically. A normal exit finishes pending profile
+writes. The files are reloaded next time the game is opened.
+
+Extra CPUs applies only in one-player Career and Rally. Two-player mode
+disables the added main CPUs while retaining the saved solo preference.
+Center Screen requires Bottom Screen Off; its disabled control is silent.
+
+Keep settings.ini and the Data folder when updating or moving the portable
+game. Each separate test/installation folder has its own saved settings.
+
+The FPS counter is a launcher preference. ShowFpsCounter=0 disables it, and
+Off is the default. It has been restored to Off in both local 2.1.0 test
+folders. Headless test logs can still record processing throughput separately.

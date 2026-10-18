@@ -42,7 +42,7 @@ static void profile_settings_store_checksum(uint8_t *data){
 static void profile_settings_defaults(uint8_t *data){
     unsigned n;
     memset(data,0,TOPGEAR_PLAYER_SETTINGS_SIZE);
-    memcpy(data,"TGPS",4u);data[4]=5u;data[8]=TOPGEAR_PLAYER_SETTINGS_SIZE;
+    memcpy(data,"TGPS",4u);data[4]=8u;data[8]=TOPGEAR_PLAYER_SETTINGS_SIZE;
     for(n=0u;n<3u;n++){
         uint8_t *profile=data+16u+n*26u;
         memcpy(profile,profile_control_schemes[0],16u);
@@ -50,7 +50,7 @@ static void profile_settings_defaults(uint8_t *data){
     }
     memcpy(data+32u,"PLAYER 1",8u);
     memcpy(data+84u,"PLAYER 1",8u);
-    data[95]=1u;
+    data[95]=1u; /* KPH; Bottom On, Center Off, Extra CPUs On. */
     profile_settings_store_checksum(data);
 }
 
@@ -58,9 +58,9 @@ static int profile_settings_validate(const uint8_t *data,size_t size){
     uint32_t stored=0u;unsigned n,version;
     if(!data||size!=TOPGEAR_PLAYER_SETTINGS_SIZE||memcmp(data,"TGPS",4u))return 0;
     version=data[4];
-    if((version<1u||version>6u)||data[5]||data[6]||data[7]||
+    if((version<1u||version>8u)||data[5]||data[6]||data[7]||
        data[8]!=TOPGEAR_PLAYER_SETTINGS_SIZE||data[9]||data[10]||data[11]||
-       data[94]>1u||(version==6u?((data[95]&~31u)!=0u||((data[95]>>2u)&3u)>2u):data[95]>(version==5u?11u:version==4u?7u:version==3u?3u:1u))||
+       data[94]>1u||(version>=6u?((data[95]&~(version>=8u?127u:version>=7u?63u:31u))!=0u||((data[95]>>2u)&3u)>2u):data[95]>(version==5u?11u:version==4u?7u:version==3u?3u:1u))||
        (version==1u&&data[95]))return 0;
     for(n=0u;n<4u;n++)stored|=(uint32_t)data[12u+n]<<(8u*n);
     if(stored!=profile_settings_checksum(data))return 0;

@@ -1656,6 +1656,8 @@ int tg_v22_reentry_group_0176_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0005DB52u: /* AD F3 1E LDA $1EF3 */
+  /* Trial owns no second car simulation or finish. */
+  if(instance->mod_time_trial_active){instance->wram[0x1EB4u]&=(uint8_t)~2u;instance->cpu.pc=0xE3B9u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1EF3u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

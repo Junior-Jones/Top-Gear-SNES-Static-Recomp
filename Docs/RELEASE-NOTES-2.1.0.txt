@@ -1,0 +1,54 @@
+Top Gear Definitive Edition 2.1.0
+
+Use the in-game Settings menu for Bottom Screen, Center Screen and Extra CPUs. Change an option with Left/Right or A.
+
+Center Screen is Off by default. With Bottom Screen Off, it moves the solo
+race view into the middle and leaves both the upper and lower areas black.
+Only Player 1 is shown, without a lower statistics panel. It restricts Career
+and Rally to one player while enabled.
+
+Extra CPUs is On by default. In one-player Career/Rally, SENNA and
+MANSELL join JONES as main CPU drivers. All three use different cars from
+Player 1 and each other, with independent fuel and pit-stop states. Turn it
+Off for the original CPU plus eighteen ordinary opponents. Two-player mode
+always disables the two extra main CPUs. The field remains twenty cars.
+
+The sixteen ordinary drivers have famous-driver names and fixed body colours.
+Time Trial remains player-only; hidden opponent contacts were removed.
+
+[General] settings.ini keys (fresh defaults):
+BottomScreen=1
+CenterScreen=0
+ExtraCPUDrivers=1
+
+Options also save in the player profile (TGPS v8, compatible with older
+profiles). Missing or invalid ExtraCPUDrivers values default to On. Keep Data
+when updating to retain your profiles, music state and Time Trial records.
+
+Validation for this update: headless menu, INI, profile/reset/cold-restart
+checks and short one-/two-player Career/Rally starts with the new option On
+and Off. CPU driving behaviour was not retuned. No Trial races were run for
+this update. Prior race tests and their limits are retained in Source/Docs.
+Self-driving changes are test tools, not a new game feature.
+
+Prepared locally. No GitHub release or tag was uploaded or replaced.
+
+Settings layout fix: Back now fits inside the border. Center Screen shows
+only On/Off; its Bottom Screen dependency is unchanged. Left/Right on Center
+Screen and Extra CPUs use the normal navigation audio cue.
+
+Audio correction: Bottom Screen, Center Screen and Extra CPUs now rejoin
+the native selector/value sound path used by the working 2.0.0 Speed setting.
+The previous private cue counter check did not check this native sound path.
+Left and Right were checked against real PCM captures and the native sound
+command. Center Screen ignores Left/Right/A silently with Bottom Screen On;
+its Left/Right captures exactly match idle PCM. No races were run for this fix.
+
+The FPS counter is Off in the local 2.1.0 test folders and remains Off for a
+fresh install. Settings save automatically; see SETTINGS-SAVING-2.1.0.txt.
+Four headless full-race On/Off checks and separate-process restart checks are
+recorded in EXTRA-CPU-FULL-RACES-2.1.0.txt, including DNF results/limitations.
+
+Center Screen correction: only the unscaled P1 view is shown in the middle.
+Both black margins contain no live statistics. The hidden lower rendering,
+HUD and statistics updates use the existing disabled-screen path.

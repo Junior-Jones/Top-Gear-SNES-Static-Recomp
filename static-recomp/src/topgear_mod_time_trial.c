@@ -264,9 +264,9 @@ static void career_overlay(TopGearRecomp *i,unsigned y){
         unsigned id=i->mod_career_order[rank],n,cp=i->mod_career_progress[id];uint32_t a=0,b=0;
         if(id==0u){memcpy(name,i->wram+0x1F86u,8u);}
         else{
-            /* CPU ID 1 is COMPUTER; IDs 2..19 use the native eight-byte names. */
+            /* Stable driver identities share the same eight-byte name lookup as results. */
             unsigned index=id==1u?18u:id-2u;
-            memcpy(name,i->rom+0x6C47Bu+index*8u,8u);
+            memcpy(name,tg_rivals_name(index==18u?1u:index+2u),8u);
         }
         name[8]=0;for(n=0;n<8;n++)if(name[n]<' '||name[n]>'Z'||name[n]=='=')name[n]=' ';
         if(rank==0u){
@@ -297,12 +297,12 @@ static void continue_overlay(TopGearRecomp *i,unsigned y){
 }
 void tg_mod_time_trial_overlay_scanline(TopGearRecomp *i,unsigned y){
     char line[24],tm[12]; unsigned n; uint16_t now;
-    if(tg_mod_bottom_screen_race_off(i))return;
+    if(tg_mod_bottom_screen_race_off(i)||tg_mod_center_screen_race(i))return;
     uint32_t s1=0u,s2=0u,s3=0u;
     if(i&&i->mod_continue_screen>=2u&&i->mod_continue_screen<=4u){continue_overlay(i,y);return;}
     if(i&&!i->mod_time_trial_active){career_overlay(i,y);return;}
     if(!i||!i->mod_time_trial_active||!i->mod_time_trial_font_valid||y<108u||y>=224u)return;
-    /* Repurpose the COMPUTER half: intentionally blank its pixels first. */
+    /* Repurpose the solo CPU half: intentionally blank its pixels first. */
     memset(&i->mode1_frame[y*256u*2u],0,256u*2u);
     if((i->mod_time_trial_sector_mask&3u)==0u&&i->mod_time_trial_lap_count>0u){
         n=(unsigned)i->mod_time_trial_lap_count-1u;

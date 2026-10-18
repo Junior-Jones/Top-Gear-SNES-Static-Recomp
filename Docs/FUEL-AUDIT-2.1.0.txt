@@ -1,0 +1,77 @@
+Full-tank CPU fuel audit - 18 October 2026
+=========================================
+Headless only. One-player Career and Rally. No Trial or two-player runs.
+
+Result: on the six-lap San Francisco course, SENNA and MANSELL each made ONE
+stop from a full tank in both modes. They both finished with fuel remaining.
+No repeat stop or insufficient refill was observed.
+
+Driver   Car            Stop       Fuel at pit entry  Fuel after refill  At finish
+SENNA    Purple Razor   Lap 5 of 6       9215              19965             4518
+MANSELL  Blue Weasel    Lap 6 of 6       3776               8689             2610
+Fuel is in native units; a full tank is 43007. Stop positions are approximately
+7665 on a 35840-unit lap. Refilling uses the stopped position, approximately
+7850, for its remaining-distance calculation. It can stop filling before full
+when the estimated fuel for the remaining distance plus reserve has been met.
+
+Control runs disabled pit opportunities on the same course. SENNA exhausted
+fuel with 31453 course units left; MANSELL exhausted fuel with 10921 left.
+That demonstrates an actual fuel shortfall, not just the estimate demanding a
+stop despite enough fuel already being present. MANSELL did coast across the
+line with an empty tank in the control, at frame 15092; its refuelled run
+finished at frame 14967. SENNA did not finish before the tenth-finisher boundary
+in the no-pit control. Neither ran dry in the normal runs. The refuelling
+estimate retained a reserve; it did not underfill either car.
+
+SENNA could not safely wait for the next pit opportunity: its no-pit control
+ran out before reaching that pit's location on the final lap. MANSELL's stop
+was on the final lap, before it ran dry later in that lap. These results do
+not establish globally optimal pit timing for every car/track/initial fuel.
+
+Why the earlier test had two stops
+---------------------------------
+That earlier stress test deliberately set CPU fuel to 11000 near the start.
+This brought the first stop forward to the opening lap. It filled to 43007,
+then the car consumed fuel over the remaining race and stopped again later.
+Normal full-tank starts in the new tests removed that extra opening stop.
+The new results do not show that the earlier second stop was caused by a
+partial first fill: the first fill was complete. They also do not claim that
+the deliberately low-fuel test used the fewest strategically possible stops.
+
+Relation to the original CPU
+----------------------------
+The original JONES CPU still executes native game routines. The two added
+CPUs use separate C functions derived from those routines, with independent
+fuel and pit state. Fuel-use arithmetic is checked against native code and
+uses each assigned car's parameters. Pit refill rate is 127 units per event,
+tank cap 43007; remaining-distance entry/refill factors are 61/80, reproducing
+the native-style rules. Invisible transfer stages advance as logical events.
+This is a port of the original logic, not execution of its native pit code.
+
+Car fuel factors: red Cannibal 100, purple Razor 90, blue Weasel 82, white
+Sidewinder 64. The red car has the highest consumption at equal RPM. Actual
+race use also depends on gearing, RPM, acceleration and contacts. This audit
+used P1's red-car selection, so the added CPUs were purple and blue.
+
+Evidence and reproduction
+-------------------------
+Verification/Rivals/full-tank-{career,rally}-{normal,no-pits}.log records
+phase changes, refill exits, laps, fuel exhaustion, finish IDs and totals.
+full-tank-fuel-receipt.json contains the exact evidence lines and hashes.
+All four runs exited successfully, with zero native shadow mismatches and
+zero graphics overflow. Normal runs recorded all eleven pit phases.
+Career reuses the natural Rally San Francisco race-start geometry with its
+mode flag set to Career. This checks Career rules on that course; it is not
+claimed as a native Career menu journey to San Francisco.
+New CPUs initialize to a full 43007; the first logged post-update value is
+43004. The test never reduces or replenishes fuel artificially. The original
+CPU's pre-existing snapshot state is ancillary, not the full-tank test subject.
+The no-pit controls set only the shared pit-position sentinel to 65534; route
+geometry is retained. All runs use the existing self-driving controls for P1.
+
+Fixture: Source/static-recomp/tests/rivals/test_pit_strategy.c, Windows CMake
+target topgear-rivals-pit-strategy. Arguments:
+  ROM snapshot 22000 output-prefix - 0 1 - career|- -|no-pits
+The race ends at ten finishers. Frame limits are ceilings, not consumed counts.
+No production fuel/pit code was changed, and the running preview is unchanged.
+This audit verifies the selected course/car pair, not all-track fuel balance.

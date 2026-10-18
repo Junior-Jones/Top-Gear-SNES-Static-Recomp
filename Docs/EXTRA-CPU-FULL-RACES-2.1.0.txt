@@ -1,0 +1,62 @@
+Top Gear Definitive Edition 2.1.0 - Extra CPUs full-race regression
+18 October 2026
+
+Four complete native races, headless only. Career and Rally only; no Trial.
+P1 used the existing white-car fuel/passing controller. CPU AI, P1 controller,
+CPU fuel, race results and game executable were not changed. Natural initial
+fuel was 43007 for P1/JONES; the extra drivers use their normal initialization.
+No retries. Each race ended normally at the game's tenth-finisher cutoff.
+
+Mode    Extra  Track       Laps  P1    JONES  SENNA  MANSELL  Restart
+Career  On     Las Vegas   3     DNF   2      3      4        Pass
+Career  Off    Las Vegas   3     2     1      9      3        Pass
+Rally   On     New York    3     1     DNF    4      2        Pass
+Rally   Off    New York    3     1     DNF    8      2        Pass
+
+DNF means the driver had not crossed before the normal ten-finisher cutoff.
+P1 failed Career qualification with Extra CPUs On; that attempt was not retried.
+JONES missed the cutoff in both Rally races. These results do not claim every
+entrant finished, or certify race balancing or the P1 controller's skill.
+With Off, SENNA/MANSELL are ordinary opponents, not the extra main drivers.
+With On, the three CPU types are red JONES, purple SENNA and blue MANSELL,
+while P1 has white. Both Rally cold starts naturally selected New York; no
+track, schedule or random seed was forced. No starting snapshots were loaded.
+
+Feature checks
+--------------
+On: both extra drivers updated and used distinct cars not selected by P1.
+Off: zero private driving updates and zero private pit stops throughout each
+full race; the original CPU and ordinary opponents raced normally.
+All four cases had zero reported rival shadow mismatches and sprite overflows.
+P1 and the two extra main drivers made no pit stops in these four races.
+
+Persistence checks
+------------------
+Each case used three separate processes:
+1. Cold boot, change Extra CPUs in the real Settings menu, save the profile and
+   INI through the production persistence functions, exit.
+2. A fresh process independently reloads both files, checks their agreement,
+   cold-boots the game, runs one full race, saves the unchanged setting, exits.
+3. Another fresh process reloads both files and opens Settings to verify the
+   saved On/Off value remains visible. All four cases passed.
+
+Normal launcher use saves changes automatically each frame. There is no Save
+button, and Back only returns to the main menu. Keep settings.ini and the
+Data folder when updating/moving the game. See SETTINGS-SAVING-2.1.0.txt.
+
+Performance (headless processing throughput, not displayed/window FPS)
+--------------------------------------------------------------------
+career-off: 4870 race frames, 213.49 frames/second.
+career-on: 5853 race frames, 208.47 frames/second.
+rally-off: 8853 race frames, 197.46 frames/second.
+rally-on: 9228 race frames, 221.56 frames/second.
+Two independent processes ran concurrently. The FPS counter is Off in the
+2.1.0 local test folders and remains Off by default in the release package.
+
+Evidence: Verification/Extra-CPU-Full-Races-20261018 contains per-case process
+logs, saved config/profile, race/result/settings captures, final race snapshots,
+JSON results and before/after hashes of the CPU code/controller/executable.
+Reproduce with target topgear-extra-cpu-full-race and arguments:
+  ROM case-directory mode extra phase
+where mode is 0=Career/1=Rally, extra is 0=Off/1=On, and phase runs in order as
+prepare, race, check in three separate processes. Output directories must exist.

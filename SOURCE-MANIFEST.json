@@ -1,5 +1,5 @@
 {
-  "file_count": 443,
+  "file_count": 503,
   "files": [
     {
       "bytes": 19,
@@ -17,9 +17,9 @@
       "sha256": "ad219b6ac742990d61c9b845666414cf3ca9171d65ed6797af957e0bd6876cfc"
     },
     {
-      "bytes": 17918,
+      "bytes": 17968,
       "path": "CMakeLists.txt",
-      "sha256": "a258dac57d7b31537188c9b74f7a58c1a18ce899884d7c33253376c68fc51ee9"
+      "sha256": "f1cef218064afbb9004ace2b9dd6b6ebab84e104f8857b4ed330870bb769c06b"
     },
     {
       "bytes": 688,
@@ -27,14 +27,14 @@
       "sha256": "9edc254bb2553e7f5412323c2305c738fa6e861e73e325105d9b819def82139b"
     },
     {
-      "bytes": 3905,
+      "bytes": 4038,
       "path": "Data/README.txt",
-      "sha256": "52d60aab9483d4e523995368dde36d31ede05513fc3500adb1977fc724fb88ab"
+      "sha256": "c13b8facf8f8ed9388d3373f038e17e162b774b67ebd13fdb29c61781af149ea"
     },
     {
       "bytes": 96,
       "path": "Data/player-settings.dat",
-      "sha256": "850a614eeb56302eda8d837f869c0a7540a556026c0ef145ad01932bc027e02c"
+      "sha256": "2a257c0ca7ecaec4386ff1d6a928d797f9c84eb435a7d44698a41a9b1d11d671"
     },
     {
       "bytes": 215240,
@@ -57,9 +57,24 @@
       "sha256": "988347e5e50bf08b0fd86fd770291881d762b734c28a5381ea425d95e14f630d"
     },
     {
+      "bytes": 2923,
+      "path": "Docs/CAREER-FIRST-FOUR-2.1.0.txt",
+      "sha256": "d44b3b4c31abcf363123bc99da3fbc6ac2a91cc854804ad58e4b88f25e1d83fb"
+    },
+    {
       "bytes": 928,
       "path": "Docs/CAREER-TRACK-CUTOFFS-2.0.0.csv",
       "sha256": "f8b6b4100b6b145d59344fcc6ca037e2ad4da33797db8db7eee7effe13c289c8"
+    },
+    {
+      "bytes": 3151,
+      "path": "Docs/CAREER-WHITE-EIGHT-FUEL-2.1.0.txt",
+      "sha256": "ac1bbbdcc1cff2531408c2ef73349e6656a9542f432ed38b2fbfa8e29f1a2b07"
+    },
+    {
+      "bytes": 2039,
+      "path": "Docs/CENTER-SCREEN-2.1.0.md",
+      "sha256": "72829c0671588a179b3f769538c50d6c2925654d7088e543bc7bb9c52c692b92"
     },
     {
       "bytes": 1523,
@@ -67,9 +82,19 @@
       "sha256": "d3b028011e11a2dc4c5e7f83757104f3af74fe865829d4763bff8eee609a9749"
     },
     {
+      "bytes": 802,
+      "path": "Docs/CPU-ORIGINAL-AUDIT-2.1.0.txt",
+      "sha256": "2d46813dd0923be440dea18f9877d017075ae3d9cf4517549982c8946ba3cd18"
+    },
+    {
       "bytes": 6054,
       "path": "Docs/DEFINITIVE-FEATURES-2026-09-13.md",
       "sha256": "a40d3467dd2cb1b01c62d0b9d5b11993b926a29176e8e477eb7b070dd130b219"
+    },
+    {
+      "bytes": 2539,
+      "path": "Docs/DISPLAY-OPTIONS-2.1.0.txt",
+      "sha256": "235c6ed82344c7d6d26b32c2624f6acbdb444715175141d10624f5e51d02f6d0"
     },
     {
       "bytes": 11656,
@@ -77,9 +102,19 @@
       "sha256": "2b31392a26b37583a2d2fd94b1d1bbe1b321d1fcde7203005367484e21c5d1da"
     },
     {
+      "bytes": 3562,
+      "path": "Docs/EXTRA-CPU-FULL-RACES-2.1.0.txt",
+      "sha256": "d6e67753a7b33789bf4fd8704f27fff430dc332491e02bec0a49faa5cfc91773"
+    },
+    {
       "bytes": 2232,
       "path": "Docs/FINISH-LINE-START-CUE-2026-09-11.md",
       "sha256": "e5de8de8230b70e06048bf5468e104fde74f6766ba46ead9d7f5fbda009e23d9"
+    },
+    {
+      "bytes": 4761,
+      "path": "Docs/FUEL-AUDIT-2.1.0.txt",
+      "sha256": "1219c2399b3936d37f2809d8048b478eb418e863e3880ad3732c0767dbd19603"
     },
     {
       "bytes": 2718,
@@ -132,6 +167,46 @@
       "sha256": "252e7284de2522aa3832803aae74b1cf67881fce31846ca12951eb8d249b421c"
     },
     {
+      "bytes": 3676,
+      "path": "Docs/RALLY-FLOW-2.1.0.txt",
+      "sha256": "e16594f519bd11885adcd552de80ba3d70ecc40cc1cae942949b6b1f747d8f06"
+    },
+    {
+      "bytes": 2991,
+      "path": "Docs/RALLY-FRESH-2.1.0.txt",
+      "sha256": "e1458bb49bf0a56bc0a5bdc803c76706d128d9c7557cde5bcc33cfad5f307d80"
+    },
+    {
+      "bytes": 5097,
+      "path": "Docs/RALLY-NATIVE-AI-2.1.0.txt",
+      "sha256": "bfd6cf56aa79ad85c40d4cfd6fb510d9bdc4cd4c649548576d915c7ebf973179"
+    },
+    {
+      "bytes": 3960,
+      "path": "Docs/RALLY-PIT-GUARD-2.1.0.txt",
+      "sha256": "49d253b1776d3a1016af261ce949d57a97619ef38efde98cba9784e48f206707"
+    },
+    {
+      "bytes": 3554,
+      "path": "Docs/RALLY-WHITE-2.1.0.txt",
+      "sha256": "d00924b83a204b3c250051169c9f874a5b2be46a7e057790099b7799805068aa"
+    },
+    {
+      "bytes": 2891,
+      "path": "Docs/RELEASE-NOTES-2.1.0.txt",
+      "sha256": "ba57639f34754f8cbc17b35204940c6a33f48f53b0ef2b3ab2597df12d288d08"
+    },
+    {
+      "bytes": 10969,
+      "path": "Docs/RIVALS-2.1.0.txt",
+      "sha256": "f5648db95c1e299dfdb58378f6fbd98f8450e8e7b2a0f130f6bd03ea9957c225"
+    },
+    {
+      "bytes": 1516,
+      "path": "Docs/SETTINGS-SAVING-2.1.0.txt",
+      "sha256": "6fb027034e9cf1a203cadbba51127fa5296bd371c0aa2c334a1190d3a4ab11fb"
+    },
+    {
       "bytes": 1128,
       "path": "Docs/Source and Generated Integrity.txt",
       "sha256": "80d6cc1600a333f450d532bfacb23c942920b62c933cc191a6cd1923c45c1436"
@@ -182,6 +257,11 @@
       "sha256": "95a92dd73fd395d6a61073e5c24d943907f3e522e33848d947a4d3c18e8348c8"
     },
     {
+      "bytes": 713,
+      "path": "Docs/WELCOME-2.1.0.txt",
+      "sha256": "6c6a061c4a0533a7e6d3fc18add5669653be5d8e873d20ea4230a032724dae90"
+    },
+    {
       "bytes": 682,
       "path": "Docs/generated/TG2-NOTE-OFF-AUTHORITY.json",
       "sha256": "2bbb0b1dd8d731cae53e029fcae7a5acbf30e466525eef3ef2bfa8d41b882666"
@@ -222,9 +302,9 @@
       "sha256": "a0ad77ec5441dd32d0640435feb0ac81d552b0280ffc329c239ee735c75beeb3"
     },
     {
-      "bytes": 6748,
+      "bytes": 7150,
       "path": "README.txt",
-      "sha256": "1f05dbc7c979764a1942c5ec6343ad50fc844745c446fc896fbb2e559d42119a"
+      "sha256": "6dae013b12c359c4a109353e0f2e3e1171613d28ef13ff98e8d59349c61e099d"
     },
     {
       "bytes": 18,
@@ -232,14 +312,14 @@
       "sha256": "cd7c51dd5d5ef0a922f98be270e81002988ab33f454674ad166b90c98178158c"
     },
     {
-      "bytes": 710,
+      "bytes": 723,
       "path": "THIRD-PARTY-NOTICES.txt",
-      "sha256": "58aa7f15217cd91b15fd2ff404668e90065c5116e7c120de9a616ca21ae8b280"
+      "sha256": "f1b06a668834aa4ec5a388fa72356e6a24e0f87d53b3c215ec23a1efea84a706"
     },
     {
-      "bytes": 351,
+      "bytes": 1035,
       "path": "VERSION.txt",
-      "sha256": "b26cd6325858f6107872050a15477c5c8c818aa860fa5399232f2b55c13708a0"
+      "sha256": "8341432e595f61e101011fba2c5f00f9b6aca22c8e8bb4642619914d6b1e0cd5"
     },
     {
       "bytes": 1363,
@@ -252,9 +332,9 @@
       "sha256": "7192528f988f86067e27cc6ad86f58c0460cca7fdabbb44e72c9aebf883fdc6e"
     },
     {
-      "bytes": 7441,
+      "bytes": 7525,
       "path": "frontend/common/topgear_player_settings_file.c",
-      "sha256": "4b2b07ac8ce95a1e18929f57e07e14ab3ea4470067320ed24f7da7e978e3c331"
+      "sha256": "4151bc47389e5f5fbfd01c1512cd498da2ba4192131aaee1960d6f83ab194e69"
     },
     {
       "bytes": 1222,
@@ -297,29 +377,29 @@
       "sha256": "7abf7febe03c0ae4a7506a85435f87bef652ef56ad283e00a964dd097900543d"
     },
     {
-      "bytes": 3332,
+      "bytes": 4296,
       "path": "frontend/windows/Release-README.txt",
-      "sha256": "ac6623ad499210773b930f2a85b8760e1d58413a05bf832f15a0280bdb1a8482"
+      "sha256": "187aee05a0db4627fdb69dd5046316c0cfa4529aa2b159877ac995fad564c5b6"
     },
     {
       "bytes": 824,
       "path": "frontend/windows/launcher_version.rc",
-      "sha256": "f9cbd89da1b2330738071c21852110d48a1217173ac140cc16491ea05be07c54"
+      "sha256": "91990f43e16706dedb85590c1646db1822cca7b42770fc33efec692c853d013f"
     },
     {
-      "bytes": 18192,
+      "bytes": 19132,
       "path": "frontend/windows/topgear_app_core.c",
-      "sha256": "7f381c4b2f1821eb1c87e2b1c271bfebeeba49d6362b11110b9f3409099bd306"
+      "sha256": "d10704c3b72994fde4cbbc1c5da3abb17f4d181aef89df52fef096ed0d9ed1d4"
     },
     {
-      "bytes": 3443,
+      "bytes": 3689,
       "path": "frontend/windows/topgear_app_core.h",
-      "sha256": "1ff4c6af419f53b7e3c329669a7337439b0fbbe99b5c71971bc7817607569a0a"
+      "sha256": "a12749d8f3be0081c1fc2c5af8c462d349c21b37e88d8cd881b7dc781f082383"
     },
     {
-      "bytes": 171081,
+      "bytes": 173416,
       "path": "frontend/windows/topgear_app_win32.c",
-      "sha256": "ec78463f2217ba0625fef9d4c146654b148adb8ca20c7072c1b30a579aefc40a"
+      "sha256": "a22c47333a1b255d1e06bb5f75f4f0c6eefa5df95202605d80e7cfbc3cc5b6da"
     },
     {
       "bytes": 38610,
@@ -352,19 +432,19 @@
       "sha256": "aa1339ccc97ed212d5cc333f133ee9b4a37d7535269d4b1c92bf6e8d93e2fdef"
     },
     {
-      "bytes": 2797,
+      "bytes": 3976,
       "path": "frontend/windows/topgear_frontend_settings_contract_test.c",
-      "sha256": "44a65c0312e00ffe89ffa0c29ea7b981cc2fa1aff49ec1639bc62d8b0853d4f7"
+      "sha256": "7ca0c4855f21a189462c01a75e85362598e37582cf87ff7313853991e16758ad"
     },
     {
-      "bytes": 34496,
+      "bytes": 35096,
       "path": "frontend/windows/topgear_frontend_settings_win32.c",
-      "sha256": "356441054f602e9e4b26e5d2ec43981857ac803f687290672d0da5687d0683a4"
+      "sha256": "be5bb06bfca149cefe93c488c3be8a665d517eba92a032ee1205e5febfda9db3"
     },
     {
-      "bytes": 2312,
+      "bytes": 2440,
       "path": "frontend/windows/topgear_frontend_settings_win32.h",
-      "sha256": "f96f3a3080a3da55b2f5bc7fa4ec7cb77ae02bb798c291b95290a9347041ed2f"
+      "sha256": "7feb3bee60d48501ec8e103ac185ebe99a6f4118937962174d05366f8ec8c18c"
     },
     {
       "bytes": 8526,
@@ -392,9 +472,9 @@
       "sha256": "d867725f8187172edf31f6724b7d93cf61a0e3da720203430d42b92afcbd46ec"
     },
     {
-      "bytes": 23706,
+      "bytes": 27543,
       "path": "static-recomp/CMakeLists.txt",
-      "sha256": "c3acedf3e10e431ac8db4947c0ce69398782d531c2cea5b2718af2212d410a5e"
+      "sha256": "4d1e8cc676878eb726c34b826959e7d806332f7304a2dee9876fbac6ebe66720"
     },
     {
       "bytes": 27667,
@@ -982,9 +1062,9 @@
       "sha256": "933a08a5a24dc454fecabe11aef74d2862dbcd38fc2c23333dd71c54a6d49692"
     },
     {
-      "bytes": 104599,
+      "bytes": 105057,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0021.c",
-      "sha256": "841220ab3925d5a56d6aac8b1fdec846e2564d11577bcca718c2d0dd8c133c2d"
+      "sha256": "8ebef1272268f4bf8994d3d2f51d2a07ee38f268d452537361dd92cb5f71a0d5"
     },
     {
       "bytes": 54933,
@@ -1157,9 +1237,9 @@
       "sha256": "4aae68124bf21a7f3efcd23fc0795cc1809b2b22b932c1e2d14651b3f2a8dd74"
     },
     {
-      "bytes": 111682,
+      "bytes": 111879,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0176.c",
-      "sha256": "b635f09318130280d687cebe4fb4a504ec29331d178edbbda1957ccf8ef98b2f"
+      "sha256": "c87c86b6f9cc2fb67924bf0b5c3f797cb1c666f5011b93e97eb182c051d9c52d"
     },
     {
       "bytes": 122006,
@@ -1167,9 +1247,9 @@
       "sha256": "137791190519a0ce774197058a3a3237822b60ed1f4a892efb948e4f7f915b10"
     },
     {
-      "bytes": 114474,
+      "bytes": 114658,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0178.c",
-      "sha256": "d1b36c3c81a48d792e0e64e9b8b5e9733dcf8da7fb62d90f3197a9dcca9ad8a9"
+      "sha256": "e5e620958bc4cdbe582dec3d28c849019f705bb739826710226965837e4e9778"
     },
     {
       "bytes": 104367,
@@ -1177,9 +1257,9 @@
       "sha256": "79b0331b4d6fbe5e22ed585488b6ebffa06e9f533cafd652902aa1cb65455cba"
     },
     {
-      "bytes": 120972,
+      "bytes": 121131,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017A.c",
-      "sha256": "309c00282afe5c5af56b1960d497b1438b6c488e28fc3455a58f069a2b2e3d6e"
+      "sha256": "fc29e55ab4da04ded75f59f873828a6ecfd5f41bf6057e34c8fbc12c71259570"
     },
     {
       "bytes": 118045,
@@ -1272,9 +1352,9 @@
       "sha256": "966fe404803af6c12a61f1378d707d73d898a220458506d59f0939c1f71670e1"
     },
     {
-      "bytes": 77495,
+      "bytes": 77765,
       "path": "static-recomp/include/topgear_static_recomp.h",
-      "sha256": "fccfbbcdcfca262aa0c4c95f588726a8eddabf82fcc9d59e059aa0064b18531b"
+      "sha256": "298642a8b01c504f4f635ac07a03f434cac771d9033586af8a65093423c480b3"
     },
     {
       "bytes": 650,
@@ -1282,14 +1362,19 @@
       "sha256": "6b392a51161ae604f95f7e8512806c083756644046cf06430a86d573d4a08b1d"
     },
     {
-      "bytes": 35052,
+      "bytes": 35244,
       "path": "static-recomp/internal/topgear_internal.h",
-      "sha256": "fc321240a8d65056f94876f0ef7e4e987e07c3958264c9bef7c68c3f32fd0b80"
+      "sha256": "de8508e0dd5dbdd4b7d47cf9f6df17d2bdf637fe9599355ef54cc0cfb5c9eca3"
+    },
+    {
+      "bytes": 2125,
+      "path": "static-recomp/internal/topgear_rivals.h",
+      "sha256": "ba35c0d1d1dc815a27b2d1ea98b7103d7e6da8e22063ef5b58183d730c838fa7"
     },
     {
       "bytes": 464,
       "path": "static-recomp/internal/topgear_snapshot_format.h",
-      "sha256": "2bb6239099c5cefd17fbb33b88d5f1ce93f2488cb6d50324637ee0e6dd7901de"
+      "sha256": "761ea11f90a64f6e4229009311e714ade90b40a0026fbecbcb67049164fa2c19"
     },
     {
       "bytes": 10056,
@@ -1312,9 +1397,9 @@
       "sha256": "0747bce9237d84bfad581df95f1914b32f6664a490de803c3f25df97a9e89b20"
     },
     {
-      "bytes": 29411,
+      "bytes": 30237,
       "path": "static-recomp/src/topgear_machine.c",
-      "sha256": "2cdd622b20e090e3129164cf259dd8faa192d5370a9c3a8ba4e39b481feb4b74"
+      "sha256": "4bd4df93b7f6a637fb932b271cc85b21a09ff801aed445ce903924086b92c83a"
     },
     {
       "bytes": 3791,
@@ -1327,9 +1412,9 @@
       "sha256": "9bb7ac78c481e27360d46e46f279ac05fde1c6a16c9ebb4af650493e4492e748"
     },
     {
-      "bytes": 65915,
+      "bytes": 69472,
       "path": "static-recomp/src/topgear_mod_menu_remodel.c",
-      "sha256": "8e06f30b81b4bd7c973c25919bf6a0dd3e80b6f6b6efc7384406045710815930"
+      "sha256": "bec1d4404955d8258226bd5a498df1c9784ec6f56f41a8c6c0a3d174a519cd7a"
     },
     {
       "bytes": 7722,
@@ -1342,14 +1427,19 @@
       "sha256": "b00c17d4fd4bef2e33f85b1a94939ec9b029bcdec44d6766c0fa0874c16eb0cb"
     },
     {
-      "bytes": 20232,
-      "path": "static-recomp/src/topgear_mod_time_trial.c",
-      "sha256": "7bd0f7ae6877510ee18976226e2a71d7bf24195b317869252c7143406861fb81"
+      "bytes": 24564,
+      "path": "static-recomp/src/topgear_mod_rivals.c",
+      "sha256": "284adfa39d93619f370bd76dce23cb49b8beb7d0f840dcbc9afa7b4f33671677"
     },
     {
-      "bytes": 25116,
+      "bytes": 20286,
+      "path": "static-recomp/src/topgear_mod_time_trial.c",
+      "sha256": "15c29f1234c36a7560232df45fb9e8cc7024d86a99b7e02b0798b2d1edc455a0"
+    },
+    {
+      "bytes": 25197,
       "path": "static-recomp/src/topgear_ppu_dma.c",
-      "sha256": "99f2cc0d4068b1ff2f7ba5e224377c4123617e3296fd13617635236d1fb61d5c"
+      "sha256": "5c0566cfaec3580c269dc77a96850489b9fd3db4a64f39a0236151b172c94643"
     },
     {
       "bytes": 29457,
@@ -1362,9 +1452,9 @@
       "sha256": "6f9a37d4f21df731c812f698a9272c972fb6467547b6252d3bbbb86876c4574f"
     },
     {
-      "bytes": 13686,
+      "bytes": 14364,
       "path": "static-recomp/src/topgear_snapshot.c",
-      "sha256": "f3427061519d5b71e54133bdd0a7d93126891603deb4e6922de5e43272edf43e"
+      "sha256": "350aa54555f502dbda800347e3da6af9365893fa791f6a429dfcf8a6f6c7b264"
     },
     {
       "bytes": 1262,
@@ -1372,14 +1462,14 @@
       "sha256": "246162bbaf8a39503c213e60c28d4d67d64ad9838f3664f51374654571d5e1fb"
     },
     {
-      "bytes": 15336,
+      "bytes": 15376,
       "path": "static-recomp/src/topgear_v22_scheduler.c",
-      "sha256": "e30382b9f9f7ce1e88ba10c2e5c4edfdf6b5a8add0bce4290e5c323c6ece3aec"
+      "sha256": "267743d3a1d5ca77839b295b8f422d194d2c608b6141ed83f72076383ad19843"
     },
     {
-      "bytes": 20481,
+      "bytes": 22764,
       "path": "static-recomp/src/topgear_v22_video.c",
-      "sha256": "3145c63c0a8f9668d38b4517789d96700003dd50f2217a9e9013e3fec7aee7aa"
+      "sha256": "6a8221ef395bee6468b2be8fb913eb164867ca928004cee4aaea6a83aacb5e40"
     },
     {
       "bytes": 22554,
@@ -1917,9 +2007,209 @@
       "sha256": "155cdd816a3c90b2ca62252cf03fd59740f9241e174a51f797358d5f9561b59f"
     },
     {
+      "bytes": 9191,
+      "path": "static-recomp/tests/existing_self_driver.inc",
+      "sha256": "cf08eae503caa252fffcb17012dcdf175d6baf1752cc582e86c5552ee8cd0ae9"
+    },
+    {
       "bytes": 1089,
       "path": "static-recomp/tests/export_music_player_transcripts.c",
       "sha256": "ed38b6e5955ffbe3208640483f4b28d1b387ce6e1f78e444603314116d4ad04f"
+    },
+    {
+      "bytes": 2370,
+      "path": "static-recomp/tests/probe_ai_records.c",
+      "sha256": "edab785f6a8679b04b4472b25d5def6c811ec77a7016b5da3ac5f5f9152a69e6"
+    },
+    {
+      "bytes": 16435,
+      "path": "static-recomp/tests/rivals/career_fuel_driver-before-tight-guard.inc",
+      "sha256": "f70119499a9570ec966de3189688360417c22dcc83bf5dfcbc7b258aca238535"
+    },
+    {
+      "bytes": 16943,
+      "path": "static-recomp/tests/rivals/career_fuel_driver.inc",
+      "sha256": "28ef631cd56091e6b9d2ad5ff30f113e82cda77390058652b3efbe15c17bf7b1"
+    },
+    {
+      "bytes": 13515,
+      "path": "static-recomp/tests/rivals/rally_flow_driver.inc",
+      "sha256": "1fb0a28f624fc5c6b87bd8bd506b6d44014fba999a3eb1c06a0ed88f9abb2c65"
+    },
+    {
+      "bytes": 13498,
+      "path": "static-recomp/tests/rivals/rally_native_driver-recorded.inc",
+      "sha256": "6d6e277fe82c877e2757c5dad349c182892128f5bf84296844a1f16a293936b7"
+    },
+    {
+      "bytes": 13571,
+      "path": "static-recomp/tests/rivals/rally_native_driver.inc",
+      "sha256": "0b5030c71c889c04ac37a3f8bf31e91c73ef8716fda42428d82e29e0bbb7b6ca"
+    },
+    {
+      "bytes": 12297,
+      "path": "static-recomp/tests/rivals/rally_passing_driver.inc",
+      "sha256": "dcc6c79f8617118d6fe471ac6d3785fcdc52485d16893cf15d9e9b2d7a907f2e"
+    },
+    {
+      "bytes": 14662,
+      "path": "static-recomp/tests/rivals/rally_pit_guard_driver.inc",
+      "sha256": "4df75ee0ab0fe1b2c45060298098b0de4160a4b07c14c509eaf4b5aab22d12cd"
+    },
+    {
+      "bytes": 9309,
+      "path": "static-recomp/tests/rivals/rally_self_driver.inc",
+      "sha256": "80596f12bd67c865322e49e9d5f3b97149688d1241cc19db7fa05b79785e4aa6"
+    },
+    {
+      "bytes": 9980,
+      "path": "static-recomp/tests/rivals/test_career_eight_fuel.c",
+      "sha256": "de688b23dc10bb87ee5a33b5ad26d5732fba14b566d926d2b8cf633c4f59d645"
+    },
+    {
+      "bytes": 6628,
+      "path": "static-recomp/tests/rivals/test_career_four.c",
+      "sha256": "45196eb7cdc771bbaea16a6cee8cdc96315ab7df0b837de56666c5c69962f796"
+    },
+    {
+      "bytes": 1974,
+      "path": "static-recomp/tests/rivals/test_career_fuel_boost.c",
+      "sha256": "2ec53ab80075a3117331ec0bd84f073f18c5a69b2f7d5519e406c1743632b951"
+    },
+    {
+      "bytes": 2420,
+      "path": "static-recomp/tests/rivals/test_career_fuel_contract.c",
+      "sha256": "0ebc4472369632851b92d7f740bb61950e373016beea0d5e24be64da51e23bae"
+    },
+    {
+      "bytes": 5447,
+      "path": "static-recomp/tests/rivals/test_career_pit_safety.c",
+      "sha256": "186c59dbc0b5732ec73066213b256746f724c28fc8d795fe8427c6f366778cd6"
+    },
+    {
+      "bytes": 3297,
+      "path": "static-recomp/tests/rivals/test_contract.c",
+      "sha256": "faa3002404171e279ebf6f658e27d78dacccd0d7c897ca277c016edb639c9c94"
+    },
+    {
+      "bytes": 2690,
+      "path": "static-recomp/tests/rivals/test_device.c",
+      "sha256": "43130993d36196a5fad5d046ab49c0a91d8dc4af827e723158eb02f64ff2ce58"
+    },
+    {
+      "bytes": 9863,
+      "path": "static-recomp/tests/rivals/test_extra_cpu_full_race.c",
+      "sha256": "83b8843ffb6f368d1eb9176a3259787503debd1e7cc62260da23bac6c0fe338b"
+    },
+    {
+      "bytes": 5700,
+      "path": "static-recomp/tests/rivals/test_extra_cpu_settings.c",
+      "sha256": "4a2dbbe919bd408d0b62428660b7bc3a8e4ce648d0a0daa6b64c559fad271a14"
+    },
+    {
+      "bytes": 1973,
+      "path": "static-recomp/tests/rivals/test_flow_boost_contract.c",
+      "sha256": "b15cc8aaa32eea2bb942ad8620a3dc2200f0a9417a58167ec774497743a56615"
+    },
+    {
+      "bytes": 2908,
+      "path": "static-recomp/tests/rivals/test_flow_contract.c",
+      "sha256": "82d078e2afde6a8dae96385e528d04d9d45c83a93640094af27892735db9a63f"
+    },
+    {
+      "bytes": 2602,
+      "path": "static-recomp/tests/rivals/test_metasprites.c",
+      "sha256": "790f87996e7b8e43640764d868595b5c101913713caddf43c459fa461db799cc"
+    },
+    {
+      "bytes": 4441,
+      "path": "static-recomp/tests/rivals/test_mode_bottom_stats.c",
+      "sha256": "b4370c4ddb013227d2e29ee2e741ee9e0e7ab805ec41e23ff4adf309bcd44a7a"
+    },
+    {
+      "bytes": 1975,
+      "path": "static-recomp/tests/rivals/test_native_boost_contract.c",
+      "sha256": "a842d59153b1d92e95c2ac63eb6e4091e6f06c5aab8d3433c3cd31a73c2587da"
+    },
+    {
+      "bytes": 2789,
+      "path": "static-recomp/tests/rivals/test_native_drive_contract.c",
+      "sha256": "ca0275179c2e8737dd1ab680b78b8641e97835ae3f66a44fef743813ddd3b645"
+    },
+    {
+      "bytes": 3794,
+      "path": "static-recomp/tests/rivals/test_native_passing_contract.c",
+      "sha256": "153a994e8c83521d17c84591c9059aa8dbc7b94e687f7da1b33302a19b0d41d5"
+    },
+    {
+      "bytes": 2660,
+      "path": "static-recomp/tests/rivals/test_passing_contract.c",
+      "sha256": "916d58b21cf9b993bb4730f2c7830f800cccea7c14be4234b86114bfab5041cc"
+    },
+    {
+      "bytes": 1978,
+      "path": "static-recomp/tests/rivals/test_pit_guard_boost.c",
+      "sha256": "dbaf95174bccd11d7fb81a3a2075ab7f4e2cc2b9775f90eb00449860338b93ab"
+    },
+    {
+      "bytes": 5085,
+      "path": "static-recomp/tests/rivals/test_pit_guard_contract.c",
+      "sha256": "379ed138ce7fcd4d78c563b540786a5c230ab648be4a7a2364fc5e19733c8856"
+    },
+    {
+      "bytes": 8350,
+      "path": "static-recomp/tests/rivals/test_pit_strategy.c",
+      "sha256": "318e83bfe33dd595304ccce29e5a4d67dedd9be0735d49b7e90dec41103839b9"
+    },
+    {
+      "bytes": 7804,
+      "path": "static-recomp/tests/rivals/test_rally_flow.c",
+      "sha256": "1a1f076df6be75508f3fed7dff69e1836d31f46c4a43794e5ac6547639ecebf8"
+    },
+    {
+      "bytes": 8342,
+      "path": "static-recomp/tests/rivals/test_rally_fresh.c",
+      "sha256": "6eb7edeefaca945e3fd02cb380358b0b7cdd7479dfb9af4c08cfa1a34ad72844"
+    },
+    {
+      "bytes": 7575,
+      "path": "static-recomp/tests/rivals/test_rally_native.c",
+      "sha256": "8185b1272a067ca832772ceca2c6cb42580ca8faea1c52480575100e574d51ab"
+    },
+    {
+      "bytes": 7429,
+      "path": "static-recomp/tests/rivals/test_rally_passing.c",
+      "sha256": "c43f605b124e8a9743ddae7227c3d97fa558a086d546c2a3affbf9f82767e9b4"
+    },
+    {
+      "bytes": 9010,
+      "path": "static-recomp/tests/rivals/test_rally_pit_guard.c",
+      "sha256": "bdf8a0de71eb17eda7ce9842d2ff862ebe4979f034471c691dc298f63bc6b8d6"
+    },
+    {
+      "bytes": 7216,
+      "path": "static-recomp/tests/rivals/test_rally_white.c",
+      "sha256": "2fb4de12b9a25fe73bbddb52535809c6e05ea2b2643e422b0f55e722d3b21c72"
+    },
+    {
+      "bytes": 6463,
+      "path": "static-recomp/tests/rivals/test_rivals.c",
+      "sha256": "4b85c1893b4c4bead552c065aecff5380fd6c05a4f5af41e32b0244cb8a6ae6f"
+    },
+    {
+      "bytes": 3500,
+      "path": "static-recomp/tests/rivals/test_settings_native_audio.c",
+      "sha256": "87b6fc4fe8883a9bdc21cb82297420e5712c6ce542bc6a7fb3b27b7776f986d0"
+    },
+    {
+      "bytes": 2476,
+      "path": "static-recomp/tests/rivals/test_snapshots.c",
+      "sha256": "d58150b4f3c78f143324988a536b64b152e9095fd07e2e708a5eb7a69f73878c"
+    },
+    {
+      "bytes": 2803,
+      "path": "static-recomp/tests/rivals/test_two_players.c",
+      "sha256": "83081bb1e43205a635903f2ec16aff417b583a3ade6cf1ad8142df6b28f2745d"
     },
     {
       "bytes": 1379,
@@ -1942,9 +2232,9 @@
       "sha256": "a865435db170604d03074039473541c4a105e9e2ceb61628e8c11562d9b3cce3"
     },
     {
-      "bytes": 8488,
+      "bytes": 8681,
       "path": "static-recomp/tests/test_bottom_screen.c",
-      "sha256": "786257662387265aed1acd7ad38e945308228010ee39d3936b4c26bb9612ebff"
+      "sha256": "f5445c7842087c7642aa9198ef832c047824f8b852c14edcbc380ca4ade6c24f"
     },
     {
       "bytes": 16208,
@@ -1952,14 +2242,19 @@
       "sha256": "82eb54bf94239224a5c1d27885c6216a2df6d114331c1b14636dc007929792c3"
     },
     {
+      "bytes": 9229,
+      "path": "static-recomp/tests/test_center_screen.c",
+      "sha256": "d411207f462dea8eaf3137c07c99dd9033cf2d96605bf1c69d91eac5a6e266a8"
+    },
+    {
       "bytes": 4658,
       "path": "static-recomp/tests/test_continues.c",
       "sha256": "36906c1594c14fe9ef47c527295a9941e6059af4aa9a5d034c92b432121fb049"
     },
     {
-      "bytes": 5189,
+      "bytes": 5288,
       "path": "static-recomp/tests/test_definitive_features.c",
-      "sha256": "c0e4e0175068063ce4e6f294adb792993e7ab83aa25dc80a08bd0f643b1901d9"
+      "sha256": "003584b89e2aab216a564f758d817c3118ebb3ef069d5267663574c492d243a1"
     },
     {
       "bytes": 356,
@@ -2004,7 +2299,7 @@
     {
       "bytes": 11125,
       "path": "static-recomp/tests/test_mode_settings_results.c",
-      "sha256": "d031fd0878f94762f92250955c045e5749aada0285e8afefc895d99457532539"
+      "sha256": "55a523f58ee0cbcdf1f575f500dc7417ca9f46a9fdebac76189ec173970e6797"
     },
     {
       "bytes": 7087,
@@ -2112,9 +2407,9 @@
       "sha256": "3e77ba748f5de811762f482213b9e20624e38b125c608c5eac72666be67d9d01"
     },
     {
-      "bytes": 2901,
+      "bytes": 4224,
       "path": "tests/test_bottom_screen_persistence_win32.c",
-      "sha256": "802195fb07a2142bb4d091180ab133018253eff13701a963a0c0f3eb2d304cfd"
+      "sha256": "1c3dd20017309df41649a2ae4678bca7b22538cf5c5e98af24694056a3601876"
     },
     {
       "bytes": 1661,
@@ -2142,9 +2437,9 @@
       "sha256": "e4c26cbbdd87160856c80fe36105ed46a939061ac7e501b06a86dff83bfb7830"
     },
     {
-      "bytes": 47635,
+      "bytes": 47893,
       "path": "tests/test_time_trial_journey.c",
-      "sha256": "ee71d6c2501e385d63c9a5d8e39d5f8318d41dd3eaefc586710d11d133875064"
+      "sha256": "be4fc3ae9d296acabd36a47b966122a4a9c4eb67787f23f3655cdba6f1c7acb7"
     },
     {
       "bytes": 26452,
@@ -2182,6 +2477,11 @@
       "sha256": "cc6244dd6b2c829eab0677e2ca2774d9d168c4698c3235b11b8f6caaea7d0f62"
     },
     {
+      "bytes": 1872,
+      "path": "third_party/SDL-LICENSES.txt",
+      "sha256": "3e085534a8e03f70d23e7c86e4d458c17d72b1ebda082e06963e3156f3f02476"
+    },
+    {
       "bytes": 877,
       "path": "third_party/SDL_GameControllerDB-LICENSE.txt",
       "sha256": "737fece95d2c7e0146fe81caa96788e3921605e874b426c95c51aae80f4f1187"
@@ -2214,10 +2514,10 @@
     {
       "bytes": 5732,
       "path": "tools/integrity_manifests.py",
-      "sha256": "48f7e000fb70e66871ed711743cadcbf362f73b6a7b4823d86b02e42aa818854"
+      "sha256": "2dd4af1e07e9cd301c7cafe8c9babddfd044421a88234b46146fe1e1df7aaae9"
     }
   ],
-  "inventory_sha256": "cf9c99b21afd364fb698bb75a492d2b4e0dd1b3dc27ca14c96ed72ea6de9665c",
-  "project_version": "2.0.1",
+  "inventory_sha256": "136458b898dd0285649f794817b5a3ffb353177a98d65f1cc0b60906898def5d",
+  "project_version": "2.1.0",
   "schema": "topgear-source-manifest-v1"
 }

@@ -1,0 +1,184 @@
+Current 2.1.0 settings update (18 October 2026)
+Settings > Extra CPUs now controls promotion of SENNA/MANSELL. Default
+On, effective only in one-player Career/Rally. Off keeps those identities as
+ordinary opponents with stable colours (SENNA 5AD6, MANSELL 02FF). JONES and
+the existing sixteen ordinary colours remain. Private driving/pit updates
+and promoted contacts are inactive when Off. No CPU driving logic was retuned.
+Saved as settings.ini ExtraCPUDrivers and TGPS v8 byte 95 bit 6 (Off).
+Two-player mode always retains eighteen ordinary opponents. Earlier notes
+below are historical; where they describe two-player promoted CPUs or a C
+rewrite, they have been superseded by the later native-driving revisions.
+See RELEASE-NOTES-2.1.0.txt and Verification/Settings-2.1.0 for this update.
+
+18 October native-driving revision: the added CPUs now execute the original
+generated driving instructions rather than the earlier C rewrite described
+below. See RALLY-NATIVE-AI-2.1.0.txt for the current implementation, single
+Rally attempt, limitations and P1 controller checks. Earlier results below
+remain historical and do not certify this revised build.
+
+18 October update: additional main CPUs are enabled ONLY for one-player
+Career/Rally. Two-player Career/Rally use the original eighteen ordinary CPU
+opponents; IDs 2/3 are no longer promoted, and the private graphics lane is
+inactive. Famous-driver name labels remain. Prior two-player extension results
+below describe the earlier experiment, which is now disabled for two players.
+Current two-players-final.log verifies native menu starts with zero private
+updates/objects and moving ordinary IDs 2/3. Solo regression logs are
+solo-only-career.log and solo-only-rally.log. The solo driving/pit implementation
+is unchanged. FPS remains enabled in the provided test settings.
+
+Top Gear 2.1.0 experimental rivals - implementation and verification
+17 October 2026. Separate local test version; not a published release.
+
+Race field and identities
+-------------------------
+Career and Rally retain twenty entrants. In one-player races these are P1,
+JONES (the original detailed CPU), SENNA and MANSELL (two promoted ordinary
+slots), plus sixteen ordinary opponents. In two-player races ID 1 is human P2:
+the field becomes two humans, SENNA, MANSELL and sixteen ordinary opponents.
+There are no additional CPU cameras, screens or audio channels.
+
+The three solo CPUs take the three car types that P1 did not select. Allocation
+is deterministic, in the game's car-type order: Cannibal, Sidewinder, Razor,
+Weasel. JONES gets the first available type, SENNA the next, MANSELL the last.
+If P1 changes car, the assignment can change next race. Within a race it is fixed.
+In two-player races both human choices are reserved; the two CPUs take distinct
+remaining types. Humans may choose the same type. Human profile names and the
+saved P2 car are preserved when returning from a solo race to setup.
+
+The sixteen ordinary opponents have stable identities and body colours:
+ID  Name      Body colour (SNES BGR555)
+ 4  PROST     001F
+ 5  PIQUET    03E0
+ 6  BERGER    7C00
+ 7  ALESI     03FF
+ 8  PATRESE   7C1F
+ 9  BOUTSEN   7FE0
+10  BRUNDLE   021F
+11  HAKKINEN  7D0F
+12  SCHUMACH  401F
+13  HILL      43E0
+14  HERBERT   7E00
+15  COULTHRD  7FFF
+16  ALBORETO  0210
+17  NANNINI   421F
+18  DECESARI  03EF
+19  WARWICK   7DEF
+Names are at most eight characters, padded with the game's blank glyph.
+Colours follow driver IDs as native records sort; they do not follow a mutable
+array position. Main cars use their selected car's original graphics/palette.
+
+State and gameplay
+------------------
+Source: static-recomp/internal/topgear_rivals.h and src/topgear_mod_rivals.c.
+TgRivals is an append-only host extension to TopGearRecomp, not guessed free
+SNES RAM. IDs 2 and 3 each own a TgRival: fractional position, lap, speed, fuel,
+gear, RPM, steering, recovery, passing side, pit phase/gate/scroll/refill and
+finish bookkeeping. They publish into the existing eighteen-byte race records
+for sorting, map positions, contacts and standings. Ordinary integration is
+skipped for those two promoted IDs to prevent moving/finishing them twice.
+
+Updates run at 05:E3CB after native player position synchronization. The original
+CPU remains in native code, with its parameter accesses adapted to its actual
+car. A shadow controller checks its speed/fuel/gear/RPM and steering bounds
+against the native result. New rivals use the same car-derived arithmetic,
+track slopes/corridors, fuel use, recovery and passing logic. Their contact
+adapter exchanges speed/deflection with humans, other detailed rivals and
+ordinary cars. It is a new implementation; full instruction-level equivalence
+of all private contacts/pit scheduling is not claimed.
+
+Each new rival decides to pit from its own fuel and remaining distance. Each
+has its own eleven-phase pit sequence. The sequence advances at the native
+00:9222 pit-event boundary, independently of whether a lower view is drawn.
+Shared track pit geometry is read; the rivals do not share fuel or pit gates.
+Refill supports a full tank or a remaining-distance early departure. A completed
+pit return restores road bounds, recentres steering and clears the local gate.
+Transfer-only pit phases finish on the next logical event because these cars
+have no private pit window to upload. Native global active-player bits are not
+expanded. Finish IDs/times append once to the native standings arrays.
+
+One intentional correction: the original CPU's low-fuel helper truncates a
+neighbour offset to eight bits. The native shadow reproduces that quirk, while
+the two new controllers retain a valid full neighbour offset.
+
+Rendering extension
+-------------------
+Four private 4-KiB car tile banks and thirty-two private palettes let the new
+car types and sixteen ordinary colours coexist. Bounded object lists are staged
+for both existing views and their alternating OAM buffers, then latched at the
+corresponding native OAM DMA. Objects enter the scanline OBJ/BG compositor before
+windows, colour math and brightness. Native VRAM, OAM and CGRAM sizes are unchanged.
+There is no finished-frame paint-over and no extra player view.
+
+Projection/body hooks retain driver IDs through native scenery sorting. The
+renderer parses all forty native main-car pose/scale styles; camera projection
+still supplies the on-screen pose. New private rivals do not add independent
+cosmetic voice messages or engine audio. Ordinary names are provided by a ROM
+read overlay and the custom standings/gap panels; the local ROM is not edited.
+
+Snapshots and persistence
+-------------------------
+Snapshot v2 saves the complete pointer-free extension, including independent
+pits and graphics buffers. The exact known v1 core prefix (481520 bytes) remains
+loadable; its new extension is initialized on entry to a race. Current core size
+is 524976 bytes. Interim development v2 snapshots of other sizes are rejected.
+Normal human profiles retain their original format and saved car selections.
+Bottom Screen/Center Screen settings retain the existing settings.ini format.
+The provided test configuration has BottomScreen=1, CenterScreen=0 and
+ShowFpsCounter=1. No new AI setting is required; the experiment applies to Career
+and Rally. The rival controller is excluded from Time Trial.
+
+Verification and limits
+-----------------------
+Evidence is under ../Verification/Rivals relative to this Source folder.
+Current final race logs: career-no-pits-final.log, career-pits-final.log,
+rally-no-pits-final.log and rally-pits-final.log. Existing self-driving P1 inputs
+were used headlessly. Each reached the native tenth-finisher race boundary with
+unique finish IDs, zero shadow comparison failures and zero object overflow.
+Both promoted rivals rendered naturally in each non-pit mode run. Each added
+rival completed two pit stops in each pit-course run, observing all eleven pit
+phases. Pit runs start with controlled low fuel (11000) once; subsequent pit
+decisions and returns are autonomous. Added rivals did not enter P1's camera
+in those pit runs; non-pit runs and isolated rendering checks cover their images.
+
+The Career pit run uses the natural San Francisco Rally-start snapshot geometry
+with Career mode selected in the fixture. It proves the controller under Career
+rules on pit geometry; it is not evidence of a natural Career menu trip to that
+course. Native menu two-player starts in both modes are checked separately.
+
+contracts-final.log: 947 cases / 8116 checks, including 32 assignment cases,
+900 native CPU physics cases and 15 low-fuel neighbour/steering boundary cases.
+device.log: empty-extension pixel/memory isolation, four car banks, four flip
+combinations, 192 object comparisons and 917504 full-frame pixel comparisons.
+metasprites.log: 320 complete metasprite comparisons (40 styles x 4 cars x 2 views).
+snapshots.log: exact state/WRAM/pixel replay for 120 normal and 120 independent
+mid-pit frames; unchanged profile record and human P2 car restored.
+two-players-final.log: actual menu starts, human choices reserved, two independently
+updating CPUs, visible lower view even with Bottom Off preference. A labelled
+controlled overlap fixture checks extra cars in P2's view. The lower object list
+is observed during raster execution; end-of-frame state has already latched the
+next upper view and is not a valid lower-rendering assertion.
+career-points-final.log, career-continues-final.log, rally-event-final.log:
+native points/results, retries/exhaustion, and eight-race Rally progression.
+
+FPS measurements are saved in fps-*.log and two-players-final.log. These measure
+headless frame processing using QueryPerformanceCounter. They exclude screenshot
+writing and do not measure window presentation FPS, display pacing or host audio
+output. The visible launcher FPS counter is enabled for the user's own checks.
+These are selected course tests, not an all-32-track balance or endurance claim.
+No further Time Trial runs were performed after the Career/Rally-only correction.
+Historical exploratory logs are retained; use the named final logs above.
+
+Reproduction
+------------
+Build the normal Source CMake project with BUILD_TESTING enabled on Windows.
+Explicit fixture targets: topgear-rivals-contract, -device, -metasprites,
+-rivals, -snapshots and -two-players. Sources are in static-recomp/tests/rivals.
+The fixture arguments and original local snapshots are recorded in
+Verification/Rivals/verification-receipt.json. The race runner refuses a
+Time Trial snapshot before advancing it. Do not run broad CTest mode matrices
+for this validation: their older workflows include modes outside this scope.
+
+Further tuning can change the names/colours tables, per-car physics tables,
+passing corridor rules, low-fuel strategy and contact responses independently.
+All-four-car balance across every track and a native-menu Career pit journey
+remain useful future validation, not requirements claimed by this preview.

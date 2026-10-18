@@ -1,0 +1,14 @@
+CPU source audit - 18 October 2026
+
+Compared with GitHub/definitive edition/Source/static-recomp.
+Native driving shards 017B, 017C, 017D are byte-for-byte identical.
+170 of 174 generated files are identical. The four differing files contain
+only earlier Trial-specific inserted guards, inactive in Rally. No Trial run.
+
+This does not mean the whole CPU integration is untouched. Earlier adaptations
+select actual-car gear thresholds, fuel factor and physics table rows for JONES.
+Earlier contact adapters exchange speed/deflection with promoted rivals.
+Those adaptations and the two added CPU controllers were left unchanged.
+CPU source, core library and Launcher hashes match the beginning of this task.
+Detailed hashes and diffs: Verification/Rivals/cpu-original-audit.json and
+cpu-audit-*.diff.txt.

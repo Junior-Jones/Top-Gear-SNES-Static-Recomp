@@ -30,8 +30,20 @@ int main(void) {
     CHECK(settings.pause_on_focus_loss == 0);
     CHECK(settings.input_source == TOPGEAR_INPUT_SOURCE_KEYBOARD);
     CHECK(settings.bottom_screen_enabled == 1);
+    CHECK(settings.center_screen_enabled == 0);
+    CHECK(settings.extra_cpu_drivers_enabled == 1);
+    CHECK(!settings.extra_cpu_drivers_saved);
     CHECK(topgear_frontend_settings_win32_save(&settings,path));
     CHECK(GetPrivateProfileIntW(L"General",L"BottomScreen",-1,path)==1);
+    CHECK(GetPrivateProfileIntW(L"General",L"CenterScreen",-1,path)==0);
+    CHECK(GetPrivateProfileIntW(L"General",L"ExtraCPUDrivers",-1,path)==1);
+    settings.extra_cpu_drivers_enabled=0;
+    settings.bottom_screen_enabled=0;
+    settings.center_screen_enabled=1;
+    CHECK(topgear_frontend_settings_win32_save(&settings,path));
+    topgear_frontend_settings_win32_load(&loaded,path);
+    CHECK(loaded.center_screen_enabled&&loaded.center_screen_saved);
+    CHECK(!loaded.extra_cpu_drivers_enabled&&loaded.extra_cpu_drivers_saved);
 
     settings.show_fps_counter = 1;
     settings.ntsc_frame_lock = 0;
@@ -42,7 +54,7 @@ int main(void) {
     settings.snapshot_slot = 4;
     settings.input_source = TOPGEAR_INPUT_SOURCE_GAMEPAD;
     settings.welcome_shown = 1;
-    settings.bottom_screen_enabled = 0;
+    settings.bottom_screen_enabled = 1;
     for (index = 0; index < TOPGEAR_WIN_BINDING_COUNT; ++index) {
         settings.bindings[index] = (UINT)('A' + index);
         settings.gamepad_bindings[index] = SC_GAMEPAD_DPAD_UP + index;
@@ -59,7 +71,8 @@ int main(void) {
     CHECK(loaded.snapshot_slot == 4);
     CHECK(loaded.input_source == TOPGEAR_INPUT_SOURCE_GAMEPAD);
     CHECK(loaded.welcome_shown == 1);
-    CHECK(loaded.bottom_screen_saved == 1&&loaded.bottom_screen_enabled == 0);
+    CHECK(loaded.bottom_screen_saved == 1&&loaded.bottom_screen_enabled == 1);
+    CHECK(!loaded.center_screen_enabled&&loaded.center_screen_saved);
     for (index = 0; index < TOPGEAR_WIN_BINDING_COUNT; ++index) {
         CHECK(loaded.bindings[index] == (UINT)('A' + index));
         CHECK(loaded.gamepad_bindings[index] == SC_GAMEPAD_DPAD_UP + index);
@@ -68,6 +81,12 @@ int main(void) {
     CHECK(WritePrivateProfileStringW(L"Input", L"Action0", L"113", path));
     topgear_frontend_settings_win32_load(&loaded, path);
     CHECK(loaded.bindings[0] == VK_UP);
+    CHECK(WritePrivateProfileStringW(L"General",L"ExtraCPUDrivers",L"9",path));
+    topgear_frontend_settings_win32_load(&loaded,path);
+    CHECK(loaded.extra_cpu_drivers_enabled&&!loaded.extra_cpu_drivers_saved);
+    CHECK(WritePrivateProfileStringW(L"General",L"ExtraCPUDrivers",NULL,path));
+    topgear_frontend_settings_win32_load(&loaded,path);
+    CHECK(loaded.extra_cpu_drivers_enabled&&!loaded.extra_cpu_drivers_saved);
     CHECK(DeleteFileW(path));
     puts("PASS all frontend settings persist and reserved bindings fail safe");
     return 0;

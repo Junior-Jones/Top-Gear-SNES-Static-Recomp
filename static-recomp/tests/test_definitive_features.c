@@ -37,7 +37,7 @@ int main(int argc,char **argv){
  }
  CHECK(c->mod_music_player_track==0);CHECK(topgear_recomp_music_state_export(c,after,sizeof(after))&&!memcmp(before,after,sizeof(before)));
  CHECK(press(0x0200)&&c->mod_music_player_track==19);CHECK(shot("music-player-last"));
- CHECK(press(0x0400));CHECK(c->mod_menu_remodel_selection==4&&!c->mod_music_player_state);CHECK(shot("settings-bottom-screen"));CHECK(press(0x0400));CHECK(c->mod_menu_remodel_selection==5);CHECK(shot("settings-back"));
+ CHECK(press(0x0400));CHECK(c->mod_menu_remodel_selection==4&&!c->mod_music_player_state);CHECK(shot("settings-bottom-screen"));CHECK(press(0x0400));CHECK(c->mod_menu_remodel_selection==5);CHECK(shot("settings-center-screen"));CHECK(press(0x0400));CHECK(c->mod_menu_remodel_selection==6);CHECK(shot("settings-back"));
  CHECK(topgear_recomp_snapshot_load(c,path,error,sizeof(error)));
  CHECK(press(0x0400)&&press(0x0080)&&press(0x0400)&&press(0x0400));CHECK(c->mod_menu_remodel_page==2&&c->mod_menu_remodel_selection==2);
  CHECK(frames(1,0x0080));for(n=0;n<120&&c->mod_menu_remodel_page!=13;n++)CHECK(frames(1,0x0080));CHECK(c->mod_menu_remodel_page==13);

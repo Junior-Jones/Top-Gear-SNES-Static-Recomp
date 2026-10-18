@@ -1,0 +1,45 @@
+Top Gear Definitive Edition 2.1.0 - final display-option rules
+
+Fresh defaults: Bottom Screen On, Center Screen Off, Extra CPUs On, FPS Off.
+Center Screen can be enabled only after Bottom Screen is Off. Turning Bottom
+Screen On disables Center Screen. Disabled Center Screen controls are silent.
+Its solo lock still prevents two-player Career/Rally while enabled.
+
+One-player lower view with Bottom Screen On
+------------------------------------------
+Career: TOP 5 CHECKPOINT GAPS. Five driver names in race order and their time
+gaps to the leader at measured checkpoints. The leader row shows the last lap
+time when available; an unavailable value is a placeholder.
+Rally: the same TOP 5 CHECKPOINT GAPS race display, for the current Rally race.
+Trial: current lap number, current lap elapsed time, S1/S2/S3 sector times,
+and eight completed-lap time rows. Uncompleted sectors/laps show placeholders.
+There is no opponent standings panel in Trial.
+
+Bottom Screen Off hides the lower raster and stats. Center Screen On then
+moves P1 into the middle at original size, with both 60-line margins black.
+No live stats are drawn below the middle view. P1's own HUD remains visible.
+Two-player Career/Rally retain the effective Bottom Screen On override so P2
+can see their own viewport.
+
+Verification
+------------
+Headless natural race starts and 600 frames of the existing P1 self-driver in
+Career, Rally and player-only Trial. Each mode asserts the correct mode flags,
+a visible lower stats panel with Bottom On, a black lower raster with Bottom
+Off, exact centered P1 pixels and black margins with Center On, profile record
+round-trip, and restored stats after switching Bottom back On. Trial asserts
+no added main CPU states are running. This is the specifically requested Trial
+display check, not a CPU-race test in Trial.
+
+Additional checks cover Settings, dependency/solo guard, explicit INI values,
+profile/reset/snapshot/cold-restart persistence and enabled/disabled navigation
+audio. Evidence: Verification/Display-Rules, including mode captures and logs.
+CPU driving and the P1 self-driving controller were not changed or retuned.
+
+The user-provided Version 2.1.0 wording is applied to the welcome dialog and
+VERSION.txt. The 16-row driver/colour table appears only at the bottom of
+VERSION.txt, not in the welcome dialog. Existing shortcut and ROM help follow
+the new welcome feature text.
+
+The local test opener removes settings.ini before each launch, as requested.
+Normal release startup retains automatic settings persistence.

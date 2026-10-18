@@ -1488,6 +1488,8 @@ int tg_v22_reentry_group_017A_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0005E82Cu: /* AC 06 02 LDY $0206 */
+  /* Trial owns no second car simulation or finish. */
+  if(instance->mod_time_trial_active){instance->cpu.pc=0xE8E8u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x0206u), &word)) return 0;
   tg_set_index16(instance, &instance->cpu.y, word);
   tg_set_nz16(instance, word);

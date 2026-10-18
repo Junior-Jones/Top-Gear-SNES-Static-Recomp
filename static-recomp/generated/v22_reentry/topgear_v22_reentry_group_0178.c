@@ -493,6 +493,8 @@ int tg_v22_reentry_group_0178_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x0005E3CBu: /* AD 40 00 LDA $0040 */
+  /* Trial is player-only timing. Keep record sync, skip both contact scans. */
+  if(instance->mod_time_trial_active){instance->cpu.pc=0xE789u;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x0040u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

@@ -1,0 +1,16 @@
+Welcome to Top Gear (SNES) Static Recompilation
+
+Version 2.1.0
+
+Added to Settings:
+* Center Screen, Default Off
+This option can be toggled On after Bottom Screen is turned Off
+* Extra CPU, default On
+This option enabled will add 2 more CPU controlled drivers using the remaining 2 cars, the CPUs use the names SENNA, MANSELL and JONES
+
+General,
+* All 16 normal AI drivers are named after classic racing drivers, with a fixed car colour assigned to each.
+• Time Trial fix: Removed hidden opponent contacts so only Player 1 races the clock.
+• Settings improvements: Options save automatically. Updated menu spacing and Left/Right sounds; disabled Center Screen stays silent.
+
+Feedback on any issues is welcomed

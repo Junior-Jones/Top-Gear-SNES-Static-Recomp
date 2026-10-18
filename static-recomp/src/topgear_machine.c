@@ -245,7 +245,14 @@ int tg_bus_read8(TopGearRecomp *instance, uint32_t address, uint8_t *value) {
         }
         if(tg_exact_cart_open_bus(bank,local)){*value=instance->cpu_mdr;instance->open_bus_read_count++;return finish_bus_read(instance,address,*value);}
     }
-    if (lorom_offset(instance, address, &offset)) { *value = instance->rom[offset]; return finish_bus_read(instance,address,*value); }
+    if (lorom_offset(instance, address, &offset)) {
+        /* Autonomous CPU now uses its assigned car's shift thresholds. */
+        if(!instance->rivals.disabled&&!instance->mod_time_trial_active&&!instance->wram[0x1f04]&&instance->cpu.pbr==5u){
+            unsigned pc=instance->cpu.pc,car=instance->wram[0x1fac]&3u;
+            if(pc==0xedeeu&&offset>=0x1a4fu&&offset<0x1a59u)offset=0x19dbu+car*16u+offset-0x1a4fu;
+            if(pc==0xedf8u&&offset>=0x1a89u&&offset<0x1a93u)offset=0x1a15u+car*16u+offset-0x1a89u;
+        }
+        *value = offset>=0x6C47Bu&&offset<0x6C513u ? tg_rivals_name_byte(offset-0x6C47Bu) : instance->rom[offset]; return finish_bus_read(instance,address,*value); }
     {
         char message[192];
         (void)snprintf(message, sizeof(message), "Unsupported Version 03 bus read from %02X:%04X.", bank, local);
@@ -269,7 +276,12 @@ int tg_bus_write8(TopGearRecomp *instance, uint32_t address, uint8_t value) {
     uint32_t offset; uint8_t bank=(uint8_t)(address>>16); uint16_t local=(uint16_t)address;
     if(!instance)return 0;
     instance->scpu_bus_writes++;
-    if (wram_offset(address,&offset)) { instance->wram[offset]=value; return finish_bus_write(instance,address,value); }
+    if (wram_offset(address,&offset)) {
+        /* Center Screen is a solo presentation. Enforce the same player-count
+           rule for native setup writers, imported profiles and mirrored WRAM. */
+        if(instance->mod_center_screen_enabled&&(offset==0x1F04u||offset==0x1F05u))value=0u;
+        instance->wram[offset]=value; return finish_bus_write(instance,address,value);
+    }
     if (bank<=0x3Fu || (bank>=0x80u && bank<=0xBFu)) {
         if(local==0x4016u){
             uint8_t strobe=(uint8_t)(value&1u);

@@ -18,6 +18,10 @@ typedef enum TopGearWinBindingAction {
 } TopGearWinBindingAction;
 
 typedef struct TopGearFrontendSettingsWin32 {
+    int center_screen_enabled;
+    int center_screen_saved;
+    int extra_cpu_drivers_enabled;
+    int extra_cpu_drivers_saved;
     int bottom_screen_enabled;
     int bottom_screen_saved;
     int integer_scale;

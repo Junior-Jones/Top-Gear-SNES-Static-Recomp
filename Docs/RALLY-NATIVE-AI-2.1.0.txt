@@ -1,0 +1,92 @@
+Rally native CPU driving and committed P1 passing - 18 October 2026
+Headless one-player Rally only. White Sidewinder. No Trial runs.
+One natural schedule; stop at first disqualification, no retries or state cheats.
+JONES red Cannibal, SENNA purple Razor, MANSELL blue Weasel.
+
+CPU implementation:
+SENNA/MANSELL now execute the original generated CPU instructions from
+05:ED92 to 05:E3B9, including acceleration, gear/fuel, movement, scenery
+collisions, recovery, steering, passing and pit-entry decisions.
+Each execution uses an isolated machine copy and commits its own vehicle
+state only. Existing per-car physics table adaptation is retained, as for
+JONES. The native low-fuel neighbour-index quirk is no longer corrected
+for the added drivers. No new CPU screen or audio is run in the live game.
+Existing host bridges for inter-car contacts, classification and hidden
+pit-event progression remain; this is not an assertion that those adapters
+are instruction-identical to a complete second-player machine.
+
+P1 test controller:
+Commit to a target car and lane for at least 90 frames, retain the lane
+through changing traffic, wait for rear clearance before returning, and
+use a 60-frame cooldown before starting another pass. Obstructed traffic
+causes braking rather than switching the committed passing side.
+Boost decisions inspect upcoming native curvature for 2200 track units
+and all 19 vehicle records, including added rivals. Require a clear lane
+and settled lateral motion for 18 frames. Timed boost windows removed.
+Only real controller buttons drive P1; no speed/fuel/position edits.
+Post-run boost audit: LA used two nitros from three requests; Rain Forest
+retained all three. Added native active-boost gating after this run.
+The final controller passes an instruction-level boost test: three requests
+produce three accepted boosts and zero remaining nitros. No additional
+Rally race was run after disqualification. Recorded controller preserved
+as rally_native_driver-recorded.inc; current driver contains that fix.
+
+Race | Track | Required | P1 white | JONES red | SENNA purple | MANSELL blue
+1 | Los Angeles | Top 8 | 2 | 4 | 1 | 3
+2 | Rain Forest | Top 7 | 9 | 5 | 7 | 8
+
+* Classified by the game at the cutoff without crossing the line.
+NC means no recorded finish/classification for that driver when the native
+ten-finisher boundary ended the race. It is not evidence of fuel exhaustion.
+
+P1 was disqualified in race 2, Rain Forest, requiring top 7. No retry was attempted.
+
+Points and standings at the end of the test:
+P1: White Sidewinder; 15 points; overall 2.
+JONES: Red Cannibal; 10 points; overall 4.
+SENNA: Purple Razor; 20 points; overall 1.
+MANSELL: Blue Weasel; 12 points; overall 3.
+The failed stage exits before awarding points. Its race results are shown,
+but cumulative points/ranks remain those from the earlier scored stages.
+If the first stage failed, no points-table ranking has been established.
+
+Compared with the previous driver on the same schedule:
+Race 1 P1 cutoff position: old 3, new 2.
+Race 2 P1 cutoff position: old 11, new 9.
+
+Passing telemetry:
+PASSING race=1 traffic_frames=1980 lane_changes=7 completed_passes=7 emergency_braking_frames=197
+PASSING race=2 traffic_frames=2214 lane_changes=8 completed_passes=4 emergency_braking_frames=385
+PASS passing cases=32 all_19_opponent_IDs=1 private_rivals=1 scenery_ignored=1 rear_traffic=1 blocked_lanes_brake=1 wrap=1 hold_until_clear=1 observe_only=1
+PASS native driving cases=12 all_four_cars=1 full_low_empty_fuel=1 speed_fuel_gear_rpm_position_lateral_steering_bounds_match=1
+PASS native boost requests=3 accepted=3 remaining=0 frames=977 no_race_started=1
+
+Boost requests and return waits:
+CONTROLLER race=1 boosts=3 return_wait=131 boost_denied_frames=7537
+CONTROLLER race=2 boosts=0 return_wait=188 boost_denied_frames=10790
+
+Headless throughput (not measured display FPS):
+TIMING race=1 frames=8536 headless_fps=121.99
+TIMING race=2 frames=10790 headless_fps=122.00
+
+Previous passing-controller telemetry (different CPU implementation):
+PASSING race=1 traffic_frames=2750 lane_changes=77 completed_passes=6 emergency_braking_frames=161
+PASSING race=2 traffic_frames=1523 lane_changes=69 completed_passes=3 emergency_braking_frames=35
+
+Diagnostics (recorded, never used to rewrite results):
+DIAGNOSTICS race=1 shadow_checks=21552 shadow_failures=0 overflow=0
+DIAGNOSTICS race=2 shadow_checks=25176 shadow_failures=0 overflow=0
+
+Generated eight-race schedule:
+SCHEDULE race=1 course=1 name=Los Angeles cutoff=8
+SCHEDULE race=2 course=7 name=Rain Forest cutoff=7
+SCHEDULE race=3 course=8 name=Tokyo cutoff=6
+SCHEDULE race=4 course=15 name=Frankfurt cutoff=5
+SCHEDULE race=5 course=19 name=Oslo cutoff=4
+SCHEDULE race=6 course=22 name=Bordeaux cutoff=3
+SCHEDULE race=7 course=24 name=Pisa cutoff=2
+SCHEDULE race=8 course=28 name=London cutoff=20
+
+Evidence: Verification/Rivals/rally-white-native.log and Rally-White-Native/results.csv.
+Per-race start/end/results snapshots and screenshots are in Rally-White-Native.
+Only the separate 2.1.0 test source/build was changed. GitHub release unchanged.

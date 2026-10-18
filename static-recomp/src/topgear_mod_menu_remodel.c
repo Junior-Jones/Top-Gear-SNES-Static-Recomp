@@ -178,6 +178,7 @@ static void copy_setup(TopGearRecomp *i,unsigned player,uint8_t data[26],int res
 }
 
 static void activate_setup(TopGearRecomp *i,int time_trial){
+    tg_rivals_menu_enter(i);
     if(i->mod_setup_import_pending){
         copy_setup(i,0u,i->mod_setup_shared[0],1);
         copy_setup(i,1u,i->mod_setup_shared[1],1);
@@ -230,12 +231,37 @@ int tg_mod_bottom_screen_race_off(const TopGearRecomp *i){
         !i->mod_audio_menu_context&&i->hdma_enable_mask==0x7Fu;
 }
 
+int tg_mod_center_screen_race(const TopGearRecomp *i){
+    return i&&i->mod_center_screen_enabled&&i->mod_bottom_screen_off&&
+        !i->wram[0x1F04u]&&!i->wram[0x1F05u]&&!i->mod_menu_remodel_active&&
+        !i->mod_audio_menu_context&&i->hdma_enable_mask==0x7Fu&&
+        !i->mod_continue_screen;
+}
+int topgear_recomp_extra_cpu_drivers_enabled(const TopGearRecomp *i){return i&&!i->rivals.extra_cpu_off;}
+void topgear_recomp_set_extra_cpu_drivers_enabled(TopGearRecomp *i,int enabled){
+    if(!i)return;
+    if(i->rivals.extra_cpu_off!=(uint64_t)!enabled)i->rivals.ready=0;
+    i->rivals.extra_cpu_off=(uint64_t)!enabled;i->mod_menu_remodel_dirty=1u;
+}
+int topgear_recomp_center_screen_enabled(const TopGearRecomp *i){
+    return i&&i->mod_center_screen_enabled&&i->mod_bottom_screen_off;
+}
+void topgear_recomp_set_center_screen_enabled(TopGearRecomp *i,int enabled){
+    if(!i)return;
+    i->mod_center_screen_enabled=(uint8_t)(enabled&&i->mod_bottom_screen_off);
+    if(i->mod_center_screen_enabled){
+        i->mod_setup_shared_players=0u;
+        (void)tg_bus_store16(i,0x1F04u,0u);
+    }
+    i->mod_menu_remodel_dirty=1u;
+}
 int topgear_recomp_bottom_screen_enabled(const TopGearRecomp *i){
     return !i||!i->mod_bottom_screen_off;
 }
 void topgear_recomp_set_bottom_screen_enabled(TopGearRecomp *i,int enabled){
     if(!i)return;
     i->mod_bottom_screen_off=(uint8_t)!enabled;i->mod_menu_remodel_dirty=1u;
+    if(enabled)i->mod_center_screen_enabled=0u;
     if(tg_mod_bottom_screen_race_off(i))memset(i->mode1_frame+108u*512u,0,116u*512u);
 }
 
@@ -273,12 +299,12 @@ int topgear_recomp_profile_record(TopGearRecomp *i,void *dst,size_t capacity){
     uint8_t *b=(uint8_t*)dst;uint32_t hash;unsigned n;
     if(!i||!b||capacity<TOPGEAR_PLAYER_SETTINGS_SIZE)return 0;
     profile_defaults(i);
-    memset(b,0,TOPGEAR_PLAYER_SETTINGS_SIZE);memcpy(b,"TGPS",4u);b[4]=6u;b[8]=96u;
+    memset(b,0,TOPGEAR_PLAYER_SETTINGS_SIZE);memcpy(b,"TGPS",4u);b[4]=8u;b[8]=96u;
     memcpy(b+16u,i->mod_setup_shared,52u);memcpy(b+68u,i->mod_setup_time_trial,26u);
     if(i->mod_profile_pending_mask&1u)memcpy(b+16u,i->mod_profile_pending[0],26u);
     if(i->mod_profile_pending_mask&2u)memcpy(b+68u,i->mod_profile_pending[1],26u);
     b[94]=(uint8_t)(i->mod_setup_shared_players?1u:0u);
-    b[95]=(uint8_t)((i->mod_settings_kph!=0u)|(i->mod_audio_mute?2u:0u)|((i->mod_music_mode%3u)<<2u)|(i->mod_bottom_screen_off?16u:0u));
+    b[95]=(uint8_t)((i->mod_settings_kph!=0u)|(i->mod_audio_mute?2u:0u)|((i->mod_music_mode%3u)<<2u)|(i->mod_bottom_screen_off?16u:0u)|(i->mod_center_screen_enabled?32u:0u)|(i->rivals.extra_cpu_off?64u:0u));
     hash=settings_checksum(b);for(n=0u;n<4u;n++)b[12u+n]=(uint8_t)(hash>>(8u*n));
     return 1;
 }
@@ -307,7 +333,7 @@ int topgear_recomp_profile_write(TopGearRecomp *i,unsigned bank,const TopGearPla
 int topgear_recomp_player_settings_import(TopGearRecomp *i,const void *src,size_t size){
     const uint8_t *b=(const uint8_t*)src;uint32_t hash=0u;unsigned n;
     if(!i||!b||size!=TOPGEAR_PLAYER_SETTINGS_SIZE||memcmp(b,"TGPS",4u)||
-       (b[4]!=1u&&b[4]!=2u&&b[4]!=3u&&b[4]!=4u&&b[4]!=5u&&b[4]!=6u)||b[5]||b[6]||b[7]||b[8]!=96u||b[9]||b[10]||b[11]||b[94]>1u||(b[4]==6u?((b[95]&~31u)!=0u||((b[95]>>2u)&3u)>2u):b[95]>(b[4]==5u?11u:b[4]==4u?7u:b[4]==3u?3u:1u))||(b[4]==1u&&b[95]))return 0;
+       (b[4]!=1u&&b[4]!=2u&&b[4]!=3u&&b[4]!=4u&&b[4]!=5u&&b[4]!=6u&&b[4]!=7u&&b[4]!=8u)||b[5]||b[6]||b[7]||b[8]!=96u||b[9]||b[10]||b[11]||b[94]>1u||(b[4]>=6u?((b[95]&~(b[4]>=8u?127u:b[4]>=7u?63u:31u))!=0u||((b[95]>>2u)&3u)>2u):b[95]>(b[4]==5u?11u:b[4]==4u?7u:b[4]==3u?3u:1u))||(b[4]==1u&&b[95]))return 0;
     for(n=0u;n<4u;n++)hash|=(uint32_t)b[12u+n]<<(8u*n);
     if(hash!=settings_checksum(b))return 0;
     for(n=0u;n<3u;n++)if(b[16u+n*26u+24u]>3u||b[16u+n*26u+25u])return 0;
@@ -318,6 +344,8 @@ int topgear_recomp_player_settings_import(TopGearRecomp *i,const void *src,size_
     i->mod_music_mode=(uint8_t)(b[4]>=4u?((b[95]>>2u)&3u):0u);
     i->mod_audio_mute=(uint8_t)(b[4]>=3u&&((b[95]&2u)!=0u));
     i->mod_setup_shared_players=b[94];i->mod_setup_initialized=1u;
+    topgear_recomp_set_center_screen_enabled(i,b[4]>=7u&&(b[95]&32u));
+    topgear_recomp_set_extra_cpu_drivers_enabled(i,!(b[4]>=8u&&(b[95]&64u)));
     i->mod_setup_import_pending=1u;
     return 1;
 }
@@ -562,7 +590,7 @@ static void render_player_setup_summary(TopGearRecomp *i){
 static unsigned page_item_count(const TopGearRecomp *i){
     if(!i)return 0u;
     switch(i->mod_menu_remodel_page){
-    case TG_REMODEL_PAGE_SETTINGS:return 6u;
+    case TG_REMODEL_PAGE_SETTINGS:return 8u;
     case TG_REMODEL_PAGE_CAREER_COUNTRY:{unsigned n=tg_mod_career_password_count(i);return n?n+2u:1u;}
     case TG_REMODEL_PAGE_PASSWORD_STANDINGS:
     case TG_REMODEL_PAGE_RALLY_TRACKS:return 0u;
@@ -590,7 +618,7 @@ static unsigned row_y_for(const TopGearRecomp *i,unsigned selection){
         return rows[selection<5u?selection:0u];
     }
     if(post_race_page(i))return 24u;
-    if(i->mod_menu_remodel_page==TG_REMODEL_PAGE_SETTINGS){static const unsigned rows[6]={5u,8u,11u,16u,20u,24u};return rows[selection<6u?selection:0u];}
+    if(i->mod_menu_remodel_page==TG_REMODEL_PAGE_SETTINGS){static const unsigned rows[8]={4u,6u,9u,12u,15u,18u,21u,24u};return rows[selection<8u?selection:0u];}
     unsigned count=page_item_count(i);
     static const unsigned y1[1]={18u};
     static const unsigned y2[2]={12u,16u};
@@ -628,7 +656,7 @@ static const char *page_item_label(TopGearRecomp *i,unsigned selection){
     switch(i->mod_menu_remodel_page){
     case TG_REMODEL_PAGE_ROOT:
         switch(selection){case 0u:return "CAREER";case 1u:return "RALLY";case 2u:return "TIME TRIAL";case 3u:return "SETTINGS";default:return "";}
-    case TG_REMODEL_PAGE_SETTINGS:return selection==0u?root_speed_label(i):selection==1u?(i->mod_audio_mute?"MUTE: ON":"MUTE: OFF"):selection==2u?"CAREER MUSIC":selection==3u?"MUSIC PLAYER":selection==4u?"BOTTOM SCREEN":"BACK";
+    case TG_REMODEL_PAGE_SETTINGS:return selection==0u?root_speed_label(i):selection==1u?(i->mod_audio_mute?"MUTE: ON":"MUTE: OFF"):selection==2u?"CAREER MUSIC":selection==3u?"MUSIC PLAYER":selection==4u?"BOTTOM SCREEN":selection==5u?"CENTER SCREEN":selection==6u?"EXTRA CPUS":"BACK";
     case TG_REMODEL_PAGE_CAREER:
         switch(selection){case 0u:return career_player_label(i);case 1u:return "COUNTRY";case 2u:return "SKILL LEVEL";case 3u:return "START";default:return "";}
     case TG_REMODEL_PAGE_RALLY:
@@ -685,7 +713,7 @@ static void render_page(TopGearRecomp *i){
         for(n=0;n<20;n++){
             char name[9],line[32];unsigned id=i->wram[0x1F62u+n];
             if(id==0u)memcpy(name,i->wram+0x1F86u,8);else if(id==1u&&read_word(i,0x1F04u))memcpy(name,i->wram+0x1FA3u,8);
-            else memcpy(name,i->rom+0x6C47Bu+(id==1u?18u:id-2u)*8u,8);
+            else memcpy(name,tg_rivals_name(id),8);
             name[8]=0;for(course=0;course<8;course++)if(!((name[course]>='A'&&name[course]<='Z')||(name[course]>='0'&&name[course]<='9')))name[course]=' ';
             if(id<2u&&!memcmp(name,"        ",8))memcpy(name,id?"PLAYER 2":"PLAYER 1",8);
             snprintf(line,sizeof(line),"%2u %.8s %3u PTS",n+1u,name,i->wram[0x1F4Eu+id]);draw_small_text(i,5u,4u+n,line);
@@ -738,15 +766,20 @@ static void render_page(TopGearRecomp *i){
     }
     if(i->mod_menu_remodel_page==TG_REMODEL_PAGE_SETTINGS){
         if(i->mod_menu_remodel_selection==3u){
-            draw_small_center_in_column(i,3u,26u,18u,tg_mod_music_player_label(i));
-            draw_small_center_in_column(i,3u,26u,19u,i->mod_music_player_state==2u?"A PLAY   LEFT RIGHT TRACK":"A STOP   LEFT RIGHT TRACK");
+            draw_small_center_in_column(i,3u,26u,14u,tg_mod_music_player_label(i));
         }
-        draw_small_center_in_column(i,3u,26u,22u,
-            read_word(i,0x1F04u)?"ON - 2 PLAYERS":tg_mod_bottom_screen_off(i)?"OFF":"ON");
+        draw_small_center_in_column(i,3u,26u,17u,
+            read_word(i,0x1F04u)?"ON - 2 PLAYERS":i->mod_bottom_screen_off?"OFF":"ON");
+        draw_small_center_in_column(i,3u,26u,20u,
+            i->mod_center_screen_enabled?"ON":"OFF");
+        draw_small_center_in_column(i,3u,26u,23u,
+            read_word(i,0x1F04u)?"OFF - 1 PLAYER ONLY":i->rivals.extra_cpu_off?"OFF":"ON");
         draw_small_text(i,text_x(page_item_label(i,1u))+8u,row_y_for(i,1u),":");
         draw_small_text(i,28u,row_y_for(i,2u),":");
         draw_small_center_in_column(i,3u,26u,row_y_for(i,2u)+2u,i->mod_music_mode==2u?"CLASSIC":i->mod_music_mode==1u?"RANDOM":"COMPLETE");
     }
+    if(i->mod_center_screen_enabled&&(i->mod_menu_remodel_page==TG_REMODEL_PAGE_CAREER||i->mod_menu_remodel_page==TG_REMODEL_PAGE_RALLY))
+        draw_small_center_in_column(i,3u,26u,26u,"CENTER SCREEN: 1 PLAYER");
     i->mod_menu_remodel_dirty=0u;
     i->mod_menu_remodel_render_count++;
 }
@@ -907,7 +940,7 @@ void tg_mod_rally_generate_schedule(TopGearRecomp *i){
    that Top Gear uses when awarding points: $1F12+rank contains the racer ID
    for each finisher, with ID 0 = Player 1 and ID 1 = Player 2 only when the
    canonical player-count setting $1F04 is nonzero.  In one-player mode ID 1
-   is the CPU COMPUTER racer and is deliberately ignored.
+   is the CPU JONES racer and is deliberately ignored.
 
    Rally race cutoffs tighten by one place per event:
        race 1 <= 8th, race 2 <= 7th, ... race 7 <= 2nd.
@@ -1070,11 +1103,26 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
         }
         /* Preserve the original game's semantic state writers for the two
            inline settings. */
+        /* Match the 2.0.0 Speed option: rejoin the native selector/value
+           update, including its $0424=$84 sound and button-release wait.
+           HANDLED skips that audible stock cue. */
+        if(page==TG_REMODEL_PAGE_SETTINGS&&sel==6u){
+            tg_mod_insert_audio_navigation(i);
+            topgear_recomp_set_extra_cpu_drivers_enabled(i,i->rivals.extra_cpu_off!=0);
+            i->mod_menu_remodel_reserved=1u;*selection_out=sel;return TG_REMODEL_INPUT_REDRAW_SELECTOR;
+        }
+        if(page==TG_REMODEL_PAGE_SETTINGS&&sel==5u){
+            if(!i->mod_bottom_screen_off){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
+            tg_mod_insert_audio_navigation(i);
+            topgear_recomp_set_center_screen_enabled(i,!i->mod_center_screen_enabled);
+            i->mod_menu_remodel_reserved=1u;*selection_out=sel;
+            return TG_REMODEL_INPUT_REDRAW_SELECTOR;
+        }
         if(page==TG_REMODEL_PAGE_SETTINGS&&sel==4u){
             tg_mod_insert_audio_navigation(i);
-            if(!read_word(i,0x1F04u))i->mod_bottom_screen_off^=1u;
+            if(!read_word(i,0x1F04u))topgear_recomp_set_bottom_screen_enabled(i,i->mod_bottom_screen_off);
             i->mod_menu_remodel_dirty=1u;i->mod_menu_remodel_reserved=1u;
-            *selection_out=sel;return TG_REMODEL_INPUT_HANDLED;
+            *selection_out=sel;return TG_REMODEL_INPUT_REDRAW_SELECTOR;
         }
         if(page==TG_REMODEL_PAGE_SETTINGS&&sel==3u){
             tg_mod_music_player_action(i,(input&TG_BTN_RIGHT)?1:-1);
@@ -1102,6 +1150,7 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
         }
         if((page==TG_REMODEL_PAGE_CAREER||page==TG_REMODEL_PAGE_RALLY)&&sel==0u){
             i->mod_menu_remodel_dirty=1u;
+            if(i->mod_center_screen_enabled){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
             return TG_REMODEL_INPUT_PASSTHROUGH;
         }
         return TG_REMODEL_INPUT_HANDLED;
@@ -1132,10 +1181,22 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
         if(sel==3u){set_page(i,TG_REMODEL_PAGE_SETTINGS,0u);*selection_out=0u;return TG_REMODEL_INPUT_REDRAW_SELECTOR;}
         return TG_REMODEL_INPUT_HANDLED;
     case TG_REMODEL_PAGE_SETTINGS:
-        if(sel==5u){tg_mod_insert_audio_accept(i);return go_root(i,3u,selection_out);}
+        if(sel==7u){tg_mod_insert_audio_accept(i);return go_root(i,3u,selection_out);}
+        if(sel==6u){
+            tg_mod_insert_audio_accept(i);
+            topgear_recomp_set_extra_cpu_drivers_enabled(i,i->rivals.extra_cpu_off!=0);
+            i->mod_menu_remodel_reserved=1u;*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;
+        }
+        if(sel==5u){
+            if(!i->mod_bottom_screen_off){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
+            tg_mod_insert_audio_accept(i);
+            topgear_recomp_set_center_screen_enabled(i,!i->mod_center_screen_enabled);
+            i->mod_menu_remodel_reserved=1u;*selection_out=sel;
+            return TG_REMODEL_INPUT_HANDLED;
+        }
         if(sel==4u){
             tg_mod_insert_audio_accept(i);
-            if(!read_word(i,0x1F04u))i->mod_bottom_screen_off^=1u;
+            if(!read_word(i,0x1F04u))topgear_recomp_set_bottom_screen_enabled(i,i->mod_bottom_screen_off);
             i->mod_menu_remodel_dirty=1u;i->mod_menu_remodel_reserved=1u;
             *selection_out=sel;return TG_REMODEL_INPUT_HANDLED;
         }
