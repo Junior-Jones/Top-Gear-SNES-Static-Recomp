@@ -315,6 +315,7 @@ static int dma_transfer_channel(TopGearRecomp *i, unsigned channel) {
     i->dma_last_mode = mode;
     i->dma_last_direction = direction;
     i->dma_last_source_address = ((uint32_t)source_bank << 16) | source16;
+    if(!direction&&target==4u&&transfer_bytes>=512u)tg_rivals_latch(i,source16);
     i->dma_last_transfer_bytes = transfer_bytes;
     i->dma_last_bbus_sequence_count = 0u;
     i->dma_transfer_modes_seen_mask |= (uint8_t)(1u << mode);

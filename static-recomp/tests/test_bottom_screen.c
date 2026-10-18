@@ -26,13 +26,14 @@ int main(int argc,char **argv){
     if(argc!=3&&!rally_two_only)return 2;dir=argv[2];f=fopen(argv[1],"rb");if(!f||fread(rom,1,sizeof(rom),f)!=sizeof(rom))return 2;fclose(f);
     CHECK(topgear_recomp_create(&c,rom,sizeof(rom),error,sizeof(error)));
     CHECK(frames(1560,0)&&frames(120,0x1000)&&frames(220,0));
+    CHECK(!c->mod_bottom_screen_off);topgear_recomp_set_bottom_screen_enabled(c,1);
     snprintf(root,sizeof(root),"%s/root.snap",dir);CHECK(topgear_recomp_snapshot_save(c,root,error,sizeof(error)));
     CHECK(settings());CHECK(c->mod_menu_remodel_page==12&&c->mod_menu_remodel_selection==4);
     CHECK(!c->mod_bottom_screen_off);CHECK(shot("settings-bottom-on"));
     CHECK(press(0x0100));CHECK(c->mod_bottom_screen_off&&tg_mod_bottom_screen_off(c));CHECK(shot("settings-bottom-off"));
     CHECK(frames(90,0x0100));CHECK(!c->mod_bottom_screen_off);CHECK(frames(90,0));
     CHECK(press(0x0200)&&c->mod_bottom_screen_off);
-    CHECK(topgear_recomp_player_settings_export(c,record,sizeof(record))&&record[4]==6&&(record[95]&16));
+    CHECK(topgear_recomp_player_settings_export(c,record,sizeof(record))&&record[4]==8&&(record[95]&16));
     snprintf(path,sizeof(path),"%s/player-settings.dat",dir);memset(again,0,sizeof(again));CHECK(topgear_player_settings_save_file(c,path,again));
     c->mod_bottom_screen_off=0;CHECK(topgear_player_settings_load_file(c,path,again)&&c->mod_bottom_screen_off);
     snprintf(path,sizeof(path),"%s/off.snap",dir);
@@ -53,9 +54,10 @@ int main(int argc,char **argv){
     }
     CHECK(topgear_recomp_snapshot_load(c,root,error,sizeof(error))&&settings());
     /* Down wraps through Back and Up returns to the new row. */
-    CHECK(press(0x0400)&&c->mod_menu_remodel_selection==5&&shot("settings-back"));
+    CHECK(press(0x0400)&&c->mod_menu_remodel_selection==5);
+    CHECK(press(0x0400)&&c->mod_menu_remodel_selection==6&&press(0x0400)&&c->mod_menu_remodel_selection==7&&shot("settings-back"));
     CHECK(press(0x0400)&&c->mod_menu_remodel_selection==0);
-    CHECK(press(0x0800)&&c->mod_menu_remodel_selection==5&&press(0x0080)&&c->mod_menu_remodel_page==0);
+    CHECK(press(0x0800)&&c->mod_menu_remodel_selection==7&&press(0x0080)&&c->mod_menu_remodel_page==0);
     puts("PASS menu: default On, left/right/A, held input debounce, wrap/Back; v1-v5 migration; physical settings and snapshot persistence");fflush(stdout);
     for(mode=rally_two_only?4u:0u;mode<5;mode++)for(off=0;off<2;off++){
         CHECK(topgear_recomp_snapshot_load(c,root,error,sizeof(error)));

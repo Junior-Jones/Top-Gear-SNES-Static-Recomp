@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.0.1 - runtime Data
+Top Gear Definitive Edition 2.1.0 - runtime Data
 ================================================
 The Data directory beside Launcher.exe contains persistent game settings and
 Time Trial history. Gameplay logic is compiled into the static core.
@@ -27,12 +27,14 @@ Corrupt/truncated/unsupported files are rejected without overwriting them.
 Prototype v1/v2 history lacks the needed metadata/sector meaning; existing
 semantic-clear migration remains. No fabricated historical records are made.
 
-Data/player-settings.dat: TGPS v6, 96 bytes
+Data/player-settings.dat: TGPS v8, 96 bytes
   16-byte header (magic/version/size and FNV-1a payload checksum).
   Three 26-byte profiles: Career/Rally P1, Career/Rally P2, separate TT P1.
   Each contains 16 native control/gear bytes, 8 name bytes and a car word.
   Byte 94 stores one/two-player choice. Byte 95 flags: KPH, music Mute,
-  Career Music (Complete, Random or Classic), and Bottom Screen Off (bit 4).
+  Career Music (Complete, Random or Classic), Bottom Screen Off (bit 4),
+  Center Screen On (bit 5), and Extra CPUs Off (bit 6). Older records import
+  missing options with Center Screen Off and Extra CPUs On.
   Bottom Screen defaults to On; versions 1-5 retain their profiles and import with On.
 The shipped record gives Career/Rally P1 and TT P1 the name PLAYER 1 while
 retaining the original Cannibal, Manual and Type A setup. The profiles remain

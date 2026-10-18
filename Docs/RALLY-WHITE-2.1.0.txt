@@ -1,0 +1,65 @@
+Rally improved passing driver - 18 October 2026
+=================================================
+
+Headless one-player Rally, Amateur skill. No Trial or two-player runs.
+EXPERIMENTAL: Los Angeles improved 3rd -> 2nd, Rain Forest regressed
+11th -> 18th at cutoff. It did not advance farther in Rally and does not
+replace the preserved baseline driver. Frequent lane changes require tuning.
+One natural Rally schedule; stop immediately at the first disqualification.
+No retries, forced results, CPU/fuel/speed overrides or qualification bypasses.
+P1 uses white Sidewinder, selected through the pre-race player-settings API.
+Native white-car physics row 16 and all CPU car assignments are asserted.
+JONES uses red Cannibal, SENNA purple Razor, MANSELL blue Weasel.
+The existing self-driver is adapted to read its course/lap context from
+native Rally RAM; no Time Trial settings or mode are selected.
+New test-only passing planner observes all nineteen vehicle records, including
+private-rendered cars, on every track. It checks traffic ahead and behind in
+candidate lanes, uses road bounds, holds the pass until clear and brakes if
+no safe adjacent lane is available. Lateral prediction reduces overshoot.
+It reads telemetry and produces controller inputs; it does not move cars.
+
+Race | Track | Required | P1 white | JONES red | SENNA purple | MANSELL blue
+1 | Los Angeles | Top 8 | 2 | 4 | 3 | 1
+2 | Rain Forest | Top 7 | 18* | 7 | 6 | 8
+
+* Classified by the game at the cutoff without crossing the line.
+NC means no recorded finish/classification for that driver when the native
+ten-finisher boundary ended the race. It is not evidence of fuel exhaustion.
+
+P1 was disqualified in race 2, Rain Forest, requiring top 7. No retry was attempted.
+
+Points and standings at the end of the test:
+P1: White Sidewinder; 15 points; overall 2.
+JONES: Red Cannibal; 10 points; overall 4.
+SENNA: Purple Razor; 12 points; overall 3.
+MANSELL: Blue Weasel; 20 points; overall 1.
+The failed stage exits before awarding points. Its race results are shown,
+but cumulative points/ranks remain those from the earlier scored stages.
+If the first stage failed, no points-table ranking has been established.
+
+Compared with the previous driver on the same schedule:
+Race 1 P1 cutoff position: old 3, new 2.
+Race 2 P1 cutoff position: old 11, new 18.
+
+Passing telemetry:
+PASSING race=1 traffic_frames=2750 lane_changes=77 completed_passes=6 emergency_braking_frames=161
+PASSING race=2 traffic_frames=1523 lane_changes=69 completed_passes=3 emergency_braking_frames=35
+PASS passing cases=27 all_19_opponent_IDs=1 private_rivals=1 scenery_ignored=1 rear_traffic=1 blocked_lanes_brake=1 wrap=1 hold_until_clear=1 observe_only=1
+
+Diagnostics (recorded, never used to rewrite results):
+DIAGNOSTICS race=1 shadow_checks=21296 shadow_failures=0 overflow=0
+DIAGNOSTICS race=2 shadow_checks=24688 shadow_failures=0 overflow=0
+
+Generated eight-race schedule:
+SCHEDULE race=1 course=1 name=Los Angeles cutoff=8
+SCHEDULE race=2 course=7 name=Rain Forest cutoff=7
+SCHEDULE race=3 course=8 name=Tokyo cutoff=6
+SCHEDULE race=4 course=15 name=Frankfurt cutoff=5
+SCHEDULE race=5 course=19 name=Oslo cutoff=4
+SCHEDULE race=6 course=22 name=Bordeaux cutoff=3
+SCHEDULE race=7 course=24 name=Pisa cutoff=2
+SCHEDULE race=8 course=28 name=London cutoff=20
+
+Evidence: Verification/Rivals/rally-white-passing.log and Rally-White-Passing/results.csv.
+Per-race start/end/results snapshots and screenshots are in Rally-White-Passing.
+No production game code, running preview or published release was changed.

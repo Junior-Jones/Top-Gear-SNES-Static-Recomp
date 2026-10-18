@@ -1,10 +1,10 @@
 Top Gear (SNES) Static Recompilation - Windows Source
-Release 2.0.1 - Top Gear Definitive Edition
+Release 2.1.0 - Top Gear Definitive Edition
 
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.
 
-See VERSION.txt for the complete cumulative change list, Docs/BOTTOM-SCREEN-2.0.1.md for the new display setting, and Docs/CAREER-2.0.0.md for Career rules.
+See VERSION.txt for the 2.1.0 feature list, Docs/RELEASE-NOTES-2.1.0.txt for the settings and CPU additions, and Docs/CAREER-2.0.0.md for Career rules.
 
 What "fully static recompilation" means
 ----------------------------------------
@@ -129,6 +129,13 @@ Docs\Frontend Architecture.txt documents the Windows presentation, audio,
 input and portability boundaries.
 
 Licensing
-SDL's license is copied beside Launcher.exe by the build. Static audio
+SDL and controller mapping notices are combined in SDL-LICENSES.txt beside
+Launcher.exe by the build. Static audio
 provenance and required third-party notices remain beside the corresponding
 source under static-recomp\static-audio\topgear-bapu-aot.
+
+Center Screen is a single-player presentation option in the in-game Settings
+menu. It defaults to Off and requires Bottom Screen Off. Enable it to centre
+P1's original-sized race view with black above and below and no lower stats.
+While enabled, Career and Rally cannot select two players. Screen settings
+are saved automatically; CenterScreen=0 is the default.

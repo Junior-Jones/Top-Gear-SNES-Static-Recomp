@@ -15,6 +15,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "topgear_rivals.h"
 
 #define TG_P_C 0x01u
 #define TG_P_Z 0x02u
@@ -529,7 +530,7 @@ struct TopGearRecomp {
     uint8_t mod_audio_menu_context;
     /* Zero preserves the default On in legacy snapshots. Two humans override. */
     uint8_t mod_bottom_screen_off;
-    uint8_t mod_audio_reserved[1];
+    uint8_t mod_center_screen_enabled;
     uint8_t mod_music_title,mod_music_engine,mod_music_r_held,mod_music_race;
     uint8_t mod_music_mode,mod_music_sequence,mod_music_native_selector;
     uint32_t mod_music_rng;
@@ -601,6 +602,8 @@ struct TopGearRecomp {
     uint8_t mod_time_trial_font_reserved[3];
     uint8_t mod_time_trial_font_tiles[48][32];
     uint16_t mod_time_trial_font_palette[16];
+    /* Append-only extension keeps the pre-rivals snapshot prefix intact. */
+    TgRivals rivals;
 };
 
 void tg_v25_note_mmio_read(struct TopGearRecomp*,uint16_t);
@@ -782,6 +785,7 @@ void tg_sha256(const uint8_t *data, size_t length, uint8_t digest[32]);
 void tg_sha256_hex(const uint8_t *data, size_t length, char output[65]);
 uint32_t tg_crc32(const uint8_t *data, size_t length);
 
+int tg_mod_center_screen_race(const TopGearRecomp *instance);
 int tg_mod_bottom_screen_off(const TopGearRecomp *instance);
 int tg_mod_bottom_screen_race_off(const TopGearRecomp *instance);
 

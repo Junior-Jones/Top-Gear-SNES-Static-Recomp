@@ -725,6 +725,8 @@ int tg_v22_reentry_group_0021_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000087E9u: /* D0 06 BNE $00:87F1 */
+  /* A completed solo Trial waits only for its own cooldown, never a CPU view/finisher. */
+  if(instance->mod_time_trial_active&&!(instance->wram[0x1F01u]&0x80u)){instance->cpu.pc=0x87F6u;instance->instruction_count++;return 1;}
   instance->cpu.pc = !tg_flag(instance, TG_P_Z) ? 0x87F1u : 0x87EBu;
   instance->instruction_count++;
   return 1;
@@ -833,6 +835,8 @@ int tg_v22_reentry_group_0021_step(struct TopGearRecomp *instance){
   instance->instruction_count++;
   return 1;
  case 0x000087F6u: /* AD B0 1E LDA $1EB0 */
+  /* A completed solo Trial waits only for its own cooldown, never a CPU view/finisher. */
+  if(instance->mod_time_trial_active&&!(instance->wram[0x1F01u]&0x80u)){instance->cpu.pc=0x882Eu;instance->instruction_count++;return 1;}
   if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | 0x1EB0u), &word)) return 0;
   tg_set_acc16(instance, word);
   tg_set_nz16(instance, word);

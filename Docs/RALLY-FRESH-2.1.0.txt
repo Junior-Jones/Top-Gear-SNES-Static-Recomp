@@ -1,0 +1,55 @@
+Fresh-boot Rally - 18 October 2026
+
+Fresh recomp process created and booted from reset; no snapshot loaded.
+Normal menu wait: 143 frames, selected using process timing. No seed/track edits.
+Five of eight tracks differ from the preceding repeated schedule.
+P1 white Sidewinder; JONES red Cannibal; SENNA purple Razor; MANSELL blue Weasel.
+Existing P1 flow controller unchanged. CPU source, core library and executable
+hashes unchanged. Headless only, no Trial. Stop at first DQ, no retries.
+
+SCHEDULE race=1 course=0 name=Las Vegas cutoff=8
+SCHEDULE race=2 course=4 name=Rio cutoff=7
+SCHEDULE race=3 course=8 name=Tokyo cutoff=6
+SCHEDULE race=4 course=15 name=Frankfurt cutoff=5
+SCHEDULE race=5 course=16 name=Stockholm cutoff=4
+SCHEDULE race=6 course=20 name=Paris cutoff=3
+SCHEDULE race=7 course=25 name=Rome cutoff=2
+SCHEDULE race=8 course=28 name=London cutoff=20
+
+Race | Track | Required | P1 white | JONES red | SENNA purple | MANSELL blue
+1 | Las Vegas | Top 8 | 4 | 1 | 3 | 2
+2 | Rio | Top 7 | 9 | 7 | 8 | 6
+
+* Native classification at cutoff without crossing. NC = no recorded finish/classification.
+
+Ending standings:
+P1: White Sidewinder; 10 points, overall 4.
+JONES: Red Cannibal; 20 points, overall 1.
+SENNA: Purple Razor; 12 points, overall 3.
+MANSELL: Blue Weasel; 15 points, overall 2.
+Failed stage awards no points; standings remain those from earlier scored races.
+
+START race=1 course=0 name=Las Vegas laps=3 length=22528 pit=65534 cutoff=8 P1car=White-Sidewinder
+PASSING race=1 traffic_frames=2706 lane_changes=16 completed_passes=5 emergency_braking_frames=0
+CONTROLLER race=1 boosts=3 return_wait=0 boost_denied_frames=4787
+FLOW race=1 replans=11 corner_braking=9 boost_active_frames=957 nitros_remaining=0
+TIMING race=1 frames=5231 headless_fps=218.70
+DIAGNOSTICS race=1 shadow_checks=12352 shadow_failures=0 overflow=0
+START race=2 course=4 name=Rio laps=6 length=43008 pit=8704 cutoff=7 P1car=White-Sidewinder
+PASSING race=2 traffic_frames=6728 lane_changes=63 completed_passes=17 emergency_braking_frames=0
+CONTROLLER race=2 boosts=3 return_wait=0 boost_denied_frames=17527
+FLOW race=2 replans=23 corner_braking=0 boost_active_frames=957 nitros_remaining=0
+TIMING race=2 frames=19735 headless_fps=216.61
+DIAGNOSTICS race=2 shadow_checks=55312 shadow_failures=0 overflow=0
+STOP disqualified_at_race=2 P1classified=9 required_top=7 retries=0
+
+Rio observation: P1 fuel rose from 36579 at frame 4000 to 40563 at
+frame 6000, and from 29006 at frame 10000 to 41902 at frame 12000.
+These show at least two refuelling intervals; total pit entries were not
+instrumented. SENNA and MANSELL each recorded one completed pit stop.
+The cause of P1 repeated pit entry has not been isolated in this run.
+No controller or CPU tuning was made mid-run or after disqualification.
+
+Headless FPS measures processing throughput, not displayed FPS.
+Full twenty-driver results for every attempted race: Rally-White-Fresh/results.csv.
+No release/GitHub changes; visible app left undisturbed.

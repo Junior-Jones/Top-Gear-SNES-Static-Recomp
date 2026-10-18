@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.0.1
+Top Gear Definitive Edition 2.1.0
 Launcher for Windows 10/11 x64
 
 Getting started
@@ -26,7 +26,11 @@ See VERSION.txt for the full rules and complete change list.
 
 Settings and audio
 ------------------
-Settings provides KPH/MPH, music mute, Career Music, Music Player and Bottom Screen.
+Changes save automatically; there is no Save button. Back returns to the main
+menu. Keep settings.ini and Data/player-settings.dat for the next launch.
+
+Settings provides KPH/MPH, music mute, Career Music, Music Player, Bottom Screen,
+Center Screen and Extra CPUs.
 Bottom Screen defaults to On. Off disables the lower race view and statistics
 in one-player Career, Rally and Time Trial, leaving that area black. Two-player
 Career and Rally force it On so Player 2 can see. Use Left/Right or A to change
@@ -73,3 +77,16 @@ F7      Run the selected ROM
 F8      Capture the current game frame
 
 The source Docs folder contains implementation and test notes.
+
+Center Screen is a single-player presentation option in the in-game Settings
+menu. It defaults to Off and requires Bottom Screen Off. Enable it to centre
+the original-sized race view and leave the upper and lower areas entirely
+black. No live stats appear beneath the centred view. While enabled, Career
+and Rally cannot select two
+players. These settings are saved in settings.ini; CenterScreen=0 is the default.
+
+Extra CPUs is On by default. In one-player Career/Rally, SENNA and
+MANSELL join JONES using the three cars not chosen by Player 1. Off restores
+the two extra drivers to ordinary opponents. Two-player mode always disables
+the two extra main CPUs. The named ordinary opponents keep stable colours.
+ExtraCPUDrivers=1/0 is saved in settings.ini and in the player profile.

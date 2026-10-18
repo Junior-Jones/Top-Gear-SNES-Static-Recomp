@@ -12,7 +12,7 @@ int main(void) {
     memset(&header, 0, sizeof(header));
     memcpy(header.magic, TOPGEAR_SNAPSHOT_MAGIC, TOPGEAR_SNAPSHOT_MAGIC_SIZE);
     header.version = TOPGEAR_SNAPSHOT_VERSION;
-    if (memcmp(header.magic, "TGSNAP27", 8u) != 0 || header.version != 1u)
+    if (memcmp(header.magic, "TGSNAP27", 8u) != 0 || header.version != 2u)
         return 2;
     if (topgear_recomp_snapshot_save(core, "invalid.snap", error,
                                      sizeof(error)) != 0 || error[0] == '\0')

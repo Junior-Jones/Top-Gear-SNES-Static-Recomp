@@ -1,0 +1,61 @@
+P1 flowing passes and shorter-straight boosts - 18 October 2026
+
+Headless solo Rally, P1 white Sidewinder. Same natural schedule. No Trial,
+no retries, no fuel/speed/position/result edits. Stopped at race 2 disqualification.
+
+CPU audit: generated native driving shards 017B/017C/017D exactly match the
+published 2.0.1 source. 170/174 generated files match; the remaining four have
+only earlier Trial-only guards, inactive in Rally. Original JONES still has
+earlier actual-car parameter and contact adaptations. They were not changed.
+All CPU source, core library and game executable hashes match task start.
+See CPU-ORIGINAL-AUDIT-2.1.0.txt and cpu-original-audit.json.
+
+Track data provides road-edge limits and packed CPU steering corridors, not
+an explicit lane-count field in the examined driving paths. Passing candidates
+are virtual lateral positions inside the current road width; no lane count is
+invented. Detect all 19 cars up to 1400 units ahead, choose a clear side, keep
+that line after passing, and reconsider sustained blockers after a commitment
+period. Traffic never requests braking. Only sharp-corner edge control can.
+Boost horizon reduced from 2200 to 896 units; allow gentle curvature, tolerate
+normal lateral correction, and require a clear vehicle path and inactive native
+boost flag before requesting another nitro. Normal controller inputs only.
+
+Race | Track | Required | P1 white | JONES red | SENNA purple | MANSELL blue
+1 | Los Angeles | Top 8 | 2 | 1 | 3 | 4
+2 | Rain Forest | Top 7 | 10 | 6 | 7 | 8
+
+Ending standings (failed stage awards no points):
+P1: White Sidewinder; 15 points, overall 2.
+JONES: Red Cannibal; 20 points, overall 1.
+SENNA: Purple Razor; 12 points, overall 3.
+MANSELL: Blue Weasel; 10 points, overall 4.
+
+Controller and performance evidence:
+PASSING race=1 traffic_frames=2423 lane_changes=10 completed_passes=10 emergency_braking_frames=0
+CONTROLLER race=1 boosts=3 return_wait=0 boost_denied_frames=5910
+FLOW race=1 replans=5 corner_braking=3 boost_active_frames=957 nitros_remaining=0
+TIMING race=1 frames=8035 headless_fps=212.30
+DIAGNOSTICS race=1 shadow_checks=20032 shadow_failures=0 overflow=0
+PASSING race=2 traffic_frames=4192 lane_changes=19 completed_passes=8 emergency_braking_frames=0
+CONTROLLER race=2 boosts=3 return_wait=0 boost_denied_frames=9271
+FLOW race=2 replans=13 corner_braking=3 boost_active_frames=957 nitros_remaining=0
+TIMING race=2 frames=10475 headless_fps=213.99
+DIAGNOSTICS race=2 shadow_checks=24816 shadow_failures=0 overflow=0
+
+All three nitros were consumed in each race; traffic-braking frames were
+zero and corner-braking frames were three per race. No shadow mismatches or
+graphics overflow recorded. Headless FPS is processing throughput, not display FPS.
+
+Compared with the preceding native-AI Rally:
+Los Angeles remains 2nd; race cutoff reached at frame 8035 instead of 8536.
+Rain Forest regressed from 9th to 10th. Qualification still failed at race 2.
+Traffic braking and unused boosts are fixed, but this is not an overall Rally
+improvement. Rain Forest recorded more traffic exposure and pass replanning.
+The available telemetry does not isolate the exact time lost to contacts or
+corner exits. No additional tuning run was started after disqualification.
+
+PASS flow cases=25 all_19_cars=1 early_passing=1 committed_lane=1 stay_in_lane_after_pass=1 no_traffic_brake=1 short_straight_boost=1 blocked_boost=1 corner_only_brake=1 observe_only=1
+PASS native boost requests=3 accepted=3 remaining=0 frames=967 no_race_started=1
+
+Full twenty-driver results per attempted race: Rally-White-Flow/results.csv.
+Running app, game executable, CPU AI and GitHub release were left unchanged.

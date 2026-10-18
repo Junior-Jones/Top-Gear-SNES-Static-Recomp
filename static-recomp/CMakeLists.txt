@@ -28,6 +28,7 @@ add_library(topgear-static-recomp STATIC
     src/topgear_mod_insert_audio.c
     src/topgear_mod_menu_remodel.c
     src/topgear_mod_time_trial.c
+    src/topgear_mod_rivals.c
     ${TOPGEAR_STATIC_AUDIO_SOURCES}
     src/topgear_ppu_dma.c
     src/topgear_v22_scheduler.c
@@ -286,6 +287,10 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_TESTING AND TOPGEAR_TEST_ROM)
+ add_executable(topgear-ai-record-probe tests/probe_ai_records.c)
+ target_include_directories(topgear-ai-record-probe PRIVATE internal generated)
+ target_compile_definitions(topgear-ai-record-probe PRIVATE _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-ai-record-probe PRIVATE topgear-static-recomp)
  foreach(route IN ITEMS menu career)
   add_executable(topgear-music-${route} tests/test_music_${route}.c)
   target_include_directories(topgear-music-${route} PRIVATE internal generated)
@@ -381,6 +386,12 @@ target_compile_definitions(topgear-tg0-engine PRIVATE SC_SMP_AOT=1 SC_STATIC_SDS
 target_sources(topgear-static-recomp PRIVATE $<TARGET_OBJECTS:topgear-tg0-engine>)
 
 if(BUILD_TESTING AND TOPGEAR_TEST_ROM)
+ add_executable(topgear-center-screen tests/test_center_screen.c ../frontend/common/topgear_player_settings_file.c)
+ target_include_directories(topgear-center-screen PRIVATE internal generated ../frontend/common)
+ target_compile_definitions(topgear-center-screen PRIVATE _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-center-screen PRIVATE topgear-static-recomp)
+ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/center-screen")
+ add_test(NAME topgear-center-screen COMMAND topgear-center-screen "${TOPGEAR_TEST_ROM}" "${CMAKE_CURRENT_BINARY_DIR}/center-screen")
  add_executable(topgear-definitive-features tests/test_definitive_features.c)
   add_executable(topgear-bottom-screen tests/test_bottom_screen.c ../frontend/common/topgear_player_settings_file.c)
   target_include_directories(topgear-bottom-screen PRIVATE internal generated ../frontend/common)
@@ -413,4 +424,44 @@ if(BUILD_TESTING AND TOPGEAR_TEST_ROM)
  target_link_libraries(topgear-rally-event PRIVATE topgear-static-recomp)
  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/rally-event")
  add_test(NAME topgear-rally-event COMMAND topgear-rally-event "${TOPGEAR_TEST_ROM}" "${CMAKE_CURRENT_BINARY_DIR}/rally-event")
+endif()
+
+# Separate 2.1.0 rival validation fixtures. Explicit arguments select Career/Rally
+# snapshots; do not register these with broad mode/Trial CTest workflows.
+if(BUILD_TESTING AND WIN32)
+ foreach(kind contract device metasprites rivals snapshots two_players pit_strategy career_four rally_white rally_passing passing_contract rally_native native_passing_contract native_drive_contract native_boost_contract rally_flow flow_contract flow_boost_contract rally_fresh rally_pit_guard pit_guard_contract pit_guard_boost career_eight_fuel career_fuel_contract career_fuel_boost career_pit_safety)
+  string(REPLACE "_" "-" target_suffix "${kind}")
+  add_executable(topgear-rivals-${target_suffix} tests/rivals/test_${kind}.c)
+  target_include_directories(topgear-rivals-${target_suffix} PRIVATE internal generated tests)
+  target_compile_definitions(topgear-rivals-${target_suffix} PRIVATE _CRT_SECURE_NO_WARNINGS)
+  target_link_libraries(topgear-rivals-${target_suffix} PRIVATE topgear-static-recomp)
+ endforeach()
+endif()
+
+if(BUILD_TESTING AND WIN32)
+ add_executable(topgear-extra-cpu-settings tests/rivals/test_extra_cpu_settings.c ../frontend/common/topgear_player_settings_file.c)
+ target_include_directories(topgear-extra-cpu-settings PRIVATE internal generated tests ../frontend/common)
+ target_compile_definitions(topgear-extra-cpu-settings PRIVATE _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-extra-cpu-settings PRIVATE topgear-static-recomp)
+endif()
+
+if(BUILD_TESTING AND WIN32)
+ add_executable(topgear-settings-native-audio tests/rivals/test_settings_native_audio.c)
+ target_include_directories(topgear-settings-native-audio PRIVATE internal generated tests)
+ target_compile_definitions(topgear-settings-native-audio PRIVATE _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-settings-native-audio PRIVATE topgear-static-recomp)
+endif()
+
+if(BUILD_TESTING AND WIN32)
+ add_executable(topgear-extra-cpu-full-race tests/rivals/test_extra_cpu_full_race.c ../frontend/common/topgear_player_settings_file.c ../frontend/windows/topgear_frontend_settings_win32.c ../third_party/topgear-gamepad/topgear_gamepad_input_win32.c)
+ target_include_directories(topgear-extra-cpu-full-race PRIVATE internal generated tests ../frontend/common ../frontend/windows ../third_party/topgear-gamepad)
+ target_compile_definitions(topgear-extra-cpu-full-race PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-extra-cpu-full-race PRIVATE topgear-static-recomp SDL3::SDL3-static user32 comctl32)
+endif()
+
+if(BUILD_TESTING AND WIN32)
+ add_executable(topgear-mode-bottom-stats tests/rivals/test_mode_bottom_stats.c)
+ target_include_directories(topgear-mode-bottom-stats PRIVATE internal generated tests)
+ target_compile_definitions(topgear-mode-bottom-stats PRIVATE _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-mode-bottom-stats PRIVATE topgear-static-recomp)
 endif()

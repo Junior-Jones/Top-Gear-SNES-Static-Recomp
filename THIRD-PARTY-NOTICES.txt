@@ -14,4 +14,4 @@ claim authorship of it. Any differences from the current upstream database must
 be treated as local modifications rather than represented as upstream work.
 
 Runtime packages place the database beside Launcher.exe as gamecontrollerdb.txt
-and include its license as SDL_GameControllerDB-LICENSE.txt.
+and include both SDL and controller database notices in SDL-LICENSES.txt.

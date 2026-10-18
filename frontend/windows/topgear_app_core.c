@@ -106,6 +106,10 @@ int topgear_app_create(TopGearApp **out, const uint8_t *rom, size_t size,
     return 1;
 }
 
+int topgear_app_extra_cpu_drivers_enabled(const TopGearApp *app){return app&&topgear_recomp_extra_cpu_drivers_enabled(app->core);}
+void topgear_app_set_extra_cpu_drivers_enabled(TopGearApp *app,int enabled){if(app)topgear_recomp_set_extra_cpu_drivers_enabled(app->core,enabled);}
+int topgear_app_center_screen_enabled(const TopGearApp *app){return app&&topgear_recomp_center_screen_enabled(app->core);}
+void topgear_app_set_center_screen_enabled(TopGearApp *app,int enabled){if(app)topgear_recomp_set_center_screen_enabled(app->core,enabled);}
 int topgear_app_bottom_screen_enabled(const TopGearApp *app){return !app||topgear_recomp_bottom_screen_enabled(app->core);}
 void topgear_app_set_bottom_screen_enabled(TopGearApp *app,int enabled){if(app)topgear_recomp_set_bottom_screen_enabled(app->core,enabled);}
 
@@ -131,9 +135,9 @@ void topgear_app_destroy(TopGearApp *app) {
 }
 
 int topgear_app_reset(TopGearApp *app, char *error, size_t capacity) {
-    uint8_t settings[TOPGEAR_PLAYER_SETTINGS_SIZE],music[TOPGEAR_MUSIC_STATE_SIZE];int have,bottom;
+    uint8_t settings[TOPGEAR_PLAYER_SETTINGS_SIZE],music[TOPGEAR_MUSIC_STATE_SIZE];int have,bottom,center;
     if(!app)return 0;
-    bottom=topgear_app_bottom_screen_enabled(app);
+    bottom=topgear_app_bottom_screen_enabled(app);center=topgear_app_center_screen_enabled(app);
     (void)topgear_recomp_music_state_export(app->core,music,sizeof(music));
     have=topgear_recomp_player_settings_export(app->core,settings,sizeof(settings));
     if (!app || !topgear_recomp_reset(app->core, error, capacity)) return 0;
@@ -142,6 +146,7 @@ int topgear_app_reset(TopGearApp *app, char *error, size_t capacity) {
     else if(app->player_settings_cache[0])
         (void)topgear_recomp_player_settings_import(app->core,app->player_settings_cache,sizeof(app->player_settings_cache));
     topgear_app_set_bottom_screen_enabled(app,bottom);
+    topgear_app_set_center_screen_enabled(app,center);
     refresh_frame(app);
     copy_error(app, error, capacity, "");
     return 1;
@@ -265,11 +270,13 @@ int topgear_app_snapshot_save(const TopGearApp *app, const char *path,
 }
 int topgear_app_snapshot_load(TopGearApp *app, const char *path,
                               char *error, size_t capacity) {
-    int bottom=topgear_app_bottom_screen_enabled(app);
+    int bottom=topgear_app_bottom_screen_enabled(app),center=topgear_app_center_screen_enabled(app);
+    int extra=topgear_app_extra_cpu_drivers_enabled(app);
     int ok = app && topgear_recomp_snapshot_load(app->core, path,
                                                   error, capacity);
-    /* Loading race progress must not restore an older display preference. */
-    if (ok) {topgear_app_set_bottom_screen_enabled(app,bottom);refresh_frame(app);}
+    /* Loading race progress must not restore older user preferences. The core
+       setter rebuilds vehicle roles if the saved promotion setting differs. */
+    if (ok) {topgear_app_set_bottom_screen_enabled(app,bottom);topgear_app_set_center_screen_enabled(app,center);topgear_app_set_extra_cpu_drivers_enabled(app,extra);refresh_frame(app);}
     return ok;
 }
 int topgear_app_sram_copy(const TopGearApp *app, void *dst, size_t capacity) {

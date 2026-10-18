@@ -703,9 +703,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 104599,
+      "bytes": 105057,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0021.c",
-      "sha256": "841220ab3925d5a56d6aac8b1fdec846e2564d11577bcca718c2d0dd8c133c2d"
+      "sha256": "8ebef1272268f4bf8994d3d2f51d2a07ee38f268d452537361dd92cb5f71a0d5"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -913,9 +913,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 111682,
+      "bytes": 111879,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0176.c",
-      "sha256": "b635f09318130280d687cebe4fb4a504ec29331d178edbbda1957ccf8ef98b2f"
+      "sha256": "c87c86b6f9cc2fb67924bf0b5c3f797cb1c666f5011b93e97eb182c051d9c52d"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -925,9 +925,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 114474,
+      "bytes": 114658,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0178.c",
-      "sha256": "d1b36c3c81a48d792e0e64e9b8b5e9733dcf8da7fb62d90f3197a9dcca9ad8a9"
+      "sha256": "e5e620958bc4cdbe582dec3d28c849019f705bb739826710226965837e4e9778"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -937,9 +937,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 120972,
+      "bytes": 121131,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017A.c",
-      "sha256": "309c00282afe5c5af56b1960d497b1438b6c488e28fc3455a58f069a2b2e3d6e"
+      "sha256": "fc29e55ab4da04ded75f59f873828a6ecfd5f41bf6057e34c8fbc12c71259570"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -1194,9 +1194,9 @@
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
     }
   ],
-  "inventory_sha256": "1012b98c1fdd081cd64ddf79a4c617787e9b5269f3538bf672ad9ea41f456a80",
+  "inventory_sha256": "21ef835060a57f6722ecc219d4aa3c11855eb2b0eebd80fd2b616128c6bea366",
   "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
-  "project_version": "2.0.1",
+  "project_version": "2.1.0",
   "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
   "schema": "topgear-generated-provenance-v1"
 }

@@ -25,7 +25,7 @@
 #define SNAPSHOT_CLASS_NAME L"TopGearStaticRecompSnapshotWindow"
 #define INFO_CLASS_NAME L"TopGearStaticRecompInformationWindow"
 #define GETTING_STARTED_CLASS_NAME L"TopGearGettingStartedWindow"
-#define APP_TITLE L"Launcher"
+#define APP_TITLE L"Top Gear: Definitive Edition (SNES)"
 #define LAUNCHER_TITLE L"Launcher"
 #define WM_APP_LOAD_COMPLETE (WM_APP + 1u)
 #define WM_APP_STARTUP_CONTINUE (WM_APP + 2u)
@@ -552,6 +552,16 @@ static int flush_player_settings_win32(void) {
         if(!WritePrivateProfileStringW(L"General",L"BottomScreen",bottom?L"1":L"0",g_settings_ini_path))return 0;
         g_frontend_settings.bottom_screen_enabled=bottom;g_frontend_settings.bottom_screen_saved=1;
     }
+    {int extra=topgear_app_extra_cpu_drivers_enabled(g_game);
+     if(!g_frontend_settings.extra_cpu_drivers_saved||extra!=g_frontend_settings.extra_cpu_drivers_enabled){
+        if(!WritePrivateProfileStringW(L"General",L"ExtraCPUDrivers",extra?L"1":L"0",g_settings_ini_path))return 0;
+        g_frontend_settings.extra_cpu_drivers_enabled=extra;g_frontend_settings.extra_cpu_drivers_saved=1;
+     }}
+    {int center=topgear_app_center_screen_enabled(g_game);
+     if(!g_frontend_settings.center_screen_saved||center!=g_frontend_settings.center_screen_enabled){
+        if(!WritePrivateProfileStringW(L"General",L"CenterScreen",center?L"1":L"0",g_settings_ini_path))return 0;
+        g_frontend_settings.center_screen_enabled=center;g_frontend_settings.center_screen_saved=1;
+     }}
     return ensure_directory_tree(g_data_directory)&&
         topgear_app_player_settings_save(g_game,g_player_settings_path);
 }
@@ -1463,6 +1473,21 @@ static void show_key_bindings(void) {
 
 static const wchar_t g_welcome_text[] =
     L"Welcome to Top Gear (SNES) Static Recompilation\r\n\r\n"
+    L"Version 2.1.0\r\n"
+    L"\r\n"
+    L"Added to Settings:\r\n"
+    L"* Center Screen, Default Off\r\n"
+    L"This option can be toggled On after Bottom Screen is turned Off\r\n"
+    L"* Extra CPU, default On\r\n"
+    L"This option enabled will add 2 more CPU controlled drivers using the remaining 2 cars, the CPUs use the names SENNA, MANSELL and JONES\r\n"
+    L"\r\n"
+    L"General,\r\n"
+    L"* All 16 normal AI drivers are named after classic racing drivers, with a fixed car colour assigned to each.\r\n"
+    L"\u2022 Time Trial fix: Removed hidden opponent contacts so only Player 1 races the clock.\r\n"
+    L"\u2022 Settings improvements: Options save automatically. Updated menu spacing and Left/Right sounds; disabled Center Screen stays silent.\r\n"
+    L"\r\n"
+    L"Feedback on any issues is welcomed\r\n"
+    L"\r\n"
     L"Frontend shortcuts\r\n"
     L"Escape - Switch between the game and Launcher\r\n"
     L"1 - Save the current snapshot slot\r\n"
@@ -3630,7 +3655,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                         static const wchar_t about[] =
                             L"F1 - Open the Welcome window\r\n\r\n"
                             L"Top Gear (SNES) Static Recompilation\r\n"
-                            L"Version 2.0.1\r\n\r\n"
+                            L"Version 2.1.0\r\n\r\n"
                             L"Title: Top Gear\r\n"
                             L"Region: USA NTSC\r\n"
                             L"File type: .sfc";
@@ -3670,8 +3695,16 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 return 0;
             }
             if (wparam == VK_F8) { capture_core_screenshot(); return 0; }
-            if (wparam == '1') { save_current_snapshot(); return 0; }
-            if (wparam == '2') { load_current_snapshot(); return 0; }
+            if (wparam == '1' && g_game && !g_paused &&
+                keyboard_gameplay_focus_active()) {
+                save_current_snapshot();
+                return 0;
+            }
+            if (wparam == '2' && g_game && !g_paused &&
+                keyboard_gameplay_focus_active()) {
+                load_current_snapshot();
+                return 0;
+            }
             if (g_game && !g_paused && keyboard_gameplay_focus_active() &&
                 keyboard_gameplay_active()) {
                 uint16_t mask = virtual_key_to_input(wparam);
@@ -3747,6 +3780,10 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             (void)topgear_app_player_settings_load(g_game,g_player_settings_path);
             if(g_frontend_settings.bottom_screen_saved)
                 topgear_app_set_bottom_screen_enabled(g_game,g_frontend_settings.bottom_screen_enabled);
+            if(g_frontend_settings.extra_cpu_drivers_saved)
+                topgear_app_set_extra_cpu_drivers_enabled(g_game,g_frontend_settings.extra_cpu_drivers_enabled);
+            if(g_frontend_settings.center_screen_saved)
+                topgear_app_set_center_screen_enabled(g_game,g_frontend_settings.center_screen_enabled);
             (void)flush_player_settings_win32();
             g_loaded_snapshot_slot = -1;
             g_sram_last_flush_frame = 0u;
@@ -3991,8 +4028,10 @@ int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE previous,
                          message.wParam == VK_F2 || message.wParam == VK_F3 ||
                          message.wParam == VK_F4 || message.wParam == VK_F5 ||
                          message.wParam == VK_F6 || message.wParam == VK_F7 ||
-                         message.wParam == VK_F8 || message.wParam == '1' ||
-                         message.wParam == '2');
+                         message.wParam == VK_F8 ||
+                         ((message.wParam == '1' || message.wParam == '2') &&
+                          g_game && !g_paused &&
+                          keyboard_gameplay_focus_active()));
                     game_key =
                         (message.message == WM_KEYDOWN ||
                          message.message == WM_KEYUP) &&

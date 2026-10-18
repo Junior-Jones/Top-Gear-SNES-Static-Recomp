@@ -22,6 +22,7 @@ static int v22_hooked_static_step(TopGearRecomp *instance,TgV22StaticStepFn step
     address=((uint32_t)instance->cpu.pbr<<16)|instance->cpu.pc;
     tg_emit_hook(instance,TOPGEAR_HOOK_EVENT_INSTRUCTION_BEFORE,address,0u,1u);
     if(instance->hook_stop_requested)return 0;
+    tg_rivals_before(instance,address);
     if(!step(instance))return 0;
     tg_emit_hook(instance,TOPGEAR_HOOK_EVENT_INSTRUCTION_AFTER,address,0u,1u);
     /* Let the scheduler account this completed instruction's nominal time.

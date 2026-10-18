@@ -109,6 +109,14 @@ int topgear_recomp_frame_bgra(TopGearRecomp *instance, uint32_t *destination,
         pixel_capacity < TOPGEAR_RECOMP_FRAME_WIDTH * TOPGEAR_RECOMP_FRAME_HEIGHT ||
         !topgear_recomp_v22_read_frame_bgr555(instance, 0u, source,
                                               sizeof(source))) return 0;
+    if(tg_mod_center_screen_race(instance)){
+        /* Centre only P1's 104 visible native scanlines, without scaling.
+           Source rows 0-3 are the raster setup seam. Both 60-line margins
+           are black; no lower statistics or second view is copied. */
+        memmove(source+60u*256u,source+4u*256u,104u*256u*sizeof(*source));
+        memset(source,0,60u*256u*sizeof(*source));
+        memset(source+164u*256u,0,60u*256u*sizeof(*source));
+    }
     for (index = 0u; index < TOPGEAR_RECOMP_FRAME_WIDTH * TOPGEAR_RECOMP_FRAME_HEIGHT;
          ++index) {
         uint32_t pixel = source[index];
@@ -228,6 +236,7 @@ int topgear_recomp_snapshot_load(TopGearRecomp *instance, const char *path,
     TopGearTimeTrialLeaderboardProvider tt_provider;
     void *tt_provider_user;
     int ok = 0;
+    size_t loaded_core_size = sizeof(*core);
     if (!instance || !path || !path[0] || !instance->static_audio_acquired) {
         snapshot_error(error, error_capacity,
                        "A running Full Static game is required to load a snapshot.");
@@ -253,20 +262,22 @@ int topgear_recomp_snapshot_load(TopGearRecomp *instance, const char *path,
     if (fread(&header, 1u, sizeof(header), file) != sizeof(header) ||
         memcmp(header.magic, TOPGEAR_SNAPSHOT_MAGIC,
                TOPGEAR_SNAPSHOT_MAGIC_SIZE) != 0 ||
-        header.version != TOPGEAR_SNAPSHOT_VERSION ||
-        header.core_size != sizeof(*core) || header.apu_size != apu_size) {
+        !((header.version==TOPGEAR_SNAPSHOT_VERSION&&header.core_size==sizeof(*core))||
+          (header.version==1u&&header.core_size==481520u&&offsetof(TopGearRecomp,rivals)==481520u)) || header.apu_size != apu_size) {
         snapshot_error(error, error_capacity,
                        "The snapshot is invalid or belongs to another build.");
         goto cleanup;
     }
-    if (fread(core, 1u, sizeof(*core), file) != sizeof(*core) ||
+    loaded_core_size=header.core_size;
+    memset(core,0,sizeof(*core));
+    if (fread(core, 1u, loaded_core_size, file) != loaded_core_size ||
         fread(apu, 1u, apu_size, file) != apu_size) {
         snapshot_error(error, error_capacity, "The snapshot file is truncated.");
         goto cleanup;
     }
     trailing = fgetc(file);
     if (ferror(file) || trailing != EOF ||
-        snapshot_hash(core, sizeof(*core)) != header.core_hash ||
+        snapshot_hash(core, loaded_core_size) != header.core_hash ||
         snapshot_hash(apu, apu_size) != header.apu_hash) {
         snapshot_error(error, error_capacity,
                        "The snapshot is corrupt or has unexpected trailing data.");

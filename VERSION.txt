@@ -1,6 +1,33 @@
-Top Gear Definitive Edition 2.0.1
-Windows 10/11 x64 - Launcher.exe
+Version 2.1.0
 
-New Feature:
+Added to Settings:
+* Center Screen, Default Off
+This option can be toggled On after Bottom Screen is turned Off
+* Extra CPU, default On
+This option enabled will add 2 more CPU controlled drivers using the remaining 2 cars, the CPUs use the names SENNA, MANSELL and JONES
 
-Added Bottom Screen under the in-game Settings menu. Set it to Off to hide the bottom screen in single-player Career, Rally and Time Trial. It defaults to On for fresh installs and is forced On for two-player games. Your single-player choice is saved between sessions.
+General,
+* All 16 normal AI drivers are named after classic racing drivers, with a fixed car colour assigned to each.
+• Time Trial fix: Removed hidden opponent contacts so only Player 1 races the clock.
+• Settings improvements: Options save automatically. Updated menu spacing and Left/Right sounds; disabled Center Screen stays silent.
+
+Feedback on any issues is welcomed
+
+| Driver | Colour |
+|---|---|
+| PROST | Red |
+| PIQUET | Green |
+| BERGER | Blue |
+| ALESI | Yellow |
+| PATRESE | Magenta |
+| BOUTSEN | Cyan |
+| BRUNDLE | Orange |
+| HAKKINEN | Violet |
+| SCHUMACH | Pink |
+| HILL | Mint green |
+| HERBERT | Azure blue |
+| COULTHRD | White |
+| ALBORETO | Olive |
+| NANNINI | Light red |
+| DECESARI | Lime green |
+| WARWICK | Periwinkle |

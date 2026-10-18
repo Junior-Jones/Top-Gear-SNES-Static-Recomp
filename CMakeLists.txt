@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(TopGearSNESStaticRecomp VERSION 2.0.1 LANGUAGES C CXX)
+project(TopGearSNESStaticRecomp VERSION 2.1.0 LANGUAGES C CXX)
 
 include(CTest)
 set(TOPGEAR_TEST_ROM "" CACHE FILEPATH
@@ -280,11 +280,12 @@ add_custom_command(TARGET topgear-launcher POST_BUILD
         "${CMAKE_SOURCE_DIR}/third_party/gamecontrollerdb.txt"
         "$<TARGET_FILE_DIR:topgear-launcher>/gamecontrollerdb.txt"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-        "${TOPGEAR_SDL_SOURCE_DIR}/LICENSE.txt"
+        "${CMAKE_SOURCE_DIR}/third_party/SDL-LICENSES.txt"
+        "$<TARGET_FILE_DIR:topgear-launcher>/SDL-LICENSES.txt"
+    COMMAND "${CMAKE_COMMAND}" -E rm -f
         "$<TARGET_FILE_DIR:topgear-launcher>/SDL-LICENSE.txt"
-    COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/third_party/SDL_GameControllerDB-LICENSE.txt"
         "$<TARGET_FILE_DIR:topgear-launcher>/SDL_GameControllerDB-LICENSE.txt"
+        "$<TARGET_FILE_DIR:topgear-launcher>/RELEASE-NOTES.md"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
         "${CMAKE_SOURCE_DIR}/THIRD-PARTY-NOTICES.txt"
         "$<TARGET_FILE_DIR:topgear-launcher>/THIRD-PARTY-NOTICES.txt"

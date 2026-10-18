@@ -1,0 +1,67 @@
+Career white-car test: stopped at user request - 18 October 2026
+
+Headless only; no Trial or Rally. CPU source/library/executable unchanged.
+Seven tracks qualified. Rain Forest had three completed failed attempts:
+12th, 14th, 13th at the cutoff; none crossed the line. Fourth attempt stopped
+at user request, with no result counted. Three native Continues had been used.
+
+Fuel is measured at the ten-finisher race cutoff, not necessarily P1 finish.
+Each race began with native full fuel 43007. Chichen Itza reads zero fuel at
+cutoff. The fuel level at the moment P1 crossed was not logged, so the data
+does not establish whether depletion occurred before or after its finish.
+
+Race | Attempt | Track | P1 position | Crossed | P1 pit stops | Cutoff fuel | JONES | SENNA | MANSELL
+1 | 1 | Las Vegas | 2 | 1 | 0 | 29193 | 1 | 3 | 4
+2 | 1 | Los Angeles | 4 | 1 | 0 | 20012 | 1 | 2 | 3
+3 | 1 | New York | 3 | 1 | 0 | 19977 | 1 | 2 | 4
+4 | 1 | San Francisco | 2 | 1 | 0 | 4731 | 3 | 6 | 4
+5 | 2 | Rio | 10 | 1 | 1 | 28527 | 8 | 9 | 7
+6 | 1 | Machu Picchu | 1 | 1 | 0 | 20193 | 2 | 3 | 4
+7 | 1 | Chichen Itza | 1 | 1 | 0 | 0 | 3 | 6 | 7
+8 | 1 | Rain Forest | 12 | 0 | 0 | 18540 | 10 | 9 | NC
+8 | 2 | Rain Forest | 14 | 0 | 0 | 18770 | 11 | 10 | NC
+8 | 3 | Rain Forest | 13 | 0 | 0 | 19213 | 11 | 9 | 10
+
+Final scored standings (Rain Forest failed attempts award no points):
+Rank | Driver | Car | Points
+1 | JONES | Red Cannibal | 102
+2 | P1 | White Sidewinder | 93
+3 | WARWICK | Ordinary | 87
+4 | SENNA | Purple Razor | 68
+5 | MANSELL | Blue Weasel | 60
+6 | HILL | Ordinary | 41
+7 | SCHUMACH | Ordinary | 35
+8 | PIQUET | Ordinary | 31
+9 | PROST | Ordinary | 28
+10 | BRUNDLE | Ordinary | 13
+11 | HAKKINEN | Ordinary | 6
+12 | PATRESE | Ordinary | 3
+13 | BERGER | Ordinary | 0
+14 | ALESI | Ordinary | 0
+15 | BOUTSEN | Ordinary | 0
+16 | HERBERT | Ordinary | 0
+17 | COULTHRD | Ordinary | 0
+18 | ALBORETO | Ordinary | 0
+19 | NANNINI | Ordinary | 0
+20 | DECESARI | Ordinary | 0
+
+P1 completed-race pit stop: Rio attempt 2, frame 12701, fuel 7648,
+estimated requirement 16626, remaining distance 76521, low=1, shortfall=1.
+No other P1 pit entries in the accepted completed races.
+
+Diagnostic restart disclosure: the initial Rio attempt accidentally entered
+with 40754 fuel and no request. It was stopped, its log preserved, and the
+guard tightened to the opposite road half with steering priority. The test
+resumed the exact Rio start snapshot, preserving the first four scored races.
+Those first four used the initial guard; Rio onward used the tightened guard.
+
+One CPU shadow-comparison mismatch was logged on Chichen Itza. Cause not
+isolated; CPU code was left unchanged. No graphics overflow was recorded.
+
+Fuel policy requires fuel <=12288 and projected fuel needed greater than
+remaining fuel, using observed burn per distance, 10% margin plus 512 reserve.
+The zero-fuel Chichen Itza cutoff means this run cannot certify that the fuel
+estimate always preserves fuel through the finish. No more tests were run.
+
+Evidence: Career-White-Eight-Fuel/results.csv; completed race snapshots;
+career-white-eight-fuel-completed.log; aborted diagnostic and resumed logs.

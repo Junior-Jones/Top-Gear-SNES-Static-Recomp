@@ -1,0 +1,47 @@
+Career first four tracks - 18 October 2026
+=========================================
+
+Headless one-player Career, Amateur skill, P1 red Cannibal.
+Existing self-driving inputs for P1. All three CPUs run normally.
+No CPU fuel, speed, pit, finish-order or points overrides.
+The same Career session advances through results into each next race.
+No Rally, Trial or two-player runs are executed by this fixture.
+
+Driver   Las Vegas  Los Angeles  New York  San Francisco  Final rank  Points
+P1               2            6         3              7           4      37
+JONES            4          DNF         4              4           5      30
+SENNA            1            2         2              5           1      58
+MANSELL          3            3         1              6           3      50
+
+Race places above require an actual recorded finish. DNF means the native
+tenth-finisher boundary ended the race before that driver crossed.
+Final rank is the native points-table order after track four, among all
+twenty entrants. Native ordering is retained for ties.
+P1 needed one normal Continue in New York; the failed attempt did not award points.
+San Francisco was replayed from its exact saved race start after a harness
+diagnostic stopped the first recording. Earlier points were retained exactly.
+The replay reached the same race-end frame (15297).
+One native CPU shadow comparison mismatch was recorded in San Francisco:
+38760 checks, 1 mismatch, 0 graphics overflow. Its cause is not established.
+This is a completed results run, not a clean diagnostic pass. Verbose replay
+SHADOW_DETAIL messages also include raw flag 255 versus Boolean 1 and must
+not be confused with the authoritative mismatch counter.
+CPU cars: JONES white Sidewinder, SENNA purple Razor, MANSELL blue Weasel.
+
+Native standings screenshots and exact state snapshots are in
+Verification/Rivals/Career-First-Four. results.csv includes all twenty
+drivers after every race; career-first-four.log records the run.
+
+Los Angeles JONES clarification - 18 October 2026
+The saved results state has native P2/CPU classification word 1F02=15,
+meaning 16th place (zero-based). Native 00:87C3..87C6 assigns the current
+race position to this word when the CPU has not crossed by the cutoff.
+Thus the earlier DNF label meant not across the line among the first ten,
+not a mechanical retirement. The game classified JONES 16th and awarded no points.
+The same results snapshot retains 18709 fuel out of 43007 (43.5%), no active
+pit phase, and no active contact-recovery state. He did not run out of fuel.
+Those are post-race retained fields, not a continuous pre-cutoff incident trace.
+The saved race-state records have already been reused for result graphics;
+they must not be interpreted as live opponent records at this point.
+The existing progress log confirms final-lap progress but does not identify
+which earlier incident or pace deficit caused the lost time.

@@ -41,7 +41,7 @@
 typedef struct TgPixel { uint16_t color; uint8_t palette_index,priority,layer,obj_palette,transparent; } TgPixel;
 typedef struct TgObject { uint16_t x; uint8_t y,character,name_select,palette,priority,hflip,vflip,width,height,index; } TgObject;
 typedef struct TgObjectLine { TgObject object; uint8_t line; } TgObjectLine;
-typedef struct TgObjectTile { uint16_t x; uint8_t priority,palette,hflip; uint32_t data; } TgObjectTile;
+typedef struct TgObjectTile { uint16_t x; uint8_t priority,palette,hflip; uint32_t data; uint16_t order; } TgObjectTile;
 
 static uint8_t regv(const TopGearRecomp *i,uint16_t a){return i->ppu_registers[a-0x2100u];}
 static uint16_t vr16(const TopGearRecomp *i,uint32_t a){return (uint16_t)(i->vram[a&0xffffu]|((uint16_t)i->vram[(a+1u)&0xffffu]<<8));}
@@ -152,12 +152,32 @@ static uint8_t sw(unsigned m){static const uint8_t v[8]={8,8,8,16,16,32,16,16};r
    over-conservative on New York and San Francisco.  Those tracks qualified
    from framebuffer road-centre steering with this OAM heuristic disabled. */
 static TgObject decobj(const TopGearRecomp *i,unsigned n){TgObject o;uint8_t hi=i->oam[512u+n/4u],pair=(uint8_t)((hi>>((n&3u)*2u))&3u),at=i->oam[n*4u+3u],sel=regv(i,0x2101u),large=(pair>>1)&1u,sm=sel>>5;o.x=(uint16_t)(i->oam[n*4u]|((pair&1u)<<8));o.y=(uint8_t)(i->oam[n*4u+1u]+1u);o.character=i->oam[n*4u+2u];o.name_select=at&1u;o.palette=(at>>1)&7u;o.priority=(at>>4)&3u;o.hflip=(at>>6)&1u;o.vflip=(at>>7)&1u;o.width=large?lw(sm):sw(sm);o.height=large?lh(sm):sh(sm);o.index=(uint8_t)n;return o;}
-static void objline(const TopGearRecomp *core,unsigned y,uint8_t pals[256],uint8_t pris[256]){TgObjectLine items[32];TgObjectTile tiles[34];unsigned ic=0,tc=0,scan,i,t,p;uint8_t sel=regv(core,0x2101u);unsigned first=core->oam_priority_rotation?((unsigned)core->oam_byte_address>>1)&127u:0u;memset(pals,0,256);memset(pris,0,256);for(scan=0;scan<128;scan++){unsigned n=(first+scan)&127u;TgObject o=decobj(core,n);uint8_t line=(uint8_t)((y+1u-o.y)&0xffu);if((o.x<=256u||(uint32_t)o.x+o.width-1u>=512u)&&line<o.height){if(ic>=32)break;items[ic].object=o;items[ic].line=line;ic++;}}for(i=ic;i>0;i--){TgObject o=items[i-1].object;unsigned yy=items[i-1].line,xx=o.x&511u,base=(sel&7u)<<13,cx=o.character&15u,cy,tw,tx;if(o.vflip){if(o.width==o.height)yy=o.height-1u-yy;else if(yy<o.width)yy=o.width-1u-yy;else yy=o.width+(o.width-1u)-(yy-o.width);}if(o.name_select)base+=(1u+((sel>>3)&3u))<<12;cy=(((o.character>>4)+(yy>>3))&15u)<<4;tw=o.width>>3;for(tx=0;tx<tw;tx++){unsigned ox=(xx+(tx<<3))&511u,mx,ad,a0,a1;uint16_t w0,w1;if(xx!=256u&&ox>=256u&&ox+7u<512u)continue;mx=o.hflip?tw-1u-tx:tx;ad=base+((cy+((cx+mx)&15u))<<4);ad=(ad&0xfff0u)+(yy&7u);a0=(ad*2u)&0xffffu;a1=((ad+8u)*2u)&0xffffu;w0=vr16(core,a0);w1=vr16(core,a1);if(tc>=34)break;tiles[tc].x=(uint16_t)ox;tiles[tc].priority=o.priority;tiles[tc].palette=(uint8_t)(128u+(o.palette<<4));tiles[tc].hflip=o.hflip;tiles[tc].data=(uint32_t)w0|((uint32_t)w1<<16);tc++;}if(tc>=34)break;}for(t=0;t<tc;t++){unsigned xx=tiles[t].x;for(p=0;p<8;p++){unsigned shift;uint8_t col;xx&=511u;if(xx<256u){shift=tiles[t].hflip?p:7u-p;col=(uint8_t)(((tiles[t].data>>shift)&1u)|(((tiles[t].data>>(shift+8u))&1u)<<1)|(((tiles[t].data>>(shift+16u))&1u)<<2)|(((tiles[t].data>>(shift+24u))&1u)<<3));if(col){pals[xx]=(uint8_t)(tiles[t].palette+col);pris[xx]=tiles[t].priority;}}xx++;}}}
+static void objline(const TopGearRecomp *core,unsigned y,uint8_t pals[256],uint8_t pris[256],uint32_t orders[256]){TgObjectLine items[32];TgObjectTile tiles[34];unsigned ic=0,tc=0,scan,i,t,p;uint8_t sel=regv(core,0x2101u);unsigned first=core->oam_priority_rotation?((unsigned)core->oam_byte_address>>1)&127u:0u;memset(pals,0,256);memset(pris,0,256);for(i=0;i<256;i++)orders[i]=0xffffffffu;for(scan=0;scan<128;scan++){unsigned n=(first+scan)&127u;TgObject o=decobj(core,n);uint8_t line=(uint8_t)((y+1u-o.y)&0xffu);if((o.x<=256u||(uint32_t)o.x+o.width-1u>=512u)&&line<o.height){if(ic>=32)break;items[ic].object=o;items[ic].line=line;ic++;}}for(i=ic;i>0;i--){TgObject o=items[i-1].object;unsigned yy=items[i-1].line,xx=o.x&511u,base=(sel&7u)<<13,cx=o.character&15u,cy,tw,tx;if(o.vflip){if(o.width==o.height)yy=o.height-1u-yy;else if(yy<o.width)yy=o.width-1u-yy;else yy=o.width+(o.width-1u)-(yy-o.width);}if(o.name_select)base+=(1u+((sel>>3)&3u))<<12;cy=(((o.character>>4)+(yy>>3))&15u)<<4;tw=o.width>>3;for(tx=0;tx<tw;tx++){unsigned ox=(xx+(tx<<3))&511u,mx,ad,a0,a1;uint16_t w0,w1;if(xx!=256u&&ox>=256u&&ox+7u<512u)continue;mx=o.hflip?tw-1u-tx:tx;ad=base+((cy+((cx+mx)&15u))<<4);ad=(ad&0xfff0u)+(yy&7u);a0=(ad*2u)&0xffffu;a1=((ad+8u)*2u)&0xffffu;w0=vr16(core,a0);w1=vr16(core,a1);if(tc>=34)break;tiles[tc].x=(uint16_t)ox;tiles[tc].priority=o.priority;tiles[tc].palette=(uint8_t)(128u+(o.palette<<4));tiles[tc].hflip=o.hflip;tiles[tc].data=(uint32_t)w0|((uint32_t)w1<<16);tiles[tc].order=o.index;tc++;}if(tc>=34)break;}for(t=0;t<tc;t++){unsigned xx=tiles[t].x;for(p=0;p<8;p++){unsigned shift;uint8_t col;xx&=511u;if(xx<256u){shift=tiles[t].hflip?p:7u-p;col=(uint8_t)(((tiles[t].data>>shift)&1u)|(((tiles[t].data>>(shift+8u))&1u)<<1)|(((tiles[t].data>>(shift+16u))&1u)<<2)|(((tiles[t].data>>(shift+24u))&1u)<<3));if(col){pals[xx]=(uint8_t)(tiles[t].palette+col);pris[xx]=tiles[t].priority;orders[xx]=tiles[t].order*2048u+2047u;}}xx++;}}}
+/* Merge the private object lane before BG/window/colour-math composition. */
+static void extended_objline(const TopGearRecomp *i,unsigned y,uint8_t pals[256],uint8_t pris[256],uint32_t orders[256],uint16_t colors[256],uint8_t math[256]){
+    unsigned n,x;const TgRivalObjects *v=&i->rivals.visible;
+    for(x=0;x<256;x++){colors[x]=0xffffu;math[x]=0;}
+    if(i->rivals.disabled||!i->rivals.ready||i->mod_time_trial_active||i->mod_menu_remodel_active||i->hdma_enable_mask!=0x7fu)return;
+    for(n=0;n<v->count;n++){
+        const TgExtendedObject *o=&v->objects[n];int line=(int)y-o->y;unsigned yy;
+        if(line<0||line>=o->size)continue;yy=o->vflip?o->size-1u-(unsigned)line:(unsigned)line;
+        for(x=0;x<o->size;x++){
+            int screen=o->x+(int)x;unsigned xx=o->hflip?o->size-1u-x:x,tile,ad,p,shift;uint8_t b0,b1,b2,b3;
+            if(screen<0||screen>=256||o->order>=orders[screen])continue;
+            tile=((o->tile&0x1f0u)+((yy>>3)<<4)+((o->tile+(xx>>3))&15u))&511u;
+            if(o->bank<4u){ad=(tile&127u)*32u+(yy&7u)*2u;b0=i->rivals.tiles[o->bank][ad];b1=i->rivals.tiles[o->bank][ad+1u];b2=i->rivals.tiles[o->bank][ad+16u];b3=i->rivals.tiles[o->bank][ad+17u];}
+            else{unsigned sel=regv(i,0x2101u),base=(sel&7u)<<14;if(tile&256u)base+=(1u+((sel>>3)&3u))<<13;ad=(base+(tile&255u)*32u+(yy&7u)*2u)&65535u;b0=i->vram[ad];b1=i->vram[(ad+1u)&65535u];b2=i->vram[(ad+16u)&65535u];b3=i->vram[(ad+17u)&65535u];}
+            shift=7u-(xx&7u);p=((b0>>shift)&1u)|(((b1>>shift)&1u)<<1)|(((b2>>shift)&1u)<<2)|(((b3>>shift)&1u)<<3);
+            if(!p)continue;
+            colors[screen]=i->rivals.palettes[o->palette][p];math[screen]=o->math;pals[screen]=128u;pris[screen]=o->priority;orders[screen]=o->order;
+        }
+    }
+}
 static uint8_t wnib(const TopGearRecomp *i,unsigned l){if(l<2)return(uint8_t)((regv(i,0x2123u)>>(l*4u))&15u);if(l<4)return(uint8_t)((regv(i,0x2124u)>>((l-2u)*4u))&15u);if(l==4)return regv(i,0x2125u)&15u;return regv(i,0x2125u)>>4;}static unsigned wlogic(const TopGearRecomp *i,unsigned l){if(l<4)return(regv(i,0x212au)>>(l*2u))&3u;if(l==4)return regv(i,0x212bu)&3u;return(regv(i,0x212bu)>>2)&3u;}static int inside(unsigned x,unsigned a,unsigned b){return a<=b&&x>=a&&x<=b;}static int wmask(const TopGearRecomp *i,unsigned l,unsigned x){uint8_t n=wnib(i,l);int e1=(n&2)!=0,e2=(n&8)!=0,v1=inside(x,regv(i,0x2126u),regv(i,0x2127u)),v2=inside(x,regv(i,0x2128u),regv(i,0x2129u));unsigned q;if(!e1&&!e2)return 0;if(n&1)v1=!v1;if(n&4)v2=!v2;if(!e1)return v2;if(!e2)return v1;q=wlogic(i,l);if(q==0)return v1||v2;if(q==1)return v1&&v2;if(q==2)return v1!=v2;return v1==v2;}static int applies(unsigned s,int in){if(s==0)return 0;if(s==1)return!in;if(s==2)return in;return 1;}
-static TgPixel screenpx(const TopGearRecomp *i,unsigned mask,unsigned wen,unsigned x,unsigned y,uint8_t opal,uint8_t opri){TgPixel best;unsigned mode=regv(i,0x2105u)&7u,l;memset(&best,0,sizeof(best));best.color=cg(i,0);best.layer=5;for(l=0;l<4;l++){TgPixel c;if((mask&(1u<<l))==0)continue;if((wen&(1u<<l))&&wmask(i,l,x))continue;if(mode==7){if(!mode7_pixel(i,l,x,y,&c))continue;}else{if(!bpp(mode,l)||!tiled_pixel(i,l,x,y,&c))continue;}if(!c.transparent&&c.priority>best.priority)best=c;}if((mask&0x10u)&&opal){uint8_t pr=objpri(i,mode,opri);if(!((wen&0x10u)&&wmask(i,4,x))&&pr>best.priority){best.color=cg(i,opal);best.palette_index=opal;best.priority=pr;best.layer=4;best.obj_palette=(uint8_t)((opal-128u)>>4);}}return best;}
+static TgPixel screenpx(const TopGearRecomp *i,unsigned mask,unsigned wen,unsigned x,unsigned y,uint8_t opal,uint8_t opri,uint16_t extended,uint8_t math){TgPixel best;unsigned mode=regv(i,0x2105u)&7u,l;memset(&best,0,sizeof(best));best.color=cg(i,0);best.layer=5;for(l=0;l<4;l++){TgPixel c;if((mask&(1u<<l))==0)continue;if((wen&(1u<<l))&&wmask(i,l,x))continue;if(mode==7){if(!mode7_pixel(i,l,x,y,&c))continue;}else{if(!bpp(mode,l)||!tiled_pixel(i,l,x,y,&c))continue;}if(!c.transparent&&c.priority>best.priority)best=c;}if((mask&0x10u)&&opal){uint8_t pr=objpri(i,mode,opri);if(!((wen&0x10u)&&wmask(i,4,x))&&pr>best.priority){best.color=extended==0xffffu?cg(i,opal):extended;best.palette_index=opal;best.priority=pr;best.layer=4;best.obj_palette=extended==0xffffu?(uint8_t)((opal-128u)>>4):(uint8_t)(math?4u:0u);}}return best;}
 
 int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
-    unsigned x;uint8_t opal[256],opri[256];
+    unsigned x;uint8_t opal[256],opri[256],omath[256];uint16_t ocolor[256];uint32_t oorder[256];
     if(!i||y>=224u)return 0;
     /* Settings owns its text after native VBlank DMA, before visible pixels.
        In-place values must not expose the stock Options rows while held. */
@@ -170,14 +190,14 @@ int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
     if(y>=108u&&tg_mod_bottom_screen_race_off(i)){
         memset(i->mode1_frame+y*512u,0,512u);return 1;
     }
-    objline(i,y,opal,opri);
+    objline(i,y,opal,opri,oorder);extended_objline(i,y,opal,opri,oorder,ocolor,omath);
     for(x=0;x<256u;x++){
         TgPixel mp,sp;uint16_t color,add=i->ppu_fixed_color;uint8_t inid=regv(i,0x2100u),main=regv(i,0x212cu)&0x1fu,sub=regv(i,0x212du)&0x1fu,mw=regv(i,0x212eu)&0x1fu,swm=regv(i,0x212fu)&0x1fu,cgw=regv(i,0x2130u),cga=regv(i,0x2131u);unsigned br=inid&15u;int blank=(inid&0x80u)!=0,cw,clip,prevent,math;
         if(blank)color=0;
         else{
-            mp=screenpx(i,main,mw,x,y,opal[x],opri[x]);color=mp.color;cw=wmask(i,5,x);clip=applies((cgw>>6)&3u,cw);prevent=applies((cgw>>4)&3u,cw);math=(cga&(1u<<mp.layer))!=0;
+            mp=screenpx(i,main,mw,x,y,opal[x],opri[x],ocolor[x],omath[x]);color=mp.color;cw=wmask(i,5,x);clip=applies((cgw>>6)&3u,cw);prevent=applies((cgw>>4)&3u,cw);math=(cga&(1u<<mp.layer))!=0;
             if(clip)color=0;
-            if(cgw&2u){sp=screenpx(i,sub,swm,x,y,opal[x],opri[x]);add=sp.color;}
+            if(cgw&2u){sp=screenpx(i,sub,swm,x,y,opal[x],opri[x],ocolor[x],omath[x]);add=sp.color;}
             if(mp.layer==4&&mp.obj_palette<4)math=0;
             if(prevent)math=0;
             if(math)color=(cga&0x80u)?csub(color,add,(cga&0x40u)!=0):cadd(color,add,(cga&0x40u)!=0);
@@ -190,7 +210,7 @@ int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
 }
 
 int topgear_recomp_v22_render_current_frame(TopGearRecomp *i,TopGearV22VideoInfo *info){
-    unsigned x,y;uint8_t opal[256],opri[256];uint32_t non=0;uint8_t seen[32768/8];
+    unsigned x,y;uint8_t opal[256],opri[256],omath[256];uint16_t ocolor[256];uint32_t oorder[256];uint32_t non=0;uint8_t seen[32768/8];
     if(!i||!info)return 0;
     if(i->mod_menu_remodel_active&&i->mod_menu_remodel_page==12u){i->mod_menu_remodel_dirty=1u;tg_mod_menu_remodel_draw_if_dirty(i);}
     memset(info,0,sizeof(*info));memset(seen,0,sizeof(seen));
@@ -201,15 +221,15 @@ int topgear_recomp_v22_render_current_frame(TopGearRecomp *i,TopGearV22VideoInfo
         if(y>=108u&&tg_mod_bottom_screen_race_off(i)){
             memset(i->mode1_frame+y*512u,0,512u);seen[0]|=1u;continue;
         }
-        objline(i,y,opal,opri);
+        objline(i,y,opal,opri,oorder);extended_objline(i,y,opal,opri,oorder,ocolor,omath);
         for(x=0;x<256;x++){
             TgPixel mp,sp;uint16_t color,add=i->ppu_fixed_color;int cw,clip,prevent,math;
             if(blank){color=0;}
             else{
-                mp=screenpx(i,main,mw,x,y,opal[x],opri[x]);color=mp.color;
+                mp=screenpx(i,main,mw,x,y,opal[x],opri[x],ocolor[x],omath[x]);color=mp.color;
                 cw=wmask(i,5,x);clip=applies((cgw>>6)&3u,cw);prevent=applies((cgw>>4)&3u,cw);math=(cga&(1u<<mp.layer))!=0;
                 if(clip)color=0;
-                if(cgw&2u){sp=screenpx(i,sub,swm,x,y,opal[x],opri[x]);add=sp.color;}
+                if(cgw&2u){sp=screenpx(i,sub,swm,x,y,opal[x],opri[x],ocolor[x],omath[x]);add=sp.color;}
                 if(mp.layer==4&&mp.obj_palette<4)math=0;
                 if(prevent)math=0;
                 if(math)color=(cga&0x80u)?csub(color,add,(cga&0x40u)!=0):cadd(color,add,(cga&0x40u)!=0);
