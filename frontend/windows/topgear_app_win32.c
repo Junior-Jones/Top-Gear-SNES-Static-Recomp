@@ -12,6 +12,7 @@
 #include "topgear_input_latch.h"
 #include "topgear_player_settings_file.h"
 #include "topgear_time_trial_store.h"
+#include "topgear_time_trial_file_win32.h"
 
 #include <stdint.h>
 #include <io.h>
@@ -196,6 +197,7 @@ static wchar_t g_rom_directory[PATH_CAPACITY];
 static wchar_t g_saves_directory[PATH_CAPACITY];
 static wchar_t g_data_directory[PATH_CAPACITY];
 static wchar_t g_time_trial_data_path[PATH_CAPACITY];
+static TopGearTimeTrialFileWin32 g_time_trial_file;
 static char g_player_settings_path[PATH_CAPACITY * 4];
 static wchar_t g_sram_path[PATH_CAPACITY];
 static uint32_t g_sram_last_flush_frame;
@@ -501,47 +503,7 @@ static void maybe_flush_battery_sram_win32(void) {
 }
 
 static int load_time_trial_data_win32(TopGearApp *game) {
-    FILE *file;
-    void *bytes;
-    size_t size,count;
-    long length;
-    int trailing;
-    char error[256];
-    if (!game || !g_time_trial_data_path[0]) return 1;
-    file = _wfopen(g_time_trial_data_path, L"rb");
-    if (!file) {
-        DWORD attributes=GetFileAttributesW(g_time_trial_data_path),reason=GetLastError();
-        /* Access/sharing errors are not an empty leaderboard. */
-        return attributes==INVALID_FILE_ATTRIBUTES &&
-               (reason==ERROR_FILE_NOT_FOUND||reason==ERROR_PATH_NOT_FOUND);
-    }
-    /* Read the actual file length so the host-side Time Trial store can
-       recognize TGTT v6 and migrate TGTT v5 and safely reset semantically incomplete
-       TGTT v1/v2 prototype history without assigning invented car metadata. */
-    if (fseek(file, 0, SEEK_END) != 0 || (length = ftell(file)) <= 0 ||
-        length > 1024L * 1024L || fseek(file, 0, SEEK_SET) != 0) {
-        (void)fclose(file);
-        return 0;
-    }
-    size = (size_t)length;
-    bytes = malloc(size);
-    if (!bytes) { (void)fclose(file); return 0; }
-    count = fread(bytes, 1u, size, file);
-    trailing = fgetc(file);
-    if (ferror(file) || fclose(file) != 0 || count != size || trailing != EOF) {
-        free(bytes); return 0;
-    }
-    memset(error, 0, sizeof(error));
-    if (!topgear_app_time_trial_data_import(game, bytes, size, error, sizeof(error))) {
-        free(bytes); return 0;
-    }
-    if(size>=8u&&((const unsigned char*)bytes)[4]==5u&&((const unsigned char*)bytes)[5]==0u){
-        wchar_t backup[PATH_CAPACITY+64];
-        _snwprintf_s(backup,ARRAY_COUNT(backup),_TRUNCATE,L"%s.v5-%lu-%llu.bak",g_time_trial_data_path,(unsigned long)GetCurrentProcessId(),(unsigned long long)GetTickCount64());
-        if(!CopyFileW(g_time_trial_data_path,backup,TRUE)){free(bytes);return 0;}
-    }
-    free(bytes);
-    return 1;
+    return topgear_time_trial_file_load(game,g_time_trial_data_path,&g_time_trial_file);
 }
 
 static int flush_player_settings_win32(void) {
@@ -567,45 +529,11 @@ static int flush_player_settings_win32(void) {
 }
 
 static int flush_time_trial_data_win32(int force) {
-    void *bytes;
-    size_t size;
-    wchar_t temporary[PATH_CAPACITY];
-    FILE *file;
-    int written;
-    if (!g_game || !g_time_trial_data_path[0]) return 1;
-    if (!force && !topgear_app_time_trial_data_dirty(g_game)) return 1;
-    if (!ensure_directory_tree(g_data_directory)) return 0;
-    size = topgear_app_time_trial_data_size();
-    bytes = malloc(size);
-    if (!bytes) return 0;
-    if (!topgear_app_time_trial_data_export(g_game, bytes, size)) { free(bytes); return 0; }
-    written = _snwprintf(temporary, ARRAY_COUNT(temporary), L"%s.tmp-%lu",
-                         g_time_trial_data_path, (unsigned long)GetCurrentProcessId());
-    if (written < 0 || (size_t)written >= ARRAY_COUNT(temporary)) { free(bytes); return 0; }
-    file = _wfopen(temporary, L"wb");
-    if (!file) { free(bytes); return 0; }
-    {
-        int failed = 0;
-        if (fwrite(bytes, 1u, size, file) != size) failed = 1;
-        if (!failed && fflush(file) != 0) failed = 1;
-        /* fflush only reaches the CRT/OS boundary. _commit requests that the
-           temporary TGTT-v5 bytes reach the storage device before the atomic
-           replacement, matching the POSIX headless acceptance path's fsync. */
-        if (!failed && _commit(_fileno(file)) != 0) failed = 1;
-        if (fclose(file) != 0) failed = 1;
-        if (failed ||
-            !MoveFileExW(temporary, g_time_trial_data_path,
-                         MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
-            (void)DeleteFileW(temporary);
-            free(bytes);
-            return 0;
-        }
-    }
-    free(bytes);
-    /* This is the only point that acknowledges the completed-run handoff to
-       the static core.  A failed durable save leaves the RESULTS page locked. */
-    topgear_app_time_trial_data_mark_clean(g_game);
-    return 1;
+    if(!g_game||!g_time_trial_data_path[0])return 1;
+    if(!g_time_trial_file.loaded)return 0;
+    if(!force&&!topgear_app_time_trial_data_dirty(g_game))return 1;
+    return ensure_directory_tree(g_data_directory)&&
+        topgear_time_trial_file_save(g_game,g_time_trial_data_path,&g_time_trial_file);
 }
 
 
@@ -1473,18 +1401,15 @@ static void show_key_bindings(void) {
 
 static const wchar_t g_welcome_text[] =
     L"Welcome to Top Gear (SNES) Static Recompilation\r\n\r\n"
-    L"Version 2.1.0\r\n"
-    L"\r\n"
-    L"Added to Settings:\r\n"
-    L"* Center Screen, Default Off\r\n"
-    L"This option can be toggled On after Bottom Screen is turned Off\r\n"
-    L"* Extra CPU, default On\r\n"
-    L"This option enabled will add 2 more CPU controlled drivers using the remaining 2 cars, the CPUs use the names SENNA, MANSELL and JONES\r\n"
+    L"Version 2.1.1\r\n"
     L"\r\n"
     L"General,\r\n"
-    L"* All 16 normal AI drivers are named after classic racing drivers, with a fixed car colour assigned to each.\r\n"
-    L"\u2022 Time Trial fix: Removed hidden opponent contacts so only Player 1 races the clock.\r\n"
-    L"\u2022 Settings improvements: Options save automatically. Updated menu spacing and Left/Right sounds; disabled Center Screen stays silent.\r\n"
+    L"* Menu fix: The original menu layout no longer flashes when using Up, Down, Left or Right.\r\n"
+    L"* Time Trial menu fixes: The L/R shoulder buttons now change the car filter correctly. Results text stays inside the menu and no longer leaves stray digits on the leaderboard.\r\n"
+    L"* Timing data fix: A corrupt or unreadable timing file is protected from being overwritten.\r\n"
+    L"* Settings improvements: Options forced by 2 player mode stay silent and do not change your saved 1 player settings.\r\n"
+    L"* Menu spacing: Fixed leftover difficulty text and moved the Center Screen message inside the border.\r\n"
+    L"* Menu sounds: Pages with only one choice stay silent when Up or Down cannot change the selection.\r\n"
     L"\r\n"
     L"Feedback on any issues is welcomed\r\n"
     L"\r\n"
@@ -3655,7 +3580,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                         static const wchar_t about[] =
                             L"F1 - Open the Welcome window\r\n\r\n"
                             L"Top Gear (SNES) Static Recompilation\r\n"
-                            L"Version 2.1.0\r\n\r\n"
+                            L"Version 2.1.1\r\n\r\n"
                             L"Title: Top Gear\r\n"
                             L"Region: USA NTSC\r\n"
                             L"File type: .sfc";
@@ -3776,7 +3701,8 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             (void)flush_player_settings_win32();
             topgear_app_destroy(g_game);
             g_game = result->game;
-            (void)load_time_trial_data_win32(g_game);
+            if(!load_time_trial_data_win32(g_game))
+                MessageBoxW(window,L"The timing database could not be loaded. Its existing file has been left unchanged and timing saves are blocked. Close the game, restore a valid Data/time-trial.dat, then load the ROM again.",APP_TITLE,MB_OK|MB_ICONERROR);
             (void)topgear_app_player_settings_load(g_game,g_player_settings_path);
             if(g_frontend_settings.bottom_screen_saved)
                 topgear_app_set_bottom_screen_enabled(g_game,g_frontend_settings.bottom_screen_enabled);

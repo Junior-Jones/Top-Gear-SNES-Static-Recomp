@@ -1,15 +1,12 @@
-Version 2.1.0
-
-Added to Settings:
-* Center Screen, Default Off
-This option can be toggled On after Bottom Screen is turned Off
-* Extra CPU, default On
-This option enabled will add 2 more CPU controlled drivers using the remaining 2 cars, the CPUs use the names SENNA, MANSELL and JONES
+Version 2.1.1
 
 General,
-* All 16 normal AI drivers are named after classic racing drivers, with a fixed car colour assigned to each.
-• Time Trial fix: Removed hidden opponent contacts so only Player 1 races the clock.
-• Settings improvements: Options save automatically. Updated menu spacing and Left/Right sounds; disabled Center Screen stays silent.
+* Menu fix: The original menu layout no longer flashes when using Up, Down, Left or Right.
+* Time Trial menu fixes: The L/R shoulder buttons now change the car filter correctly. Results text stays inside the menu and no longer leaves stray digits on the leaderboard.
+* Timing data fix: A corrupt or unreadable timing file is protected from being overwritten.
+* Settings improvements: Options forced by 2 player mode stay silent and do not change your saved 1 player settings.
+* Menu spacing: Fixed leftover difficulty text and moved the Center Screen message inside the border.
+* Menu sounds: Pages with only one choice stay silent when Up or Down cannot change the selection.
 
 Feedback on any issues is welcomed
 

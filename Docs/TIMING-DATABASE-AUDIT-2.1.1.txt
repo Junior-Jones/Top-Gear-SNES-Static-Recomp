@@ -1,0 +1,56 @@
+Time Trial timing database audit - 2.1.1
+
+Seven natural controller-driven races completed headless, with no fabricated
+lap/sector times, finish positions, fuel or race outcomes. P1 used Blue Weasel,
+automatic gears. Three tracks were selected randomly without replacement.
+
+Track        Laps   First run      Second run
+Sicily         3    2:24.983       2:27.033
+Bordeaux       6    4:57.450       4:57.450
+Stonehenge     4    2:16.433       2:16.417
+
+Each pair used the actual Retry action, RESULTS -> Leaderboard -> Finish,
+physical time-trial.dat writes, reopened-file verification and a core restart
+with physical player-settings reload. Actual completed snapshots were then
+used to explore Leaderboard/B/Finish, Tracks, Cars/all four selections, and
+Main Menu with live leaderboard callbacks and no synthetic results.
+
+A shared test database combined the six genuine records unchanged. A seventh
+cold Sicily run completed in 2:24.983 and was saved into that existing file.
+Independent Python decoding verified all 1,280 slots, record ownership,
+complete laps, total=sum(laps), lap=sum(sectors), separate sector minima,
+unused lap slots, contiguous Top 5 banks and stable ranking order.
+There are seven ranked records. The older tied Sicily result remains first;
+the newer equal run is second, followed by 2:27.033. Bordeaux has two equal
+records in completion order; Stonehenge's faster second run ranks first.
+The other 31 track sections remained byte-for-byte unchanged by race seven.
+The controller harness's latest-run rank check was corrected to distinguish
+identical times using sequence IDs; this was a reporting fix, not a data fix.
+
+Database edge cases
+- All 1,280 track/car/gearbox slots filled, exported, reloaded and queried.
+- 24 invalid/corrupt mutations and every short header length (0..31).
+- Invalid track/car/gearbox, name, flags, lap count, incomplete laps,
+  zero/mismatched totals, inconsistent sectors/minima, unused lap data,
+  and overflowing eight-lap totals rejected without changing the live store.
+- Exact ties, saturated sequence IDs, full Top 5 eviction/non-qualifying
+  last-run retention, automatic/manual separation, genuine v5 migration,
+  and v1/v2 semantic reset verified.
+- Actual Windows file module: bad magic, empty/truncated/extra-byte files,
+  invalid timing, exclusive locks, read-only replacement failure, recovery,
+  pending-run retention, durable save and missing-file initialization pass.
+
+Fix: a failed timing-file load is now remembered. Existing unreadable/corrupt
+files cannot be overwritten by later forced saves. The launcher reports the
+problem; restore a valid file and reload the ROM to retry. Stream read errors
+always close the file. Successful durable replacement alone acknowledges the
+completed run. The TGTT v6 format is unchanged.
+
+Evidence under Verification/Menu-Flicker:
+Time-Trial-Races/*/run.log and menu-audit.log
+Time-Trial-Races/shared-database/physical-audit.json
+database-edges.log, Timing-File-Edge-Cases/run.log
+
+Limits: these are targeted automated checks, not proof against every possible
+hardware failure or concurrent writer. The randomized sample covers three
+tracks with Blue Weasel/automatic; synthetic storage tests cover all banks.

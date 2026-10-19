@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.1.0 - runtime Data
+Top Gear Definitive Edition 2.1.1 - runtime Data
 ================================================
 The Data directory beside Launcher.exe contains persistent game settings and
 Time Trial history. Gameplay logic is compiled into the static core.
@@ -60,3 +60,10 @@ persistent save-game format. A new Career attempt starts with three continues. R
 Keep Data when updating. Automated tests use separate fixture directories.
 The ROM belongs in Rom; snapshots/screenshots/diagnostic exports retain their
 separate folders. Launcher settings.ini currently remains beside the EXE.
+
+Timing file protection (2.1.1)
+A failed timing database load blocks writes to that file. Corrupt, truncated
+or unreadable existing files are left unchanged; the launcher reports the
+problem. Close the game, restore a valid file, and reload the ROM to retry.
+A genuinely missing file initializes normally. Failed durable saves keep the
+completed run pending, and the results menu waits for a successful save.

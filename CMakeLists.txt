@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(TopGearSNESStaticRecomp VERSION 2.1.0 LANGUAGES C CXX)
+project(TopGearSNESStaticRecomp VERSION 2.1.1 LANGUAGES C CXX)
 
 include(CTest)
 set(TOPGEAR_TEST_ROM "" CACHE FILEPATH
@@ -37,6 +37,11 @@ if(BUILD_TESTING)
             -Wall -Wextra -Wpedantic -Werror)
     endif()
     add_test(NAME topgear-time-trial-store COMMAND topgear-time-trial-store-test)
+    add_executable(topgear-time-trial-store-edge-test tests/test_time_trial_store_edge.c frontend/common/topgear_time_trial_store.c)
+    target_include_directories(topgear-time-trial-store-edge-test PRIVATE frontend/common)
+    target_link_libraries(topgear-time-trial-store-edge-test PRIVATE topgear-static-recomp)
+    add_test(NAME topgear-time-trial-store-edge COMMAND topgear-time-trial-store-edge-test)
+
 
     add_executable(topgear-headless-audio-test
         frontend/headless/topgear_headless.c)
@@ -189,6 +194,7 @@ FetchContent_GetProperties(topgear_sdl SOURCE_DIR TOPGEAR_SDL_SOURCE_DIR)
 
 add_executable(topgear-launcher WIN32
     frontend/windows/topgear_app_win32.c
+    frontend/windows/topgear_time_trial_file_win32.c
     frontend/windows/topgear_app_core.c
     frontend/common/topgear_time_trial_store.c
     frontend/common/topgear_player_settings_file.c
@@ -309,6 +315,10 @@ else()
 endif()
 
 if(BUILD_TESTING AND WIN32 AND TOPGEAR_TEST_ROM)
+ add_executable(topgear-timing-file-test tests/test_timing_file_win32.c frontend/windows/topgear_time_trial_file_win32.c frontend/windows/topgear_app_core.c frontend/common/topgear_time_trial_store.c frontend/common/topgear_player_settings_file.c third_party/topgear-gamepad/topgear_gamepad_input_win32.c)
+ target_include_directories(topgear-timing-file-test PRIVATE frontend/windows frontend/common third_party/topgear-gamepad)
+ target_compile_definitions(topgear-timing-file-test PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _CRT_SECURE_NO_WARNINGS)
+ target_link_libraries(topgear-timing-file-test PRIVATE topgear-static-recomp SDL3::SDL3-static user32 comctl32)
  add_executable(topgear-bottom-screen-persistence tests/test_bottom_screen_persistence_win32.c frontend/windows/topgear_app_core.c frontend/common/topgear_time_trial_store.c frontend/common/topgear_player_settings_file.c frontend/windows/topgear_frontend_settings_win32.c third_party/topgear-gamepad/topgear_gamepad_input_win32.c)
  target_include_directories(topgear-bottom-screen-persistence PRIVATE frontend/windows frontend/common third_party/topgear-gamepad)
  target_compile_definitions(topgear-bottom-screen-persistence PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _CRT_SECURE_NO_WARNINGS)

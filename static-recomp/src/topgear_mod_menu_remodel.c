@@ -10,7 +10,8 @@
    This is intentionally a core-owned menu-state extension, not a frontend
    overlay.  The original OPTIONS renderer establishes the Mode-1 background,
    border, font graphics and selector sprite.  This module reuses those exact
-   assets and replaces only the BG1 tilemap text inside the existing frame.
+   assets. Its layout builder replaces the stock Options text calls and owns
+   both the visible BG1 map and the native upload buffer inside that frame.
 
    New root:
        CAREER
@@ -137,7 +138,7 @@ static void draw_small_text(TopGearRecomp *i,unsigned x,unsigned y,const char *t
     size_t n,j;
     if(!i||!text||y>=32u)return;
     n=strlen(text);
-    for(j=0u;j<n&&x<30u;j++,x++)vram_word(i,x,y,small_glyph_word(text[j]));
+    for(j=0u;j<n&&x<29u;j++,x++)vram_word(i,x,y,small_glyph_word(text[j]));
 }
 
 
@@ -154,6 +155,7 @@ static void clear_menu_text_area(TopGearRecomp *i){
     /* Rebuild the title break in the existing frame, then clear only the
        interior BG1 text area.  Vertical/bottom border tiles remain untouched. */
     for(x=3u;x<=28u;x++){
+        vram_word(i,x,1u,0u);
         vram_word(i,x,2u,0u);
         vram_word(i,x,3u,UINT16_C(0x002C));
     }
@@ -544,12 +546,12 @@ static void render_post_race_detail(TopGearRecomp *i){
     (void)snprintf(line,sizeof(line),"%s %s %s",name,
                    tt_car_label_id(run.car_id),tt_gear_label_id(run.gearbox));
     draw_small_center_in_column(i,3u,26u,5u,line);
-    draw_small_text(i,3u,7u,"       TIME    S1   S2   S3");
+    draw_small_text(i,3u,7u,"      TIME    S1   S2   S3");
     if(run.total_time_ticks)format_total_ticks(run.total_time_ticks,t);else (void)snprintf(t,sizeof(t),"0:00:000");
     if(run.best_sector1_ticks)format_sector_ticks(run.best_sector1_ticks,s1);else (void)snprintf(s1,sizeof(s1),"00.0");
     if(run.best_sector2_ticks)format_sector_ticks(run.best_sector2_ticks,s2);else (void)snprintf(s2,sizeof(s2),"00.0");
     if(run.best_sector3_ticks)format_sector_ticks(run.best_sector3_ticks,s3);else (void)snprintf(s3,sizeof(s3),"00.0");
-    (void)snprintf(line,sizeof(line),"   %s  %s %s %s",t,s1,s2,s3);
+    (void)snprintf(line,sizeof(line),"  %s  %s %s %s",t,s1,s2,s3);
     draw_small_text(i,3u,8u,line);
     (void)snprintf(line,sizeof(line),"LAPS: %u",(unsigned)run.required_laps);
     draw_small_text(i,3u,10u,line);
@@ -779,7 +781,7 @@ static void render_page(TopGearRecomp *i){
         draw_small_center_in_column(i,3u,26u,row_y_for(i,2u)+2u,i->mod_music_mode==2u?"CLASSIC":i->mod_music_mode==1u?"RANDOM":"COMPLETE");
     }
     if(i->mod_center_screen_enabled&&(i->mod_menu_remodel_page==TG_REMODEL_PAGE_CAREER||i->mod_menu_remodel_page==TG_REMODEL_PAGE_RALLY))
-        draw_small_center_in_column(i,3u,26u,26u,"CENTER SCREEN: 1 PLAYER");
+        draw_small_center_in_column(i,3u,26u,25u,"CENTER SCREEN: 1 PLAYER");
     i->mod_menu_remodel_dirty=0u;
     i->mod_menu_remodel_render_count++;
 }
@@ -817,7 +819,18 @@ int tg_mod_menu_remodel_main_menu_enter(TopGearRecomp *i){
 }
 
 void tg_mod_menu_remodel_draw_if_dirty(TopGearRecomp *i){
-    if(i&&i->mod_menu_remodel_active&&i->mod_menu_remodel_dirty)render_page(i);
+    if(i&&i->mod_menu_remodel_active&&i->mod_menu_remodel_dirty){
+        render_page(i);
+        /* The native menu DMA reads this BG1 map buffer. Keep the custom
+           layout here as well, so later uploads contain no stock rows. */
+        memcpy(i->wram+0x0C6Cu,i->vram,0x0800u);
+    }
+}
+
+void tg_mod_menu_remodel_replace_layout(TopGearRecomp *i){
+    if(!i||!i->mod_menu_remodel_active)return;
+    i->mod_menu_remodel_dirty=1u;
+    tg_mod_menu_remodel_draw_if_dirty(i);
 }
 
 static void schedule_return(TopGearRecomp *i,uint8_t page,uint8_t selection){
@@ -849,9 +862,10 @@ static int move_selection(TopGearRecomp *i,int delta,uint16_t *selection_out){
     count=page_item_count(i);
     if(count==0u)return TG_REMODEL_INPUT_HANDLED;
     current=i->mod_menu_remodel_selection;
-    if(current>=count)current=0u;
+    if(current>=count){current=0u;i->mod_menu_remodel_selection=0u;i->mod_menu_remodel_dirty=1u;}
     if(delta<0)next=current?current-1u:count-1u;
     else next=(current+1u)%count;
+    if(next==current){*selection_out=(uint16_t)current;return TG_REMODEL_INPUT_HANDLED;}
     i->mod_menu_remodel_selection=(uint8_t)next;
     i->mod_menu_remodel_dirty=1u;
     (void)tg_bus_store16(i,(uint32_t)((i->cpu.d+0x5Au)&0xFFFFu),(uint16_t)next);
@@ -1107,6 +1121,7 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
            update, including its $0424=$84 sound and button-release wait.
            HANDLED skips that audible stock cue. */
         if(page==TG_REMODEL_PAGE_SETTINGS&&sel==6u){
+            if(read_word(i,0x1F04u)){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
             tg_mod_insert_audio_navigation(i);
             topgear_recomp_set_extra_cpu_drivers_enabled(i,i->rivals.extra_cpu_off!=0);
             i->mod_menu_remodel_reserved=1u;*selection_out=sel;return TG_REMODEL_INPUT_REDRAW_SELECTOR;
@@ -1119,6 +1134,7 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
             return TG_REMODEL_INPUT_REDRAW_SELECTOR;
         }
         if(page==TG_REMODEL_PAGE_SETTINGS&&sel==4u){
+            if(read_word(i,0x1F04u)){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
             tg_mod_insert_audio_navigation(i);
             if(!read_word(i,0x1F04u))topgear_recomp_set_bottom_screen_enabled(i,i->mod_bottom_screen_off);
             i->mod_menu_remodel_dirty=1u;i->mod_menu_remodel_reserved=1u;
@@ -1166,7 +1182,9 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
         int d=(input&TG_BTN_R)?1:-1;
         i->mod_time_trial_leaderboard_car=(uint8_t)(((int)(i->mod_time_trial_leaderboard_car&3u)+d+4)%4);
         i->mod_menu_remodel_dirty=1u;
-        return TG_REMODEL_INPUT_HANDLED;
+        tg_mod_insert_audio_navigation(i);
+        i->mod_menu_remodel_reserved=1u;*selection_out=sel;
+        return TG_REMODEL_INPUT_REDRAW_SELECTOR;
     }
 
     if((input&(TG_BTN_A|TG_BTN_START))==0u)return TG_REMODEL_INPUT_HANDLED;
@@ -1183,6 +1201,7 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
     case TG_REMODEL_PAGE_SETTINGS:
         if(sel==7u){tg_mod_insert_audio_accept(i);return go_root(i,3u,selection_out);}
         if(sel==6u){
+            if(read_word(i,0x1F04u)){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
             tg_mod_insert_audio_accept(i);
             topgear_recomp_set_extra_cpu_drivers_enabled(i,i->rivals.extra_cpu_off!=0);
             i->mod_menu_remodel_reserved=1u;*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;
@@ -1195,6 +1214,7 @@ int tg_mod_menu_remodel_handle_input(TopGearRecomp *i,uint16_t input,
             return TG_REMODEL_INPUT_HANDLED;
         }
         if(sel==4u){
+            if(read_word(i,0x1F04u)){*selection_out=sel;return TG_REMODEL_INPUT_HANDLED;}
             tg_mod_insert_audio_accept(i);
             if(!read_word(i,0x1F04u))topgear_recomp_set_bottom_screen_enabled(i,i->mod_bottom_screen_off);
             i->mod_menu_remodel_dirty=1u;i->mod_menu_remodel_reserved=1u;

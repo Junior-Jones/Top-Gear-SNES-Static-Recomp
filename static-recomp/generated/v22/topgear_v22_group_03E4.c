@@ -1024,6 +1024,13 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F91AAu: /* 20 93 9F JSR $9F93 */
+        /* Custom menus replace the stock Options layout builder. */
+        if(instance->mod_menu_remodel_active){
+            tg_mod_menu_remodel_replace_layout(instance);
+            instance->cpu.pc=0x91ADu;
+            instance->instruction_count++;
+            return 1;
+        }
         if (!tg_push16(instance, 0x91ACu)) return 0;
         instance->cpu.pc = 0x9F93u;
         instance->instruction_count++;
@@ -1036,8 +1043,8 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F91B0u: /* B9 17 A7 LDA $A717,Y */
-        if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA717u + instance->cpu.y)), &word)) return 0;
-        word=tg_mod_menu_remodel_selector_coord(instance,(uint16_t)(instance->cpu.y>>1u),word);
+        if(instance->mod_menu_remodel_active)word=tg_mod_menu_remodel_selector_coord(instance,(uint16_t)(instance->cpu.y>>1u),0u);
+        else if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA717u + instance->cpu.y)), &word)) return 0;
         tg_set_acc16(instance, word);
         tg_set_nz16(instance, word);
         instance->cpu.pc = 0x91B3u;
@@ -1049,8 +1056,8 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F91B5u: /* B9 21 A7 LDA $A721,Y */
-        if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA721u + instance->cpu.y)), &word)) return 0;
-        word=tg_mod_menu_remodel_selector_width(instance,(uint16_t)(instance->cpu.y>>1u),word);
+        if(instance->mod_menu_remodel_active)word=tg_mod_menu_remodel_selector_width(instance,(uint16_t)(instance->cpu.y>>1u),0u);
+        else if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA721u + instance->cpu.y)), &word)) return 0;
         tg_set_acc16(instance, word);
         tg_set_nz16(instance, word);
         instance->cpu.pc = 0x91B8u;
@@ -1249,8 +1256,8 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F9200u: /* B9 17 A7 LDA $A717,Y */
-        if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA717u + instance->cpu.y)), &word)) return 0;
-        word=tg_mod_menu_remodel_selector_coord(instance,(uint16_t)(instance->cpu.y>>1u),word);
+        if(instance->mod_menu_remodel_active)word=tg_mod_menu_remodel_selector_coord(instance,(uint16_t)(instance->cpu.y>>1u),0u);
+        else if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA717u + instance->cpu.y)), &word)) return 0;
         tg_set_acc16(instance, word);
         tg_set_nz16(instance, word);
         instance->cpu.pc = 0x9203u;
@@ -1262,8 +1269,8 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F9205u: /* B9 21 A7 LDA $A721,Y */
-        if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA721u + instance->cpu.y)), &word)) return 0;
-        word=tg_mod_menu_remodel_selector_width(instance,(uint16_t)(instance->cpu.y>>1u),word);
+        if(instance->mod_menu_remodel_active)word=tg_mod_menu_remodel_selector_width(instance,(uint16_t)(instance->cpu.y>>1u),0u);
+        else if (!tg_bus_read16(instance, (((uint32_t)instance->cpu.dbr << 16) | (uint16_t)(0xA721u + instance->cpu.y)), &word)) return 0;
         tg_set_acc16(instance, word);
         tg_set_nz16(instance, word);
         instance->cpu.pc = 0x9208u;
@@ -1334,6 +1341,13 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F9223u: /* 20 93 9F JSR $9F93 */
+        /* Custom menus replace the stock Options layout builder. */
+        if(instance->mod_menu_remodel_active){
+            tg_mod_menu_remodel_replace_layout(instance);
+            instance->cpu.pc=0x9226u;
+            instance->instruction_count++;
+            return 1;
+        }
         if (!tg_push16(instance, 0x9225u)) return 0;
         instance->cpu.pc = 0x9F93u;
         instance->instruction_count++;
@@ -1443,6 +1457,13 @@ int tg_v22_group_03E4(struct TopGearRecomp *instance){
         instance->instruction_count++;
         return 1;
     case 0x000F9251u: /* 20 88 9F JSR $9F88 */
+        /* Custom menus replace the stock Options layout builder. */
+        if(instance->mod_menu_remodel_active){
+            tg_mod_menu_remodel_replace_layout(instance);
+            instance->cpu.pc=0x9254u;
+            instance->instruction_count++;
+            return 1;
+        }
         if (!tg_push16(instance, 0x9253u)) return 0;
         instance->cpu.pc = 0x9F88u;
         instance->instruction_count++;

@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.1.0
+Top Gear Definitive Edition 2.1.1
 Launcher for Windows 10/11 x64
 
 Getting started
@@ -22,7 +22,8 @@ Leaderboard, Retry, Tracks, Cars and Main Menu. Retry can be used without a
 limit. The Top 5 records total time, the best three sectors and lap times for
 each track, car and gearbox.
 
-See VERSION.txt for the full rules and complete change list.
+See VERSION.txt for the latest fixes and history.txt for all four versions,
+including the full rules and earlier features.
 
 Settings and audio
 ------------------
@@ -43,7 +44,7 @@ songs in order. Random plays every race song once before reshuffling. Classic
 uses the original Top Gear race music. Title, qualifying and results songs are
 not selected as race songs. Music Player uses Left/Right to choose a song and
 A to stop or resume it. R cycles the three title songs on title and menu
-screens.
+screens. On the per-car leaderboard, L/R changes the car filter instead.
 
 Menu movement and confirmation effects use a separate cue channel, so music
 mute and the lower menu-music level do not silence them. Starting Career,
@@ -90,3 +91,9 @@ MANSELL join JONES using the three cars not chosen by Player 1. Off restores
 the two extra drivers to ordinary opponents. Two-player mode always disables
 the two extra main CPUs. The named ordinary opponents keep stable colours.
 ExtraCPUDrivers=1/0 is saved in settings.ini and in the player profile.
+
+Timing file protection (2.1.1)
+If an existing timing file cannot be loaded, the launcher reports the problem
+and prevents saves from replacing it. Close the game, restore a valid
+Data/time-trial.dat, and reload the ROM to retry. A missing file is created
+automatically. A failed disk save keeps the results menu waiting for a retry.
