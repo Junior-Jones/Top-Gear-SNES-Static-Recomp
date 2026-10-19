@@ -7,7 +7,7 @@
   "original": {
     "region": "USA"
   },
-  "status": "complete",
+  "status": "released",
   "targets": [
     "Windows"
   ],
@@ -29,5 +29,5 @@
       "url": "https://github.com/Junior-Jones/Top-Gear-SNES-Static-Recomp/blob/main/README.txt"
     }
   ],
-  "notes": "No further work is currently planned."
+  "notes": "A public Windows release is available. Development has resumed on the Definitive Edition."
 }
