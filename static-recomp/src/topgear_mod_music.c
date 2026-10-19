@@ -28,10 +28,11 @@ uint16_t tg_mod_music_input(TopGearRecomp *i,uint16_t input){
     int menu=!i->mod_music_race||i->mod_menu_remodel_active;
     int player=i->mod_menu_remodel_active&&i->mod_menu_remodel_page==12u&&i->mod_menu_remodel_selection==3u;
     int setup=i->mod_menu_remodel_active&&(i->mod_menu_remodel_page==1u||i->mod_menu_remodel_page==2u||i->mod_menu_remodel_page==3u);
+    int car_filter=i->mod_menu_remodel_active&&i->mod_menu_remodel_page==9u;
     if(player&&!i->mod_music_player_state){(void)player_select(i);i->mod_menu_remodel_dirty=1u;}
     if(!player&&i->mod_music_player_state){i->mod_music_player_state=0u;(void)select_engine(i,i->mod_music_title,0u);}
     uint8_t pressed=(uint8_t)((input&0x10u)!=0u);
-    if(menu&&!setup&&!(i->mod_menu_remodel_active&&(i->mod_menu_remodel_page==10u||i->mod_menu_remodel_page==11u))&&pressed&&!i->mod_music_r_held){
+    if(menu&&!setup&&!car_filter&&!(i->mod_menu_remodel_active&&(i->mod_menu_remodel_page==10u||i->mod_menu_remodel_page==11u))&&pressed&&!i->mod_music_r_held){
         i->mod_music_title=(uint8_t)((i->mod_music_title+1u)%3u);
         (void)select_engine(i,i->mod_music_title,0u);
         if(player){
@@ -41,7 +42,7 @@ uint16_t tg_mod_music_input(TopGearRecomp *i,uint16_t input){
         }
     }
     i->mod_music_r_held=pressed;
-    return menu&&!setup?(uint16_t)(input&~0x10u):input;
+    return menu&&!setup&&!car_filter?(uint16_t)(input&~0x10u):input;
 }
 void tg_mod_music_menu_enter(TopGearRecomp *i){
     if(i->mod_menu_remodel_return_pending&&(i->mod_menu_remodel_return_page==10u||i->mod_menu_remodel_return_page==11u)){

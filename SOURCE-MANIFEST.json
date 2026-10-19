@@ -1,5 +1,5 @@
 {
-  "file_count": 503,
+  "file_count": 518,
   "files": [
     {
       "bytes": 19,
@@ -17,9 +17,9 @@
       "sha256": "ad219b6ac742990d61c9b845666414cf3ca9171d65ed6797af957e0bd6876cfc"
     },
     {
-      "bytes": 17968,
+      "bytes": 19104,
       "path": "CMakeLists.txt",
-      "sha256": "f1cef218064afbb9004ace2b9dd6b6ebab84e104f8857b4ed330870bb769c06b"
+      "sha256": "6ccb390d6611515032e247a40e7f589432128075c04a4d18a8793aca313aadbb"
     },
     {
       "bytes": 688,
@@ -27,19 +27,9 @@
       "sha256": "9edc254bb2553e7f5412323c2305c738fa6e861e73e325105d9b819def82139b"
     },
     {
-      "bytes": 4038,
+      "bytes": 4447,
       "path": "Data/README.txt",
-      "sha256": "c13b8facf8f8ed9388d3373f038e17e162b774b67ebd13fdb29c61781af149ea"
-    },
-    {
-      "bytes": 96,
-      "path": "Data/player-settings.dat",
-      "sha256": "2a257c0ca7ecaec4386ff1d6a928d797f9c84eb435a7d44698a41a9b1d11d671"
-    },
-    {
-      "bytes": 215240,
-      "path": "Data/time-trial.dat",
-      "sha256": "7b6f6f7c74c98d75e273dcc102246464a56212881ad61154f1b6ed96e19f9860"
+      "sha256": "b671607f61fafb9f7571552768e330bd5766910a4fbbf4f2b9deb197e12440ba"
     },
     {
       "bytes": 30230,
@@ -137,6 +127,11 @@
       "sha256": "29d6d701c654025cf8b15f53023dc1e973d2eaeafb50701f7a2ee733b4f109e4"
     },
     {
+      "bytes": 9215,
+      "path": "Docs/MENU-AUDIT-TEST.txt",
+      "sha256": "09086b163700f438ac35a18b1358155b0502569dffd24cc767667fc161fc166b"
+    },
+    {
       "bytes": 2902,
       "path": "Docs/MENU-MUSIC-CONTROLS-2026-09-11.md",
       "sha256": "f684c8ee3d0ba9083d209afe2979b3c108cf117826792558cd8a00b1a6c7b059"
@@ -217,6 +212,11 @@
       "sha256": "3c834a0f62133d526a6a16d289ee440b16a8e8e76a62e03ab951fd5bfd2f016f"
     },
     {
+      "bytes": 3223,
+      "path": "Docs/TIMING-DATABASE-AUDIT-2.1.1.txt",
+      "sha256": "969c6d28fa5add5ced64dc761ad1a05a53726d190c11a0d085951b7a89fd14fa"
+    },
+    {
       "bytes": 5589,
       "path": "Docs/TOP-GEAR-AUDIO-TRACK-DISCOVERY.md",
       "sha256": "461f9bbc5d30baf5386b9108a6fafebf8634541076e3a7aaa87d22467f78d604"
@@ -230,6 +230,11 @@
       "bytes": 6573,
       "path": "Docs/TRACK-HARNESS-AND-CORE-REPAIRS-2026-09-10.md",
       "sha256": "7f857e60aac8a8fc102e7e3088fbdba56655e2e84c93d9a285e5d99b1bd34766"
+    },
+    {
+      "bytes": 1638,
+      "path": "Docs/TWO-PLAYER-SMOKE-2.1.1.txt",
+      "sha256": "7fe61b7928e3de0ce35a5ae37c5781324c51a94390d8ed219275d8d94deaa90c"
     },
     {
       "bytes": 2092,
@@ -302,9 +307,9 @@
       "sha256": "a0ad77ec5441dd32d0640435feb0ac81d552b0280ffc329c239ee735c75beeb3"
     },
     {
-      "bytes": 7150,
+      "bytes": 7333,
       "path": "README.txt",
-      "sha256": "6dae013b12c359c4a109353e0f2e3e1171613d28ef13ff98e8d59349c61e099d"
+      "sha256": "bade08f4b57783bd31797bf71554fe031827c1e3faf8e4c77ddbe77fa44cae34"
     },
     {
       "bytes": 18,
@@ -317,9 +322,9 @@
       "sha256": "f1b06a668834aa4ec5a388fa72356e6a24e0f87d53b3c215ec23a1efea84a706"
     },
     {
-      "bytes": 1035,
+      "bytes": 1108,
       "path": "VERSION.txt",
-      "sha256": "8341432e595f61e101011fba2c5f00f9b6aca22c8e8bb4642619914d6b1e0cd5"
+      "sha256": "beb9d66ac582775c5c59d76412101d1d5869953d099ef7b0c10a1f7c89bc2a51"
     },
     {
       "bytes": 1363,
@@ -377,14 +382,14 @@
       "sha256": "7abf7febe03c0ae4a7506a85435f87bef652ef56ad283e00a964dd097900543d"
     },
     {
-      "bytes": 4296,
+      "bytes": 4756,
       "path": "frontend/windows/Release-README.txt",
-      "sha256": "187aee05a0db4627fdb69dd5046316c0cfa4529aa2b159877ac995fad564c5b6"
+      "sha256": "b370657d51cbafae945d7d5254344f44f55ded45a6b9917b281271d966530f6b"
     },
     {
       "bytes": 824,
       "path": "frontend/windows/launcher_version.rc",
-      "sha256": "91990f43e16706dedb85590c1646db1822cca7b42770fc33efec692c853d013f"
+      "sha256": "5201fb44948e85825e9b7850fa3e2d462a309c428a9ac22497b97bd3d21a4577"
     },
     {
       "bytes": 19132,
@@ -397,9 +402,9 @@
       "sha256": "a12749d8f3be0081c1fc2c5af8c462d349c21b37e88d8cd881b7dc781f082383"
     },
     {
-      "bytes": 173416,
+      "bytes": 170530,
       "path": "frontend/windows/topgear_app_win32.c",
-      "sha256": "a22c47333a1b255d1e06bb5f75f4f0c6eefa5df95202605d80e7cfbc3cc5b6da"
+      "sha256": "d798e049830c76c56771d3d06bbfeee17ae8e8abcd4c579048bc747b856eb40a"
     },
     {
       "bytes": 38610,
@@ -452,6 +457,16 @@
       "sha256": "c74c694fb39824ea46f46a14ff91b4239dbb7bbf2e8d2426d2333fc9f15c5d48"
     },
     {
+      "bytes": 4168,
+      "path": "frontend/windows/topgear_time_trial_file_win32.c",
+      "sha256": "944fdd33a3bd76a5655195c836e3104632a3a58b07647942ea8299970419104b"
+    },
+    {
+      "bytes": 410,
+      "path": "frontend/windows/topgear_time_trial_file_win32.h",
+      "sha256": "9e6d0614afecb19718e0f9ba77034c5f7e75a60c714843bf52087f4ceb6d6224"
+    },
+    {
       "bytes": 2557,
       "path": "generated/audio/v27-static-smp/TOPGEAR-V27-SMP-AOT-GENERATION.json",
       "sha256": "c3d5e90d9f80a58b565209df745d6c2f10aa683d9efeb4cf14e614902eaab9f3"
@@ -472,9 +487,14 @@
       "sha256": "d867725f8187172edf31f6724b7d93cf61a0e3da720203430d42b92afcbd46ec"
     },
     {
-      "bytes": 27543,
+      "bytes": 8847,
+      "path": "history.txt",
+      "sha256": "da5624c64f6ba298f4baad343efafcd339c018344629db97957730c3cb5b7b00"
+    },
+    {
+      "bytes": 29701,
       "path": "static-recomp/CMakeLists.txt",
-      "sha256": "4d1e8cc676878eb726c34b826959e7d806332f7304a2dee9876fbac6ebe66720"
+      "sha256": "0d61929bbe21e8f39714c138f53ff3b96be339d46efca2a1f9901c3e5df5d191"
     },
     {
       "bytes": 27667,
@@ -1012,9 +1032,9 @@
       "sha256": "4a12727021cefd5f012c9d926b92f159bd4160f49e7417fa344fd3fa4de3906e"
     },
     {
-      "bytes": 108824,
+      "bytes": 109845,
       "path": "static-recomp/generated/v22/topgear_v22_group_03E4.c",
-      "sha256": "393d05df598b813640391e9a1c983a79bca9f5e230157b2231d30c359af88a68"
+      "sha256": "7b7c0b7089f1d858471c7c9eaee057c368eb4b94378b0abf8312e750c784e109"
     },
     {
       "bytes": 105157,
@@ -1302,9 +1322,9 @@
       "sha256": "f0a9af7209b73fcd765b70cf87a2581180a522c5168621ad1b13fcf3e7364d4c"
     },
     {
-      "bytes": 106730,
+      "bytes": 107751,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E4.c",
-      "sha256": "4e113306e272ece3c5845181cbe7d9e1b74a0c551c723f6260d11f3ffeaff67e"
+      "sha256": "fcabd518c4d2571e92f33e66dc9f266ae8b98851b575246f013233f9610b54d4"
     },
     {
       "bytes": 103006,
@@ -1362,9 +1382,9 @@
       "sha256": "6b392a51161ae604f95f7e8512806c083756644046cf06430a86d573d4a08b1d"
     },
     {
-      "bytes": 35244,
+      "bytes": 35308,
       "path": "static-recomp/internal/topgear_internal.h",
-      "sha256": "de8508e0dd5dbdd4b7d47cf9f6df17d2bdf637fe9599355ef54cc0cfb5c9eca3"
+      "sha256": "6e91702e7089aae56e84a0df8bd0feec1892bbe7a5892a59ca5f72d647502f31"
     },
     {
       "bytes": 2125,
@@ -1412,14 +1432,14 @@
       "sha256": "9bb7ac78c481e27360d46e46f279ac05fde1c6a16c9ebb4af650493e4492e748"
     },
     {
-      "bytes": 69472,
+      "bytes": 70600,
       "path": "static-recomp/src/topgear_mod_menu_remodel.c",
-      "sha256": "bec1d4404955d8258226bd5a498df1c9784ec6f56f41a8c6c0a3d174a519cd7a"
+      "sha256": "a04bb8043856bfe491f95201d9a1add51d59b444e1b28ad7a57b428494e63f89"
     },
     {
-      "bytes": 7722,
+      "bytes": 7825,
       "path": "static-recomp/src/topgear_mod_music.c",
-      "sha256": "ddf5c6d411613918c8a1ccb450991f9b7a4a43fb9780aaeca0c04f1f434b06be"
+      "sha256": "c5d727fe1f607c7578c917a12116f8d08d1e2359fb2428f9fd57ef234f78d433"
     },
     {
       "bytes": 4001,
@@ -1467,9 +1487,9 @@
       "sha256": "267743d3a1d5ca77839b295b8f422d194d2c608b6141ed83f72076383ad19843"
     },
     {
-      "bytes": 22764,
+      "bytes": 22311,
       "path": "static-recomp/src/topgear_v22_video.c",
-      "sha256": "6a8221ef395bee6468b2be8fb913eb164867ca928004cee4aaea6a83aacb5e40"
+      "sha256": "4ef5d2d4faddace2f6c378676b79b8acdfebad2a568e60b0f1943929161a9f1b"
     },
     {
       "bytes": 22554,
@@ -2197,9 +2217,9 @@
       "sha256": "4b85c1893b4c4bead552c065aecff5380fd6c05a4f5af41e32b0244cb8a6ae6f"
     },
     {
-      "bytes": 3500,
+      "bytes": 3632,
       "path": "static-recomp/tests/rivals/test_settings_native_audio.c",
-      "sha256": "87b6fc4fe8883a9bdc21cb82297420e5712c6ce542bc6a7fb3b27b7776f986d0"
+      "sha256": "6ee687b64d0c142bdb2c50e365143560d02d473c7b774d900578878f6622b56a"
     },
     {
       "bytes": 2476,
@@ -2207,9 +2227,19 @@
       "sha256": "d58150b4f3c78f143324988a536b64b152e9095fd07e2e708a5eb7a69f73878c"
     },
     {
+      "bytes": 7080,
+      "path": "static-recomp/tests/rivals/test_two_player_journey.c",
+      "sha256": "e15dd309d2d3f5847fa6bb0067f0a58a9ab008eb2ac24e12991c2dd0e1303cb5"
+    },
+    {
       "bytes": 2803,
       "path": "static-recomp/tests/rivals/test_two_players.c",
       "sha256": "83081bb1e43205a635903f2ec16aff417b583a3ade6cf1ad8142df6b28f2745d"
+    },
+    {
+      "bytes": 17195,
+      "path": "static-recomp/tests/rivals/two_player_self_driver.inc",
+      "sha256": "461b6595ef5613a8bb94bd3b1d3c6698ca308ae5c15d7941ea4f062da2b41b04"
     },
     {
       "bytes": 1379,
@@ -2277,14 +2307,44 @@
       "sha256": "f36844ab0b4a89644c520bd9a82483564ba4b449189b40a7f3ed9f1049b23982"
     },
     {
+      "bytes": 7907,
+      "path": "static-recomp/tests/test_menu_all_pages.c",
+      "sha256": "8138ef1ac9b60cd238901e04c5a3f03ce9de6278147867e5fec26909cb0f307e"
+    },
+    {
+      "bytes": 5436,
+      "path": "static-recomp/tests/test_menu_audit_contract.c",
+      "sha256": "9325720c18d40822cea45c875bdac6f60e9e00892ab042602bc7f071b3c010cc"
+    },
+    {
+      "bytes": 6356,
+      "path": "static-recomp/tests/test_menu_flicker.c",
+      "sha256": "8d9406ab11b635fa944c9405353d0e707e0a1b87cc6a6cfbe2b9bd18a180bb1f"
+    },
+    {
       "bytes": 12976,
       "path": "static-recomp/tests/test_menu_insert_audio.c",
       "sha256": "02c8446b7e05d6d1809359ab45c18a75e80729edaf68e7f18dca2fdcc6f69bfc"
     },
     {
+      "bytes": 7373,
+      "path": "static-recomp/tests/test_menu_misc.c",
+      "sha256": "ce04a6d42f0b97156eab0a46725002b69eaa5b74a5cf8fbba613b7b03523ebf3"
+    },
+    {
+      "bytes": 4662,
+      "path": "static-recomp/tests/test_menu_original_probe.c",
+      "sha256": "d567c60ea5f3a7e574710f9754fea975ca50bd1f40733cb479c69146ff3ae1fb"
+    },
+    {
       "bytes": 6256,
       "path": "static-recomp/tests/test_menu_player_summary.c",
       "sha256": "b0a5ee02e5d5596c2e03c4acf8f0625a7dafae386e58c051ceefbc15a453cc5b"
+    },
+    {
+      "bytes": 3369,
+      "path": "static-recomp/tests/test_menu_saved_results.c",
+      "sha256": "5bccf3cdadede8480267cc90c93c33c0e6b78a3e0d5d8dee5fc54bb2f73615f7"
     },
     {
       "bytes": 4732,
@@ -2382,9 +2442,9 @@
       "sha256": "dd54e00b710434dc24877a41c56221cb14d0e5b969f4f6dfebf5bb3e0b2637d4"
     },
     {
-      "bytes": 17025,
+      "bytes": 17240,
       "path": "static-recomp/tests/test_time_trial.c",
-      "sha256": "9029a1416decd4016aa0c07a2d817690a3e8343e7951eb8f27fe57014ee15982"
+      "sha256": "67edaae69cde433399f25515f5e7f652455bfa65250954622cae0184d44bc5f4"
     },
     {
       "bytes": 5182,
@@ -2400,6 +2460,11 @@
       "bytes": 6070,
       "path": "tests/audit_time_trial_matrix.py",
       "sha256": "27abed3ae3b183a90fb23b8b82dcfb3d1daef86127ab71bff5d51956150d1450"
+    },
+    {
+      "bytes": 3737,
+      "path": "tests/audit_timing_database.py",
+      "sha256": "e8438d24e456fc6cb7b655e28a2690c783526b3c74c8635e24731c160045a74b"
     },
     {
       "bytes": 4861,
@@ -2437,9 +2502,9 @@
       "sha256": "e4c26cbbdd87160856c80fe36105ed46a939061ac7e501b06a86dff83bfb7830"
     },
     {
-      "bytes": 47893,
+      "bytes": 48705,
       "path": "tests/test_time_trial_journey.c",
-      "sha256": "be4fc3ae9d296acabd36a47b966122a4a9c4eb67787f23f3655cdba6f1c7acb7"
+      "sha256": "86ff984d5cdc857b5481d14825c37d37eda3b120d2ab50322e200eb0b62d3c5b"
     },
     {
       "bytes": 26452,
@@ -2450,6 +2515,16 @@
       "bytes": 8143,
       "path": "tests/test_time_trial_store.c",
       "sha256": "ec28dbc3bbc9c3c7873e4446f7156055bae058819fa954435055e8925bbab6ad"
+    },
+    {
+      "bytes": 4197,
+      "path": "tests/test_time_trial_store_edge.c",
+      "sha256": "c1164d08e46eda83b88c189cfc392551113f2d812589ea9367ec7af3756e78bf"
+    },
+    {
+      "bytes": 3816,
+      "path": "tests/test_timing_file_win32.c",
+      "sha256": "ca93c788d5ede3142e103b5aca66a2aea03e7c9de227b208393f06c270cdb7df"
     },
     {
       "bytes": 21170,
@@ -2514,10 +2589,10 @@
     {
       "bytes": 5732,
       "path": "tools/integrity_manifests.py",
-      "sha256": "2dd4af1e07e9cd301c7cafe8c9babddfd044421a88234b46146fe1e1df7aaae9"
+      "sha256": "28afca4ba1e3c9fc3235629ce120c56a564918f3faee1cc4367ba0a60d9b062e"
     }
   ],
-  "inventory_sha256": "75188e37590ff48437af6aeec0df1944ebc40bee73ae09ee738f7b7edc38a18f",
-  "project_version": "2.1.0",
+  "inventory_sha256": "6d8bbaa5a025f6d59198c88fe31efc539c4f4e882e9e6213c3a4aaf541862923",
+  "project_version": "2.1.1",
   "schema": "topgear-source-manifest-v1"
 }

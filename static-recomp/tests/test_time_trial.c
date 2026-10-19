@@ -276,8 +276,11 @@ int main(void){
     if(tg_mod_menu_remodel_handle_input(&c,TG_BTN_A,&sel)!=2||c.mod_menu_remodel_page!=9u||c.mod_time_trial_leaderboard_car!=1u){
         fprintf(stderr,"Overall CAR action failed\n");ok=0;
     }
-    if(tg_mod_menu_remodel_handle_input(&c,TG_BTN_R,&sel)!=1||c.mod_time_trial_leaderboard_car!=2u||
-       tg_mod_menu_remodel_handle_input(&c,TG_BTN_L,&sel)!=1||c.mod_time_trial_leaderboard_car!=1u){
+    if(tg_mod_menu_remodel_handle_input(&c,TG_BTN_R,&sel)!=2||c.mod_time_trial_leaderboard_car!=2u||
+       tg_mod_menu_remodel_handle_input(&c,TG_BTN_R,&sel)!=1||c.mod_time_trial_leaderboard_car!=2u||
+       tg_mod_menu_remodel_handle_input(&c,0u,&sel)!=0||
+       tg_mod_menu_remodel_handle_input(&c,TG_BTN_L,&sel)!=2||c.mod_time_trial_leaderboard_car!=1u||
+       tg_mod_menu_remodel_handle_input(&c,0u,&sel)!=0){
         fprintf(stderr,"per-car L/R cycling failed\n");ok=0;
     }
     if(tg_mod_menu_remodel_handle_input(&c,TG_BTN_B,&sel)!=2||c.mod_menu_remodel_page!=8u||c.mod_menu_remodel_selection!=1u){

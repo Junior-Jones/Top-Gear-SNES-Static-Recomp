@@ -1,0 +1,29 @@
+Two-player checks - 2.1.1
+
+Headless Career and Rally both started normally with real P1/P2 inputs.
+Bottom Screen Off was correctly overridden, and neither extra main CPU
+executed. Native Player 1/Player 2/Exit setup, both name editors, gear,
+controls and car screens were traversed with every D-pad direction.
+No CPU AI was changed; topgear_mod_rivals.c matches published 2.1.0 exactly.
+
+The user later clarified that two-player checking only needed to prove the
+modes could start. No further two-player races were launched after that.
+The already completed controller tests are retained below for transparency.
+P1 White Sidewinder, P2 Blue Weasel, automatic gears, full starting tanks.
+
+Career first track only: Las Vegas - P1 3rd, P2 8th, zero pit stops, both
+finished. Headless throughput 193.10 FPS (not window presentation FPS).
+
+One Rally attempt, no retries:
+1 Las Vegas   - P1 1st, P2 8th, both finished, no pits.
+2 Machu Picchu - P1 1st, P2 4th, both finished, no pits.
+3 Yokohama    - P1 5th, P2 2nd, both finished, no pits.
+4 Frankfurt   - P1 2nd with one pit stop; P2 DNF, classified 17th, no pit stop.
+P2's test controller missed refuelling and ran out of fuel. This ended the
+Rally attempt; it was not retried. After track 3, P1 had 48 points (1st),
+P2 had 28 (4th). The failure path clears the active tally, so the test's
+post-failure zero point fields are not a new final championship result.
+Rally headless throughput by track: 198.49, 224.08, 242.41, 224.03 FPS.
+These controller outcomes are not a claim of successful full-Rally coverage.
+
+Evidence: Verification/Menu-Flicker/Two-Player-Races and two-player-final.log.

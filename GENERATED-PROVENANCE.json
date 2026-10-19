@@ -643,9 +643,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 108824,
+      "bytes": 109845,
       "path": "static-recomp/generated/v22/topgear_v22_group_03E4.c",
-      "sha256": "393d05df598b813640391e9a1c983a79bca9f5e230157b2231d30c359af88a68"
+      "sha256": "7b7c0b7089f1d858471c7c9eaee057c368eb4b94378b0abf8312e750c784e109"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -991,9 +991,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 106730,
+      "bytes": 107751,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_03E4.c",
-      "sha256": "4e113306e272ece3c5845181cbe7d9e1b74a0c551c723f6260d11f3ffeaff67e"
+      "sha256": "fcabd518c4d2571e92f33e66dc9f266ae8b98851b575246f013233f9610b54d4"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -1194,9 +1194,9 @@
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
     }
   ],
-  "inventory_sha256": "21ef835060a57f6722ecc219d4aa3c11855eb2b0eebd80fd2b616128c6bea366",
+  "inventory_sha256": "df6c37ce5b4756896773069e36b0ad6d80c8d6a01eb6fda9a6342f5e56fd2eb6",
   "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
-  "project_version": "2.1.0",
+  "project_version": "2.1.1",
   "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
   "schema": "topgear-generated-provenance-v1"
 }

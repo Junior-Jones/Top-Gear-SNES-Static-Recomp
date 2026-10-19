@@ -621,6 +621,7 @@ int tg_audio_backend_mod_write_dsp_register(struct TopGearRecomp*,uint8_t,uint8_
 int tg_mod_insert_audio_process(struct TopGearRecomp*,uint64_t);
 int tg_mod_menu_remodel_main_menu_enter(struct TopGearRecomp*);
 void tg_mod_menu_remodel_draw_if_dirty(struct TopGearRecomp*);
+void tg_mod_menu_remodel_replace_layout(struct TopGearRecomp*);
 int tg_mod_menu_remodel_handle_input(struct TopGearRecomp*,uint16_t,uint16_t*);
 void tg_mod_rally_note_points_award(struct TopGearRecomp*);
 unsigned tg_mod_rally_cutoff(unsigned index);

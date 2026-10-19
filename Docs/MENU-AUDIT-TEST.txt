@@ -1,0 +1,153 @@
+Version 2.1.1 - menu audit and fix log
+2026-10-19
+
+The published GitHub website release remains v2.1.0. This log describes the
+completed 2.1.1 candidate and the local definitive edition delivery folder.
+
+FIX 1 - Replace the old Options layout calls
+The custom menu reused the native Options event loop, but its navigation and
+value redraw calls still invoked the old layout builder. The resulting native
+map upload briefly restored the original rows. Those three layout call sites
+are now replaced in both generated dispatch paths. Custom selector coordinates
+and widths no longer read the old Options layout tables while active.
+The replacement owns both the visible map and the native upload buffer at
+WRAM $0C6C; the old Settings-only render-time redraw workaround was removed.
+Shared fonts, border, selector, input/timing and audio remain. Original player
+setup screens remain separate native screens; the original ROM is unchanged.
+Verified: published v1.2.0 source built and observed headless; 4 navigation
+presses entered its native layout builder 8 times and issued 4 sound cues.
+The replacement entered that old layout builder 0 times and retained 4 cues.
+Baseline navigation: 216 incorrect completed frames out of 5,088.
+Fixed main/Career/Rally/Time Trial main/Settings: 0 out of 11,712 frames,
+including all four D-pad directions and held/released value changes.
+
+FIX 2 - Per-car leaderboard R routing and hold handling
+The global title-music shortcut consumed R before the per-car leaderboard
+could use its documented car-filter control. That page now receives R without
+changing the selected title music. L/R filters use one change per press and
+the existing native selector/sound/release path. Music switching elsewhere is
+retained. Verified naturally across all 32 leaderboard tracks and all four
+car filters; global title selection stayed unchanged on that page.
+
+VALIDATION NOTES
+Completed-frame lettering checks allow the native queued update delay, but
+reject mixed layouts and reversion after a new complete value has appeared.
+Initial Time Trial post-race layout checks used explicit display fixtures.
+The user subsequently authorized random-track Time Trial races; those are
+recorded separately in Verification/Menu-Flicker/Time-Trial-Races. Retry routing is covered by the existing
+menu/settings/results semantic contract without advancing a race.
+
+EVIDENCE
+Verification/Menu-Flicker/before.log
+Verification/Menu-Flicker/all-dpad-final.log
+Verification/Menu-Flicker/original-probe.log
+Verification/Menu-Flicker/v120-original.log
+Verification/Menu-Flicker/contracts.log
+Verification/Menu-Flicker/audio.log
+
+FIX 3 - Forced two-player settings stay disabled
+Bottom Screen and Extra CPUs displayed forced two-player states, but their
+Left/Right/A handlers could still issue change cues; Extra CPUs could also
+change the saved solo preference without showing that change. Their forced
+controls now ignore those inputs silently and retain both solo preferences.
+Verified with the menu contract over both stored preferences and all three
+inputs. Exact PCM checks now pass for both directions in both two-player fixtures: zero native cues and zero changed samples.
+
+FIX 4 - No-op navigation on single-choice pages
+Up/Down on a page containing only one choice used the native selector redraw
+and sound path even though no selection changed. These inputs now stay silent
+and do not count as navigation. Invalid selection indices still clamp safely.
+Verified by the audit contract. Both generated layout call paths and original
+shared call/stack behaviour also pass that contract (30 prior failures, now 0).
+
+FIX 5 - Clear the complete difficulty title
+Leaving the country/password page could leave the upper halves of its
+skill title visible. Clear its first tile row along with the rest of the
+custom title before drawing the destination page.
+Verified for all three skill titles by the layout contract.
+
+FIX 6 - Keep the Center Screen hint inside the frame
+The Career/Rally one-player hint occupied the bottom border row. Move it
+one tile row up into the normal cleared text area. The border remains intact
+and the hint is removed normally when leaving that page.
+The new title/border assertions failed 4 times before these corrections and
+pass with 0 failures afterwards (layout-contract-before/after.log).
+
+EXPANDED VERIFICATION (headless)
+- Final main/menu/settings sweep: 11,712 completed frames, 0 mismatches.
+- Full Time Trial menu browser: 32 tracks, four car filters on every track,
+  results fixtures and navigation: 32,547 completed frames, 0 mismatches.
+- Actual audio: enabled Speed/Bottom/Center/Extra left/right each issue one
+  native cue with changed PCM; disabled Center and forced two-player Bottom/
+  Extra each issue zero cues and zero changed PCM samples.
+- Five targeted contract/persistence tests passed; preview release/skip and
+  password standings release/start contracts also pass without race execution.
+- Continue tests: gate matrix for all Career tracks and Rally ordinals/both
+  humans; actual Career three retries, exhaustion, No and standings failure
+  paths pass. These use controlled failure fixtures, not natural race results.
+- Native two-player chooser/P1/P2 name/gear/controls/car/Exit paths and Rally
+  preview pass (819 checked completed custom frames, 0 mismatches).
+
+Harness corrections are not counted as product fixes: delayed native upload
+oracle, snapshot history reset, native name END cursor, two-player setup
+chooser, and results footer navigation assumptions. Historical failed logs
+are retained for diagnosis; final logs are named explicitly below.
+
+Final logs so far: all-dpad-verified.log, all-pages-final.log, audio-final.log,
+contracts-final.log, audit-contract-final.log, two-player-final.log,
+continues-final.log. The complete miscellaneous tour passed: 5,381 completed
+custom frames, zero mismatches (misc-complete.log).
+
+FIX 7 - Time Trial results must stay inside the cleared text area
+Actual random-track races exposed leftover last-sector digits at the far
+right of the leaderboard. The results total row used 27 tiles inside a
+26-tile text area. Reduce the total/header leading padding by one tile and clamp compact
+text at the same right boundary used when clearing. All time/sector digits
+fit, and the frame column is preserved. The regression failed before this
+fix (width-contract-before.log); the corrected width and complete S3 header
+pass with zero failures (width-contract-after.log). Actual completed results
+and leaderboard screenshots were also inspected after the correction.
+
+FIX 8 - Preserve an unreadable or corrupt timing database
+The launcher ignored a failed timing-file load, then a later forced save
+could replace the file with an empty database. Timing file I/O now tracks
+successful loading and blocks writes after any failed load. The launcher
+reports the problem and leaves the existing file unchanged. Reopening after
+restoring a valid file clears the block. Missing files still initialize normally.
+The actual Windows file path is tested headless using the real app wrapper:
+corrupt, empty, truncated, trailing bytes, invalid timing and exclusive file
+locks all preserve disk and in-memory records; a failed atomic replacement
+retains the pending completed run, and a successful retry commits it.
+Verified: Timing-File-Edge-Cases/run.log passes. Stream errors also always close
+the file handle before returning failure.
+
+PACKAGING CLEANUP
+Removed local player-settings.dat and time-trial.dat from distributable source.
+They are runtime data, created on first use; originals are retained privately
+in Verification/Removed-Source-Runtime-Data. No race-test data or settings
+config will be included in the new release ZIP or fresh test copy.
+
+FINAL COVERAGE
+- Final 2.1.1 sweep: dpad-211.log, 11,712 frames, 0 mismatches.
+- Final 2.1.1 TT browser/results: all-pages-211.log, 32,547 frames, 0 mismatches.
+- All 17 custom menu page types covered across natural navigation and declared
+  display fixtures. Native skill/name/password/gear/controls/car screens and
+  both human setup flows covered. Continue failures use controlled fixtures.
+- Seven genuine self-driven TT races, live saved-results footer navigation,
+  restart/reload and independent physical database audit passed. See
+  TIMING-DATABASE-AUDIT-2.1.1.txt for tracks, exact times and storage edge cases.
+- Both two-player modes started. The extra main CPUs remain disabled there.
+  See TWO-PLAYER-SMOKE-2.1.1.txt for the stopped Rally controller attempt.
+- Original CPU AI is unchanged; source hash matches published v2.1.0.
+- VERSION.txt uses the user's earlier layout for the new patch notes.
+  history.txt contains the published 2.0.0/2.0.1/2.1.0 notes unchanged plus
+  the 2.1.1 notes, in chronological order.
+
+No test proves that every possible bug is absent. These are reproducible,
+targeted checks of the audited menu paths and database failure cases.
+
+FINAL BUILD CHECK
+Release 2.1.1 built successfully. All 28 ROM-free CTest checks passed,
+including the added timing edge-case and menu audit contracts. The real
+Windows timing-file failure tests passed headless. Source/provenance
+manifests are regenerated and verified for the final delivery.

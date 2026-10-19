@@ -179,12 +179,6 @@ static TgPixel screenpx(const TopGearRecomp *i,unsigned mask,unsigned wen,unsign
 int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
     unsigned x;uint8_t opal[256],opri[256],omath[256];uint16_t ocolor[256];uint32_t oorder[256];
     if(!i||y>=224u)return 0;
-    /* Settings owns its text after native VBlank DMA, before visible pixels.
-       In-place values must not expose the stock Options rows while held. */
-    if(y==0u&&i->mod_menu_remodel_active&&i->mod_menu_remodel_page==12u){
-        i->mod_menu_remodel_dirty=1u;
-        tg_mod_menu_remodel_draw_if_dirty(i);
-    }
     /* No object evaluation, tile fetch, pixel composition or overlay for
        the disabled viewport. Menus/results use the complete frame. */
     if(y>=108u&&tg_mod_bottom_screen_race_off(i)){
@@ -212,7 +206,6 @@ int tg_v23_render_scanline(TopGearRecomp *i,unsigned y){
 int topgear_recomp_v22_render_current_frame(TopGearRecomp *i,TopGearV22VideoInfo *info){
     unsigned x,y;uint8_t opal[256],opri[256],omath[256];uint16_t ocolor[256];uint32_t oorder[256];uint32_t non=0;uint8_t seen[32768/8];
     if(!i||!info)return 0;
-    if(i->mod_menu_remodel_active&&i->mod_menu_remodel_page==12u){i->mod_menu_remodel_dirty=1u;tg_mod_menu_remodel_draw_if_dirty(i);}
     memset(info,0,sizeof(*info));memset(seen,0,sizeof(seen));
     for(y=0;y<224;y++){
         unsigned mode=regv(i,0x2105u)&7u;

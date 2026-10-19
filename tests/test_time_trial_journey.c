@@ -441,7 +441,7 @@ static int verify_saved_file(const char *path,const TopGearTimeTrialRun *expecte
     for(rank=0u;rank<TOPGEAR_TIME_TRIAL_RECORDS_PER_CAR;++rank){
         memset(&ranked,0,sizeof(ranked));
         if(topgear_time_trial_store_car_record(&reload,expected->course,expected->car_id,rank,&ranked)&&
-           run_equal(&ranked,expected)){if(rank_out)*rank_out=rank;error[0]='\0';return 1;}
+           run_equal(&ranked,expected)&&ranked.sequence==last.sequence){if(rank_out)*rank_out=rank;error[0]='\0';return 1;}
     }
     /* Unlimited retries may produce a valid last run outside the saved Top 5. */
     for(rank=0u;rank<TOPGEAR_TIME_TRIAL_RECORDS_PER_CAR;++rank){
@@ -495,6 +495,15 @@ int main(int argc,char **argv) {
     int detail_continue_sent=0,top5_continue_sent=0,returned_country=0;uint64_t prior_hash=0u;unsigned stable_frames=0u;
     char error[256],path[4096],total[16],best1[16],best2[16],best3[16];
 
+    if(argc==3&&!strcmp(argv[1],"--verify-data")){
+        TopGearTimeTrialStore *check=(TopGearTimeTrialStore*)malloc(sizeof(*check));TopGearTimeTrialRun last;unsigned rank;uint8_t *data;size_t bytes;
+        if(!check||!load_file(argv[2],&data,&bytes)){free(check);return 1;}
+        topgear_time_trial_store_init(check);
+        if(!topgear_time_trial_store_import(check,data,bytes,error,sizeof(error))||
+           !topgear_time_trial_store_last_run(check,&last)||
+           !verify_saved_file(argv[2],&last,&rank,error,sizeof(error))){free(data);free(check);return 1;}
+        free(check);free(data);printf("PASS latest physical run sequence=%u track=%u car=%u rank=%u ticks=%u\n",last.sequence,last.course,last.car_id,rank<5?rank+1:0,last.total_time_ticks);return 0;
+    }
     if(argc==3&&!strcmp(argv[1],"--self-test-data")){
         unsigned trial,lap,rank;
         if(argc==8&&!strcmp(argv[7],"--center-screen"))topgear_recomp_set_center_screen_enabled(core,1);
@@ -563,7 +572,7 @@ int main(int argc,char **argv) {
         return 0;
     }
     if(argc!=7&&argc!=8){fprintf(stderr,"usage: %s ROM OUTPUT_DIR DATA_FILE COURSE CAR GEARBOX(auto|manual) [--runs=N | --bottom-screen-off | --center-screen | NATURAL_COMPLETED_SNAPSHOT]\n",argv[0]);return 2;}
-    if(argc==8&&!strncmp(argv[7],"--runs=",7u)){target_runs=(unsigned)strtoul(argv[7]+7u,NULL,10);if(target_runs<2u||target_runs>1000u)return 2;}
+    if(argc==8&&!strncmp(argv[7],"--runs=",7u)){target_runs=(unsigned)strtoul(argv[7]+7u,NULL,10);if(target_runs<1u||target_runs>1000u)return 2;}
     resume_snapshot=argc==8&&strncmp(argv[7],"--runs=",7u)!=0&&strcmp(argv[7],"--bottom-screen-off")!=0&&strcmp(argv[7],"--center-screen")!=0;
     course=(unsigned)strtoul(argv[4],NULL,10);car=(unsigned)strtoul(argv[5],NULL,10);
     manual=strcmp(argv[6],"manual")==0;
