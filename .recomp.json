@@ -29,5 +29,8 @@
       "url": "https://github.com/Junior-Jones/Top-Gear-SNES-Static-Recomp/blob/main/README.txt"
     }
   ],
-  "notes": "A public Windows release is available. Development has resumed on the Definitive Edition."
+  "notes": "A public Windows release is available. Development has resumed on the Definitive Edition.",
+  "tags": [
+    "Racing"
+  ]
 }
