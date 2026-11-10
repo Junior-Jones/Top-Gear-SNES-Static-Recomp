@@ -1,4 +1,4 @@
-/* Experimental graphics coprocessor budget. No release source is edited.
+/* Optional experimental graphics coprocessor budget.
    Keep all original instruction semantics, interrupt, beam and audio code.
    Only racing graphics workers in bank 01 and executable WRAM receive a
    two-master-clock processing budget. This is not hardware certification.
@@ -6,17 +6,13 @@
 #include "topgear_internal.h"
 #include "topgear_60_timing.h"
 #include "topgear_v23_nominal_timing.h"
-static unsigned tg_experiment_graphics_instruction;
-unsigned tg_experiment_graphics_cycles(const TopGearRecomp *i){
-    unsigned normal=tg_v23_nominal_processor_cycles(i);
-    tg_experiment_graphics_instruction=0u;
-    if(tg60_active(i)&&i->hdma_enable_mask==0x7fu&&!i->mod_menu_remodel_active&&
+unsigned tg60_graphics_master_budget(const TopGearRecomp *i){
+    if(tg60_active(i)&&!i->v23_event_in_interrupt&&i->hdma_enable_mask==0x7fu&&!i->mod_menu_remodel_active&&
        ((i->cpu.pbr==0u&&i->cpu.pc>=0xabfcu&&i->cpu.pc<0xb18cu)||
         (i->cpu.pbr==1u&&i->cpu.pc>=0x8000u)||
-        (i->cpu.pbr==0x7eu&&i->cpu.pc>=0x2000u&&i->cpu.pc<0x4000u))){tg_experiment_graphics_instruction=1u;return 1u;}
-    return normal;
+        (i->cpu.pbr==0x7eu&&i->cpu.pc>=0x2000u&&i->cpu.pc<0x4000u)))return 2u;
+    return 0u;
 }
-#define tg_v23_nominal_processor_cycles tg_experiment_graphics_cycles
 #include "topgear_internal.h"
 #include "topgear_v23_nominal_timing.h"
 #include "topgear_v22_wram_epoch.h"
@@ -62,13 +58,21 @@ static void v23_advance_raw(TopGearRecomp *i,uint32_t clocks){i->v23_event_maste
 int tg_v23_advance_master_clocks(TopGearRecomp *i,uint32_t clocks){uint32_t remain=clocks;if(!i||!i->v23_event_mode)return 0;while(remain&&!i->failed){uint16_t h=i->v23_event_hcounter,period=i->v23_event_line_period;uint32_t step=remain;uint16_t next=period;uint16_t th=(uint16_t)((i->htime_target+1u)*4u);if(!i->v23_event_refresh_done&&i->v23_event_refresh_position>h&&i->v23_event_refresh_position<next)next=i->v23_event_refresh_position;if(i->v23_event_vcounter<224u&&!i->v23_event_seen_scanline_render&&1080u>h&&1080u<next)next=1080u;if(i->v23_event_vcounter<224u&&i->hdma_active_mask&&1104u>h&&1104u<next)next=1104u;if((i->nmitimen&0x10u)&&th>h&&th<next)next=th;if((uint32_t)(next-h)<step)step=(uint32_t)(next-h);if(step){v23_advance_raw(i,step);remain-=step;}h=i->v23_event_hcounter;if(!i->v23_event_refresh_done&&h==i->v23_event_refresh_position){i->v23_event_refresh_done=1u;i->v23_event_refresh_count++;/* Ricoh 5A22 v2 refresh consumes 40 master clocks. */v23_advance_raw(i,40u);continue;}if(i->v23_event_vcounter<224u&&!i->v23_event_seen_scanline_render&&h>=1080u){if(!tg_v23_render_scanline(i,i->v23_event_vcounter))return 0;i->v23_event_seen_scanline_render=1u;i->v23_event_scanline_render_count++;continue;}if(i->v23_event_vcounter<224u&&i->hdma_active_mask&&h==1104u){if(!v23_hdma_line(i))return 0;/* prevent retrigger at same H */v23_advance_raw(i,2u);continue;}v23_irq_poll(i);if(h>=period){i->v23_event_hcounter=(uint16_t)(h-period);i->hcounter_master=i->v23_event_hcounter;i->v23_event_vcounter++;if(i->v23_event_vcounter>=262u){i->v23_event_vcounter=0u;i->v23_event_field^=1u;}i->vcounter_line=i->v23_event_vcounter;v23_line_start(i);continue;}if(step==0u){/* Event at current H already consumed; guarantee progress. */v23_advance_raw(i,2u);if(remain>=2u)remain-=2u;else remain=0u;}}
 return i->failed?0:1;}
 
-int tg_v23_advance_nominal_current_instruction(TopGearRecomp *i,unsigned cycles){if(!i||!i->v23_event_mode)return 0;if(!cycles){i->v23_event_timing_context_miss_count++;cycles=3u;}i->v23_event_nominal_processor_cycles+=cycles;return tg_v23_advance_master_clocks(i,tg_experiment_graphics_instruction?2u:cycles*8u);}
+int tg_v23_advance_nominal_current_instruction(TopGearRecomp *i,unsigned cycles){if(!i||!i->v23_event_mode)return 0;if(!cycles){i->v23_event_timing_context_miss_count++;cycles=3u;}i->v23_event_nominal_processor_cycles+=cycles;return tg_v23_advance_master_clocks(i,cycles*8u);}
+
+/* Only the selected main-loop instruction receives this explicit budget.
+   Interrupt entry and handler instructions use the nominal function above. */
+static int tg60_advance_main_instruction(TopGearRecomp *i,unsigned cycles,unsigned master_budget){
+    if(!master_budget)return tg_v23_advance_nominal_current_instruction(i,cycles);
+    i->v23_event_nominal_processor_cycles+=1u;
+    return tg_v23_advance_master_clocks(i,master_budget);
+}
 
 static int v23_service_interrupts(TopGearRecomp *i){if(i->v23_event_nmi_pending&&!i->v23_event_in_interrupt){i->v23_event_nmi_pending=0u;i->v23_event_in_interrupt=1u;if(!tg_v22_semantic_service_nmi(i))return 0;i->v23_event_in_interrupt=0u;i->v23_event_nmi_count++;return 1;}if(i->v23_event_irq_pending&&!i->v23_event_in_interrupt&&(i->cpu.p&TG_P_I)==0u){i->v23_event_irq_pending=0u;i->v23_event_in_interrupt=1u;if(!tg_v22_semantic_service_irq(i))return 0;i->v23_event_in_interrupt=0u;i->v23_event_irq_count++;return 1;}return 1;}
 
 static void v23_initialize(TopGearRecomp *i){i->v23_event_mode=1u;i->v22_semantic_main_mode=1u;i->v23_event_audio_deferred=0u;i->v23_event_master_clock=186u;i->scpu_master_clock=186u;i->v23_event_hcounter=186u;i->hcounter_master=186u;i->v23_event_vcounter=0u;i->vcounter_line=0u;i->v23_event_field=0u;i->v23_event_cpu_mod8=2u;i->v23_event_line_period=1364u;i->v23_event_refresh_position=v23_refresh_position(i);i->v23_event_refresh_done=0u;i->v23_event_last_frame_sha256[0]='\0';i->v24_frame_callback=NULL;i->v24_frame_callback_user=NULL;i->v24_frame_index_base=0u;i->v24_frame_sequence_fnv1a64=1469598103934665603ull;i->v24_trace_enabled=0u;i->v24_observed_bgmode_mask=0u;i->v24_first_frame_sha256[0]='\0';}
 
-enum TopGearRunResult topgear_recomp_v23_run_main_core_events(TopGearRecomp *i,uint64_t max_instructions,uint32_t stop_after_frames,TopGearV23EventReport *r){uint64_t start,frames0,dma0;TopGearCpuState cpu;if(!i||!r||!max_instructions)return TOPGEAR_RUN_ERROR;memset(r,0,sizeof(*r));v23_initialize(i);start=i->instruction_count;frames0=i->v23_event_frame_count;while(!i->failed&&i->instruction_count-start<max_instructions){unsigned cy;uint64_t before_dma;if(stop_after_frames&&i->v23_event_frame_count-frames0>=stop_after_frames)break;if(!v23_service_interrupts(i))break;if(i->v23_event_nmi_pending||(i->v23_event_irq_pending&&(i->cpu.p&TG_P_I)==0u))continue;cy=tg_v23_nominal_processor_cycles(i);if(!cy){i->v23_event_timing_context_miss_count++;cy=3u;}before_dma=i->dma_master_clocks_accounted;if(!tg_v22_semantic_static_step_any(i))break;dma0=i->dma_master_clocks_accounted-before_dma;if(!tg_v23_advance_nominal_current_instruction(i,cy))break;if(dma0&&!tg_v23_advance_master_clocks(i,(uint32_t)(dma0>0xffffffffu?0xffffffffu:dma0)))break;/* Enabling NMI during an already-active vblank produces a transition. */if((i->nmitimen&0x80u)&&i->v23_event_vcounter>=225u&&!i->v23_event_in_interrupt&&!i->v23_event_nmi_issued_this_vblank){i->v23_event_nmi_pending=1u;i->v23_event_nmi_issued_this_vblank=1u;}}
+enum TopGearRunResult topgear_recomp_v23_run_main_core_events(TopGearRecomp *i,uint64_t max_instructions,uint32_t stop_after_frames,TopGearV23EventReport *r){uint64_t start,frames0,dma0;TopGearCpuState cpu;if(!i||!r||!max_instructions)return TOPGEAR_RUN_ERROR;memset(r,0,sizeof(*r));v23_initialize(i);start=i->instruction_count;frames0=i->v23_event_frame_count;while(!i->failed&&i->instruction_count-start<max_instructions){unsigned cy,graphics_budget;uint64_t before_dma;if(stop_after_frames&&i->v23_event_frame_count-frames0>=stop_after_frames)break;if(!v23_service_interrupts(i))break;if(i->v23_event_nmi_pending||(i->v23_event_irq_pending&&(i->cpu.p&TG_P_I)==0u))continue;graphics_budget=tg60_graphics_master_budget(i);cy=tg_v23_nominal_processor_cycles(i);if(!cy){i->v23_event_timing_context_miss_count++;cy=3u;}before_dma=i->dma_master_clocks_accounted;if(!tg_v22_semantic_static_step_any(i))break;dma0=i->dma_master_clocks_accounted-before_dma;if(!tg60_advance_main_instruction(i,cy,graphics_budget))break;if(dma0&&!tg_v23_advance_master_clocks(i,(uint32_t)(dma0>0xffffffffu?0xffffffffu:dma0)))break;/* Enabling NMI during an already-active vblank produces a transition. */if((i->nmitimen&0x80u)&&i->v23_event_vcounter>=225u&&!i->v23_event_in_interrupt&&!i->v23_event_nmi_issued_this_vblank){i->v23_event_nmi_pending=1u;i->v23_event_nmi_issued_this_vblank=1u;}}
 topgear_recomp_cpu_state(i,&cpu);r->executed_instructions=i->instruction_count-start;r->endpoint_cpu=cpu;r->nominal_processor_cycles=i->v23_event_nominal_processor_cycles;r->elapsed_master_clocks=i->v23_event_master_clock-186u;r->refresh_events=i->v23_event_refresh_count;r->nmi_count=i->v23_event_nmi_count;r->irq_count=i->v23_event_irq_count;r->frame_events=i->v23_event_frame_count-frames0;r->scanlines_rendered=i->v23_event_scanline_render_count;r->autojoy_start_count=i->v23_event_autojoy_start_count;r->autojoy_completion_count=i->v23_event_autojoy_completion_count;r->timing_context_miss_count=i->v23_event_timing_context_miss_count;r->hcounter_master=i->v23_event_hcounter;r->vcounter_line=i->v23_event_vcounter;r->field=i->v23_event_field;r->audio_deferred=i->v23_event_audio_deferred;r->runtime_opcode_decoder_used=0u;r->emulator_authority_used=0u;r->event_order_scheduler=1u;r->physical_bus_cycle_certified=0u;r->audio_shim_event_count=(uint64_t)i->v22_main_audio_bbaa_injected+i->v22_main_audio_echo_count;tg_copy_text(r->frame_bgr555_sha256,sizeof(r->frame_bgr555_sha256),i->v23_event_last_frame_sha256);if(i->frontier.reached){tg_copy_text(r->frontier_address,sizeof(r->frontier_address),i->frontier.address);tg_copy_text(r->frontier_reason,sizeof(r->frontier_reason),i->frontier.reason);}else (void)snprintf(r->frontier_address,sizeof(r->frontier_address),"%02X:%04X",cpu.pbr,cpu.pc);tg_copy_text(r->claim_boundary,sizeof(r->claim_boundary),"Version 23 runs the broad fail-closed Version 22 static CPU surface under a non-audio SNES event-order scheduler. Instruction timing is generated statically for 24,899 reached contexts and never runtime-decodes an opcode, but it deliberately uses nominal W65C816 processor-cycle classes rather than claiming exact 5A22 per-bus wait timing. The scheduler supplies NTSC beam order, v2 refresh stalls, H/V IRQ/NMI boundaries, auto-joy, functional HDMA setup/visible transfers, and scanline-state rendering. Version 27 joins APUIO to the fail-closed Full Static S-SMP/S-DSP authority at event-order master-clock boundaries and emits static PCM. Exact physical 5A22 per-bus wait timing remains a separate certification layer.");return i->failed?TOPGEAR_RUN_FRONTIER:TOPGEAR_RUN_COMPLETE;}
 
 
@@ -83,14 +87,14 @@ enum TopGearRunResult topgear_recomp_v27_advance_frame(TopGearRecomp *i,uint16_t
     if(!topgear_recomp_v08_set_controller_state(i,0u,p1_mask)||!topgear_recomp_v08_set_controller_state(i,1u,p2_mask))return TOPGEAR_RUN_ERROR;
     start=i->instruction_count;frame0=i->v23_event_frame_count;
     while(!i->failed&&i->v23_event_frame_count==frame0&&i->instruction_count-start<max_instructions){
-        unsigned cy;uint64_t before_dma,dma0;
+        unsigned cy,graphics_budget;uint64_t before_dma,dma0;
         if(!v23_service_interrupts(i))break;
         if(i->v23_event_nmi_pending||(i->v23_event_irq_pending&&(i->cpu.p&TG_P_I)==0u))continue;
-        cy=tg_v23_nominal_processor_cycles(i);if(!cy){i->v23_event_timing_context_miss_count++;cy=3u;}
+        graphics_budget=tg60_graphics_master_budget(i);cy=tg_v23_nominal_processor_cycles(i);if(!cy){i->v23_event_timing_context_miss_count++;cy=3u;}
         before_dma=i->dma_master_clocks_accounted;
         if(!tg_v22_semantic_static_step_any(i))break;
         dma0=i->dma_master_clocks_accounted-before_dma;
-        if(!tg_v23_advance_nominal_current_instruction(i,cy))break;
+        if(!tg60_advance_main_instruction(i,cy,graphics_budget))break;
         if(dma0&&!tg_v23_advance_master_clocks(i,(uint32_t)(dma0>0xffffffffu?0xffffffffu:dma0)))break;
         if((i->nmitimen&0x80u)&&i->v23_event_vcounter>=225u&&!i->v23_event_in_interrupt&&!i->v23_event_nmi_issued_this_vblank){i->v23_event_nmi_pending=1u;i->v23_event_nmi_issued_this_vblank=1u;}
     }
@@ -115,16 +119,16 @@ enum TopGearRunResult topgear_recomp_v24_run_main_core_seconds(TopGearRecomp *i,
     i->v24_trace_enabled=1u;i->v24_frame_callback=cb;i->v24_frame_callback_user=user;i->v24_frame_index_base=frames0;
     i->v24_frame_sequence_fnv1a64=1469598103934665603ull;i->v24_observed_bgmode_mask=(uint8_t)(1u<<(i->ppu_registers[5u]&7u));i->v24_first_frame_sha256[0]='\0';
     while(!i->failed&&i->instruction_count-start<max_instructions){
-        unsigned cy;uint64_t before_dma;
+        unsigned cy,graphics_budget;uint64_t before_dma;
         elapsed=i->v23_event_master_clock-186u;if(elapsed>=target)break;
         if(!v23_service_interrupts(i))break;
         if(i->v23_event_nmi_pending||(i->v23_event_irq_pending&&(i->cpu.p&TG_P_I)==0u))continue;
-        cy=tg_v23_nominal_processor_cycles(i);if(!cy){i->v23_event_timing_context_miss_count++;cy=3u;}
+        graphics_budget=tg60_graphics_master_budget(i);cy=tg_v23_nominal_processor_cycles(i);if(!cy){i->v23_event_timing_context_miss_count++;cy=3u;}
         before_dma=i->dma_master_clocks_accounted;
         if(!tg_v22_semantic_static_step_any(i))break;
         i->v24_observed_bgmode_mask|=(uint8_t)(1u<<(i->ppu_registers[5u]&7u));
         dma0=i->dma_master_clocks_accounted-before_dma;
-        if(!tg_v23_advance_nominal_current_instruction(i,cy))break;
+        if(!tg60_advance_main_instruction(i,cy,graphics_budget))break;
         if(dma0&&!tg_v23_advance_master_clocks(i,(uint32_t)(dma0>0xffffffffu?0xffffffffu:dma0)))break;
         if((i->nmitimen&0x80u)&&i->v23_event_vcounter>=225u&&!i->v23_event_in_interrupt&&!i->v23_event_nmi_issued_this_vblank){i->v23_event_nmi_pending=1u;i->v23_event_nmi_issued_this_vblank=1u;}
     }
@@ -168,5 +172,3 @@ int topgear_recomp_v25_coverage_info(const TopGearRecomp *i,TopGearV25CoverageIn
     tg_copy_text(x->claim_boundary,sizeof(x->claim_boundary),"Version 25 coverage is an observation layer over the already-generated fail-closed static CPU surface. It records reached ROM/WRAM instruction addresses and MMIO register classes without decoding opcodes, changing CPU state, or using an emulator as execution authority.");
     return 1;
 }
-
-#undef tg_v23_nominal_processor_cycles

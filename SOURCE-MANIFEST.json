@@ -1387,9 +1387,9 @@
       "sha256": "6b392a51161ae604f95f7e8512806c083756644046cf06430a86d573d4a08b1d"
     },
     {
-      "bytes": 1002,
+      "bytes": 1064,
       "path": "static-recomp/internal/topgear_60_timing.h",
-      "sha256": "a9de604261ff2a6e96eda8682b3b17013059f0a5ba875b918beb263a68c2c426"
+      "sha256": "485d490e1c6cbd9cbfbd1ab6b9917e433fac232b04206675623b6db3dd31c756"
     },
     {
       "bytes": 1330,
@@ -1517,9 +1517,9 @@
       "sha256": "4ef5d2d4faddace2f6c378676b79b8acdfebad2a568e60b0f1943929161a9f1b"
     },
     {
-      "bytes": 23722,
+      "bytes": 24026,
       "path": "static-recomp/src/topgear_v23_scheduler.c",
-      "sha256": "8a0506fea4002796e0cd03f13f148309e39cd350522bff01b87150c1b67c22fd"
+      "sha256": "df6d8e9a808207f01e1207f958b977b32aea05b89ff3c73f01c41b318dc7b8d9"
     },
     {
       "bytes": 1088,
@@ -2317,9 +2317,9 @@
       "sha256": "7ed0a067eb5da6489d2816fd77ea24f1675adb1c95f4473de684a6aeb7bc9c20"
     },
     {
-      "bytes": 1721,
+      "bytes": 2471,
       "path": "static-recomp/tests/test_experimental_60fps.c",
-      "sha256": "78fe0c2d53641c3db2d73a2b8deb66cc1b6c73111afc3ce5e4f2d0f0d17d9fb3"
+      "sha256": "58e9c34d6a608acc24756cfe415d8c8d7a9b93286e79efd8485ae70b598b45cd"
     },
     {
       "bytes": 3465,
@@ -2627,7 +2627,7 @@
       "sha256": "f7abed13eebd11abb35aa7d1fa5d20e87a615503732a59f798a8721332ee0e0c"
     }
   ],
-  "inventory_sha256": "9f4eb8110cd3416b066e311c5823e5a3b46f34c32d2a92b8eb5be1d3a5d1431e",
+  "inventory_sha256": "0a61fe9246ed61d8b4905075064d975c073b1915075e375d4c36fe1b59a9d422",
   "project_version": "2.2.0",
   "schema": "topgear-source-manifest-v1"
 }

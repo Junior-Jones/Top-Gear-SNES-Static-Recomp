@@ -8,6 +8,16 @@ int main(void){
  CHECK(tg60_fuel_step(a,0,100,1)==100&&a->timing60.fuel.calls[0]==0);
  topgear_recomp_set_experimental_60fps_enabled(a,1);CHECK(tg60_active(a)&&topgear_recomp_experimental_60fps_enabled(a));CHECK(!tg60_active(b));
  CHECK(tg60_fuel_step(a,0,100,1)==33&&a->timing60.fuel.remainder[0]==1);
+ /* Selecting an accelerated instruction must not change interrupt timing,
+    including when another core is advanced before that instruction. */
+ a->hdma_enable_mask=0x7f;a->cpu.pbr=1;a->cpu.pc=0x8000;
+ CHECK(tg60_graphics_master_budget(a)==2u&&tg60_graphics_master_budget(b)==0u);
+ a->v23_event_mode=1;a->v23_event_line_period=1364;a->v23_event_refresh_position=538;
+ CHECK(tg_v23_advance_nominal_current_instruction(a,8u));CHECK(a->v23_event_master_clock==64u);
+ b->v23_event_mode=1;b->v23_event_line_period=1364;b->v23_event_refresh_position=538;
+ CHECK(tg_v23_advance_nominal_current_instruction(b,8u));CHECK(b->v23_event_master_clock==64u);
+ a->v23_event_in_interrupt=1;CHECK(tg60_graphics_master_budget(a)==0u);
+ a->v23_event_in_interrupt=0;
  a->hdma_enable_mask=0x7f;a->wram[0x1e90]=1;
  topgear_recomp_set_experimental_60fps_enabled(a,0);CHECK(!topgear_recomp_experimental_60fps_enabled(a)&&tg60_active(a));
  a->cpu.pbr=0;a->cpu.pc=0x86c7;a->cpu.p=TG_P_I;

@@ -15,4 +15,5 @@ unsigned tg60_refill_step(TopGearRecomp *i,unsigned actor);
 int tg60_pit_force(TopGearRecomp *i,unsigned actor,int delta);
 unsigned tg60_pit_scroll(TopGearRecomp *i,unsigned actor,unsigned step);
 int tg60_countdown_step(TopGearRecomp *i,unsigned addr,unsigned channel,unsigned next);
+unsigned tg60_graphics_master_budget(const TopGearRecomp *i);
 #endif
