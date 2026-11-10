@@ -12,9 +12,9 @@
       "sha256": "23978364ad231e99b91787572c47aea8e453c6f78726ad046903b60960cd71e0"
     },
     {
-      "bytes": 959,
+      "bytes": 973,
       "path": ".recomp.json",
-      "sha256": "c6413102b14060b34cf7499b0d163062491eb61220c2b82c0024bec62b0779bc"
+      "sha256": "bf3819800ecd3849fe7f4f07c7e463095f80bb06761050821f328ed1590861b0"
     },
     {
       "bytes": 21399,
@@ -2627,7 +2627,7 @@
       "sha256": "f7abed13eebd11abb35aa7d1fa5d20e87a615503732a59f798a8721332ee0e0c"
     }
   ],
-  "inventory_sha256": "0a61fe9246ed61d8b4905075064d975c073b1915075e375d4c36fe1b59a9d422",
+  "inventory_sha256": "64f3293e92d12fac9260d5882e15049005f7a6945f9ae8968dd2e9a2e787add1",
   "project_version": "2.2.0",
   "schema": "topgear-source-manifest-v1"
 }
