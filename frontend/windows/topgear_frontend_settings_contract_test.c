@@ -25,6 +25,7 @@ int main(void) {
                            MAX_PATH, path, NULL) > 0u);
     (void)DeleteFileW(path);
     topgear_frontend_settings_win32_defaults(&settings);
+    CHECK(!settings.experimental_60fps_enabled&&!settings.experimental_60fps_notice_shown);
     CHECK(settings.show_fps_counter == 0);
     CHECK(settings.ntsc_frame_lock == 1);
     CHECK(settings.pause_on_focus_loss == 0);
@@ -45,6 +46,7 @@ int main(void) {
     CHECK(loaded.center_screen_enabled&&loaded.center_screen_saved);
     CHECK(!loaded.extra_cpu_drivers_enabled&&loaded.extra_cpu_drivers_saved);
 
+    settings.experimental_60fps_enabled=1;settings.experimental_60fps_notice_shown=1;
     settings.show_fps_counter = 1;
     settings.ntsc_frame_lock = 0;
     settings.integer_scale = 3;
@@ -62,6 +64,11 @@ int main(void) {
     CHECK(topgear_frontend_settings_win32_save(&settings, path));
     memset(&loaded, 0, sizeof(loaded));
     topgear_frontend_settings_win32_load(&loaded, path);
+    CHECK(loaded.experimental_60fps_enabled&&loaded.experimental_60fps_notice_shown);
+    loaded.experimental_60fps_enabled=0;
+    CHECK(topgear_frontend_settings_win32_save(&loaded,path));
+    topgear_frontend_settings_win32_load(&loaded,path);
+    CHECK(!loaded.experimental_60fps_enabled&&loaded.experimental_60fps_notice_shown);
     CHECK(loaded.show_fps_counter == 1);
     CHECK(loaded.ntsc_frame_lock == 0);
     CHECK(loaded.integer_scale == 3);

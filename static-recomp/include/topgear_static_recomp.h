@@ -2030,6 +2030,10 @@ size_t topgear_recomp_audio_read(TopGearRecomp*,int16_t*,size_t);
 size_t topgear_recomp_audio_discard(TopGearRecomp*,size_t);
 void topgear_recomp_audio_clear(TopGearRecomp*);
 
+/* Runtime experimental mode; defaults Off. Race changes commit at a native loop boundary. */
+int topgear_recomp_experimental_60fps_enabled(const TopGearRecomp *);
+void topgear_recomp_set_experimental_60fps_enabled(TopGearRecomp *,int);
+
 typedef struct TopGearPlayerProfile {char name[9];uint8_t car,manual,controls;} TopGearPlayerProfile;
 int topgear_recomp_profile_read(TopGearRecomp*,unsigned,TopGearPlayerProfile*);
 int topgear_recomp_profile_write(TopGearRecomp*,unsigned,const TopGearPlayerProfile*);

@@ -17,6 +17,8 @@ file(GLOB TOPGEAR_V22_REENTRY_GROUPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_D
 add_library(topgear-static-recomp STATIC
     src/topgear_runtime_api.c
     src/topgear_runtime_compat.c
+    src/topgear_60_timing.c
+    src/topgear_60_race_gate.c
     src/topgear_snapshot.c
     src/topgear_machine.c
     src/topgear_hash.c

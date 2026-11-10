@@ -21,6 +21,8 @@ extern "C" {
 #define TOPGEAR_APP_PRESENTATION_FPS_DENOMINATOR 655171u
 
 typedef struct TopGearApp TopGearApp;
+int topgear_app_experimental_60fps_enabled(const TopGearApp *);
+void topgear_app_set_experimental_60fps_enabled(TopGearApp *,int);
 int topgear_app_extra_cpu_drivers_enabled(const TopGearApp*);
 void topgear_app_set_extra_cpu_drivers_enabled(TopGearApp*,int);
 int topgear_app_center_screen_enabled(const TopGearApp*);

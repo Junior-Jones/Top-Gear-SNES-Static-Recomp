@@ -1,3 +1,22 @@
+/* Experimental graphics coprocessor budget. No release source is edited.
+   Keep all original instruction semantics, interrupt, beam and audio code.
+   Only racing graphics workers in bank 01 and executable WRAM receive a
+   two-master-clock processing budget. This is not hardware certification.
+   The game continues to own its elapsed-frame movement calculation. */
+#include "topgear_internal.h"
+#include "topgear_60_timing.h"
+#include "topgear_v23_nominal_timing.h"
+static unsigned tg_experiment_graphics_instruction;
+unsigned tg_experiment_graphics_cycles(const TopGearRecomp *i){
+    unsigned normal=tg_v23_nominal_processor_cycles(i);
+    tg_experiment_graphics_instruction=0u;
+    if(tg60_active(i)&&i->hdma_enable_mask==0x7fu&&!i->mod_menu_remodel_active&&
+       ((i->cpu.pbr==0u&&i->cpu.pc>=0xabfcu&&i->cpu.pc<0xb18cu)||
+        (i->cpu.pbr==1u&&i->cpu.pc>=0x8000u)||
+        (i->cpu.pbr==0x7eu&&i->cpu.pc>=0x2000u&&i->cpu.pc<0x4000u))){tg_experiment_graphics_instruction=1u;return 1u;}
+    return normal;
+}
+#define tg_v23_nominal_processor_cycles tg_experiment_graphics_cycles
 #include "topgear_internal.h"
 #include "topgear_v23_nominal_timing.h"
 #include "topgear_v22_wram_epoch.h"
@@ -43,7 +62,7 @@ static void v23_advance_raw(TopGearRecomp *i,uint32_t clocks){i->v23_event_maste
 int tg_v23_advance_master_clocks(TopGearRecomp *i,uint32_t clocks){uint32_t remain=clocks;if(!i||!i->v23_event_mode)return 0;while(remain&&!i->failed){uint16_t h=i->v23_event_hcounter,period=i->v23_event_line_period;uint32_t step=remain;uint16_t next=period;uint16_t th=(uint16_t)((i->htime_target+1u)*4u);if(!i->v23_event_refresh_done&&i->v23_event_refresh_position>h&&i->v23_event_refresh_position<next)next=i->v23_event_refresh_position;if(i->v23_event_vcounter<224u&&!i->v23_event_seen_scanline_render&&1080u>h&&1080u<next)next=1080u;if(i->v23_event_vcounter<224u&&i->hdma_active_mask&&1104u>h&&1104u<next)next=1104u;if((i->nmitimen&0x10u)&&th>h&&th<next)next=th;if((uint32_t)(next-h)<step)step=(uint32_t)(next-h);if(step){v23_advance_raw(i,step);remain-=step;}h=i->v23_event_hcounter;if(!i->v23_event_refresh_done&&h==i->v23_event_refresh_position){i->v23_event_refresh_done=1u;i->v23_event_refresh_count++;/* Ricoh 5A22 v2 refresh consumes 40 master clocks. */v23_advance_raw(i,40u);continue;}if(i->v23_event_vcounter<224u&&!i->v23_event_seen_scanline_render&&h>=1080u){if(!tg_v23_render_scanline(i,i->v23_event_vcounter))return 0;i->v23_event_seen_scanline_render=1u;i->v23_event_scanline_render_count++;continue;}if(i->v23_event_vcounter<224u&&i->hdma_active_mask&&h==1104u){if(!v23_hdma_line(i))return 0;/* prevent retrigger at same H */v23_advance_raw(i,2u);continue;}v23_irq_poll(i);if(h>=period){i->v23_event_hcounter=(uint16_t)(h-period);i->hcounter_master=i->v23_event_hcounter;i->v23_event_vcounter++;if(i->v23_event_vcounter>=262u){i->v23_event_vcounter=0u;i->v23_event_field^=1u;}i->vcounter_line=i->v23_event_vcounter;v23_line_start(i);continue;}if(step==0u){/* Event at current H already consumed; guarantee progress. */v23_advance_raw(i,2u);if(remain>=2u)remain-=2u;else remain=0u;}}
 return i->failed?0:1;}
 
-int tg_v23_advance_nominal_current_instruction(TopGearRecomp *i,unsigned cycles){if(!i||!i->v23_event_mode)return 0;if(!cycles){i->v23_event_timing_context_miss_count++;cycles=3u;}i->v23_event_nominal_processor_cycles+=cycles;return tg_v23_advance_master_clocks(i,cycles*8u);}
+int tg_v23_advance_nominal_current_instruction(TopGearRecomp *i,unsigned cycles){if(!i||!i->v23_event_mode)return 0;if(!cycles){i->v23_event_timing_context_miss_count++;cycles=3u;}i->v23_event_nominal_processor_cycles+=cycles;return tg_v23_advance_master_clocks(i,tg_experiment_graphics_instruction?2u:cycles*8u);}
 
 static int v23_service_interrupts(TopGearRecomp *i){if(i->v23_event_nmi_pending&&!i->v23_event_in_interrupt){i->v23_event_nmi_pending=0u;i->v23_event_in_interrupt=1u;if(!tg_v22_semantic_service_nmi(i))return 0;i->v23_event_in_interrupt=0u;i->v23_event_nmi_count++;return 1;}if(i->v23_event_irq_pending&&!i->v23_event_in_interrupt&&(i->cpu.p&TG_P_I)==0u){i->v23_event_irq_pending=0u;i->v23_event_in_interrupt=1u;if(!tg_v22_semantic_service_irq(i))return 0;i->v23_event_in_interrupt=0u;i->v23_event_irq_count++;return 1;}return 1;}
 
@@ -149,3 +168,5 @@ int topgear_recomp_v25_coverage_info(const TopGearRecomp *i,TopGearV25CoverageIn
     tg_copy_text(x->claim_boundary,sizeof(x->claim_boundary),"Version 25 coverage is an observation layer over the already-generated fail-closed static CPU surface. It records reached ROM/WRAM instruction addresses and MMIO register classes without decoding opcodes, changing CPU state, or using an emulator as execution authority.");
     return 1;
 }
+
+#undef tg_v23_nominal_processor_cycles

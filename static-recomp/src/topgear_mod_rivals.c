@@ -1,3 +1,4 @@
+#include "topgear_60_timing.h"
 #include "topgear_internal.h"
 #include <string.h>
 #include <stdlib.h>
@@ -55,8 +56,8 @@ void tg_rivals_physics(TopGearRecomp *i,TgRival *r,int actual_car){
     if(v<0){v+=(int)drag;if(v>=0)v=0;}else{v-=(int)drag;if(v<0)v=0;}
     if(r->fuel&&w(i,0x1eb0)<10){diff=s(u((int)target-v));change=s(u(term+((unsigned)fd(diff*(int)(int8_t)rw(i,0x167f+table),256)&65535u)/4u));if(change>=0)v=s(u(v+change));}
     else{diff=s(u(2*v-(int)target));if(diff>=0)v=s(u(v-fd(diff,128)));}
-    r->speed=u(v);rpm=s(u(fd(v*(int)(int8_t)rw(i,0x1767+table),128)));
-    if(rpm>0&&r->fuel){unsigned cost=1u+((unsigned)fd(rpm*(int)(int8_t)factor,16384)&1023u);
+    v=tg60_shadow_motor(i,r->speed,v);r->speed=u(v);rpm=s(u(fd(v*(int)(int8_t)rw(i,0x1767+table),128)));
+    if(rpm>0&&r->fuel){unsigned cost=1u+((unsigned)fd(rpm*(int)(int8_t)factor,16384)&1023u);cost=tg60_shadow_fuel_cost(i,cost);
         if(cost>=r->fuel){r->fuel=0;rpm=0;r->flags|=0x20;}else r->fuel=(uint16_t)(r->fuel-cost);}
     r->rpm=u(rpm);
 }
@@ -79,7 +80,7 @@ void tg_rivals_steering(TopGearRecomp *i,TgRival *r,unsigned off){
        Preserve it in the native adapter/shadow. Private rivals deliberately
        keep a valid full neighbour offset, avoiding reads inside another record. */
     if(r->id==1u&&r->fuel<0x3000u&&!(w(i,0x1ef2)&1u))front&=255u;
-    if(r->recovery){int v=s(r->steering),d=640+r->recovery;r->steering=u(v>0?(v>d?v-d:0):v<0?(v< -d?v+d:0):0);if(!r->steering)r->recovery=0;return;}
+    if(r->recovery){int v=s(r->steering),d=(int)tg60_shadow_recovery_cost(i,640+r->recovery);r->steering=u(v>0?(v>d?v-d:0):v<0?(v< -d?v+d:0):0);if(!r->steering)r->recovery=0;return;}
     if(wants_pit(i,r)){unsigned delta=u((int)(r->position>>8)-(int)w(i,0x1ef0));
         if(delta<1184u){index=(delta>768u?768u:delta)>>4;index&=0xfffeu;packed=rw(i,(w(i,0x1ef2)&4u?0x6198u:0x6166u)+index);}}
     hi=u((int)(int8_t)(packed>>8)*128);lo=u((int)(int8_t)packed*128);
@@ -90,8 +91,9 @@ void tg_rivals_steering(TopGearRecomp *i,TgRival *r,unsigned off){
         else{if(u(hf-(int)lo)<3840)clear=1;else if(s(w(i,0x216+front))>=0)set=1;else if(u((int)hi-hf)<2560)set=1;else if(s(u(hc-hf))<=0)set=1;else if(u(hc-hf)>=2048)clear=1;else set=1;}}}
     if(clear){unsigned n=u(hf+2560);pass=0;if(s(u((int)n-(int)hi))>=0)n=lo;lo=n;}
     if(set){unsigned n=u(hf-2560);pass=0xff00;if(s(u((int)n-(int)lo))<0)n=hi;hi=n;}
-    {int d=s(u((int)hi-r->upper));if(d>=601)hi=u(r->upper+600);else if(d< -1281)hi=u(r->upper-1280);}
-    {int d=s(u(r->lower-(int)lo));if(d>=601)lo=u(r->lower-600);else if(d< -1281)lo=u(r->lower+1280);}
+    {unsigned positive,negative;tg60_shadow_lane_limits(i,&positive,&negative);
+     {int d=s(u((int)hi-r->upper));if(d>=(int)positive+1)hi=u(r->upper+positive);else if(d< -(int)negative-1)hi=u(r->upper-negative);}
+     {int d=s(u(r->lower-(int)lo));if(d>=(int)positive+1)lo=u(r->lower-positive);else if(d< -(int)negative-1)lo=u(r->lower+negative);}}
     r->upper=(uint16_t)hi;r->lower=(uint16_t)lo;r->passing_side=(uint8_t)(pass!=0);
     {int center=s(u((int)hi+fd(s(u((int)lo-(int)hi)),2)));
      int curve=s(u(fd(s(r->speed)*(int)(int8_t)i->wram[0x4c08+index],256)));
@@ -166,6 +168,7 @@ int tg_rivals_native_drive(TopGearRecomp *i,TgRival *r,unsigned off){
         r->upper=(uint16_t)w(c,0x1ec4);r->lower=(uint16_t)w(c,0x1ec6);r->passing_side=c->wram[0x1ec8]!=0;
         r->forward_step=(uint16_t)w(c,0x1e8e);r->edge=c->wram[0x1ebf]!=0;r->flags=(uint16_t)w(c,0x1ef6);
         r->pit_phase=(int16_t)w(c,0x1e88);r->nitro=(uint8_t)(w(c,0x1ef2)&1u);
+        i->timing60=c->timing60;
     }else{char message[256];snprintf(message,sizeof(message),"Native rival %u failed at %02X:%04X: %.140s",r->id,c->cpu.pbr,c->cpu.pc,c->last_error);tg_fail_frontier(i,message,NULL);}
     free(c);return ok;
 }
@@ -181,20 +184,20 @@ static void pit(TopGearRecomp *i,TgRival *r){
     }
     if(phase==2||phase==3||phase==4||phase==9||phase==10){r->pit_phase--;return;}
     if(phase==5){
-        if(scroll>=0x188u)r->speed=u(r->speed+41);
-        else if(scroll>=0x80u){int delta=s((u((int)scroll-512)>>2)|0xc000u),speed=s(r->speed)+delta;if(speed>=0)r->speed=u(speed);else r->speed=0;}
+        if(scroll>=0x188u)r->speed=u(r->speed+tg60_pit_force(i,r->id,41));
+        else if(scroll>=0x80u){int delta=s((u((int)scroll-512)>>2)|0xc000u),speed=s(r->speed)+tg60_pit_force(i,r->id,delta);if(speed>=0)r->speed=u(speed);else r->speed=0;}
         else r->speed=0;
-        r->pit_elapsed=u((int)r->pit_elapsed-(int)(r->speed>>11));
+        r->pit_elapsed=u((int)r->pit_elapsed-(int)tg60_pit_scroll(i,r->id,r->speed>>11));
         if(!r->speed)r->pit_phase=-6;
         return;
     }
-    if(phase==6){unsigned fuel=r->fuel+127u;r->fuel=(uint16_t)(fuel>43007u?43007u:fuel);r->refill_updates++;
+    if(phase==6){unsigned fuel=r->fuel+tg60_refill_step(i,r->id);r->fuel=(uint16_t)(fuel>43007u?43007u:fuel);r->refill_updates++;
         if(r->fuel>=43007u||r->fuel>estimate(i,r,80u))r->pit_phase=-7;
         return;
     }
     if(phase==7||phase==8){
-        r->speed=u(s(r->speed)+fd(0x1b00-s(r->speed),64));
-        r->pit_elapsed=u((int)r->pit_elapsed-(int)(r->speed>>11));scroll=r->pit_elapsed&1023u;
+        r->speed=u(s(r->speed)+tg60_pit_force(i,r->id,fd(0x1b00-s(r->speed),64)));
+        r->pit_elapsed=u((int)r->pit_elapsed-(int)tg60_pit_scroll(i,r->id,r->speed>>11));scroll=r->pit_elapsed&1023u;
         if(phase==7&&scroll>=0x300u&&scroll<0x380u)r->pit_phase=-8;
         else if(phase==8&&scroll<0x300u)r->pit_phase=-9;
         return;
@@ -275,7 +278,7 @@ static void submit(TopGearRecomp *i,unsigned id,unsigned style,unsigned view,uns
 
 /* Fixed instruction-boundary integration shared by both generated dispatches. */
 void tg_rivals_before(TopGearRecomp *i,uint32_t pc){TgRivals *x=&i->rivals;unsigned off,id;
-    if(pc==0xa569u){tg_rivals_reset(i);return;}
+    if(pc==0xa569u){tg60_reset(i);tg_rivals_reset(i);return;}
     if(pc==0xc61eu&&enabled(i)&&!w(i,0x1f04)){unsigned p=w(i,0x1f8f)&3u,car=p==0?1u:0u;if(!x->reserved){x->saved_p2_car=(uint16_t)w(i,0x1fac);x->reserved=1;}put(i,0x1fac,car);}
     if(i->mod_time_trial_active&&pc==0xa175u){unsigned n;for(n=0;n<360;n+=18){put(i,0x21c+n,0);put(i,0x21e+n,0);put(i,0x220+n,0);}}
     if(!enabled(i)){x->ready=0;x->visible.count=0;return;}

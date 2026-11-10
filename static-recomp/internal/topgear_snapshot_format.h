@@ -5,7 +5,7 @@
 
 #define TOPGEAR_SNAPSHOT_MAGIC "TGSNAP27"
 #define TOPGEAR_SNAPSHOT_MAGIC_SIZE 8u
-#define TOPGEAR_SNAPSHOT_VERSION 2u
+#define TOPGEAR_SNAPSHOT_VERSION 4u
 
 typedef struct TopGearSnapshotHeader {
     char magic[TOPGEAR_SNAPSHOT_MAGIC_SIZE];

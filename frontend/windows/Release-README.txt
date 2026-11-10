@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.1.1
+Top Gear Definitive Edition 2.2.0
 Launcher for Windows 10/11 x64
 
 Getting started
@@ -22,7 +22,7 @@ Leaderboard, Retry, Tracks, Cars and Main Menu. Retry can be used without a
 limit. The Top 5 records total time, the best three sectors and lap times for
 each track, car and gearbox.
 
-See VERSION.txt for the latest fixes and history.txt for all four versions,
+See VERSION.txt for the latest fixes and history.txt for the earlier versions,
 including the full rules and earlier features.
 
 Settings and audio
@@ -97,3 +97,10 @@ If an existing timing file cannot be loaded, the launcher reports the problem
 and prevents saves from replacing it. Close the game, restore a valid
 Data/time-trial.dat, and reload the ROM to retry. A missing file is created
 automatically. A failed disk save keeps the results menu waiting for a retry.
+
+Experimental 60 FPS (2.2.0)
+--------------------------
+Disabled by default. Enable it with the frontend toolbar 60 FPS checkbox or
+Settings > Experimental 60 FPS in the menu bar. The experimental notice appears
+once on first enabling it; both the option and notice state are saved in
+settings.ini. Unticking it restores the original game update timing.

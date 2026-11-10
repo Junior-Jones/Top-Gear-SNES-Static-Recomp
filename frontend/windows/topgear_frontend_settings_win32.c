@@ -131,6 +131,8 @@ void topgear_frontend_settings_win32_load(TopGearFrontendSettingsWin32 *s,
      if(extra==0||extra==1){s->extra_cpu_drivers_enabled=extra;s->extra_cpu_drivers_saved=1;}}
     {int center=(int)GetPrivateProfileIntW(L"General",L"CenterScreen",-1,path);
      if(center==0||center==1){s->center_screen_enabled=center&&!s->bottom_screen_enabled;s->center_screen_saved=1;}}
+    s->experimental_60fps_enabled=GetPrivateProfileIntW(L"General",L"Experimental60FPS",0,path)!=0;
+    s->experimental_60fps_notice_shown=GetPrivateProfileIntW(L"General",L"Experimental60FPSNoticeShown",0,path)!=0;
     s->integer_scale=GetPrivateProfileIntW(L"General",L"IntegerScale",0,path);
     s->pause_on_focus_loss=GetPrivateProfileIntW(L"General",L"PauseOnFocusLoss",0,path)!=0;
     s->auto_run_on_load=GetPrivateProfileIntW(L"General",L"AutoRunOnLoad",0,path)!=0;
@@ -179,6 +181,8 @@ int topgear_frontend_settings_win32_save(const TopGearFrontendSettingsWin32 *s,
                                          const wchar_t *path) {
     int i,ok=1; wchar_t key[32];
     if(!s||!path||!*path)return 0;
+    ok&=write_int(L"General",L"Experimental60FPS",s->experimental_60fps_enabled,path);
+    ok&=write_int(L"General",L"Experimental60FPSNoticeShown",s->experimental_60fps_notice_shown,path);
     ok&=write_int(L"General",L"BottomScreen",s->bottom_screen_enabled,path);
     ok&=write_int(L"General",L"ExtraCPUDrivers",s->extra_cpu_drivers_enabled,path);
     ok&=write_int(L"General",L"CenterScreen",s->center_screen_enabled&&!s->bottom_screen_enabled,path);

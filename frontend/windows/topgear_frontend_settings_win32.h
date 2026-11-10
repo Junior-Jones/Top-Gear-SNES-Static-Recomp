@@ -18,6 +18,8 @@ typedef enum TopGearWinBindingAction {
 } TopGearWinBindingAction;
 
 typedef struct TopGearFrontendSettingsWin32 {
+    int experimental_60fps_enabled;
+    int experimental_60fps_notice_shown;
     int center_screen_enabled;
     int center_screen_saved;
     int extra_cpu_drivers_enabled;
