@@ -156,3 +156,30 @@ Feedback on any issues is welcomed
 | NANNINI | Light red |
 | DECESARI | Lime green |
 | WARWICK | Periwinkle |
+
+Version 2.2.0
+
+General
+
+* Added an Experimental 60 FPS mode, disabled as default
+
+Feedback on any issues is welcomed
+
+| Driver | Colour |
+|---|---|
+| PROST | Red |
+| PIQUET | Green |
+| BERGER | Blue |
+| ALESI | Yellow |
+| PATRESE | Magenta |
+| BOUTSEN | Cyan |
+| BRUNDLE | Orange |
+| HAKKINEN | Violet |
+| SCHUMACH | Pink |
+| HILL | Mint green |
+| HERBERT | Azure blue |
+| COULTHRD | White |
+| ALBORETO | Olive |
+| NANNINI | Light red |
+| DECESARI | Lime green |
+| WARWICK | Periwinkle |

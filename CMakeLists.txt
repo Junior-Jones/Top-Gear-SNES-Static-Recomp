@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(TopGearSNESStaticRecomp VERSION 2.1.1 LANGUAGES C CXX)
+project(TopGearSNESStaticRecomp VERSION 2.2.0 LANGUAGES C CXX)
 
 include(CTest)
 set(TOPGEAR_TEST_ROM "" CACHE FILEPATH
@@ -190,7 +190,27 @@ FetchContent_Declare(topgear_sdl
     URL_HASH "SHA256=30DCE54890B17544A35E4521274762016AF6ED59C2183B896EF5E6693E97FB6C"
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(topgear_sdl)
-FetchContent_GetProperties(topgear_sdl SOURCE_DIR TOPGEAR_SDL_SOURCE_DIR)
+  FetchContent_GetProperties(topgear_sdl SOURCE_DIR TOPGEAR_SDL_SOURCE_DIR)
+  # SDL supports overriding SDL_FILE. Use source-relative diagnostic names so
+  # the distributed executable does not disclose the build machine's folders.
+  if(MSVC)
+    # Each compilation unit supplies its own diagnostic filename.
+    set_target_properties(SDL3-static PROPERTIES DISABLE_PRECOMPILE_HEADERS ON)
+    get_target_property(TOPGEAR_SDL_SOURCES SDL3-static SOURCES)
+    foreach(TOPGEAR_SDL_SOURCE IN LISTS TOPGEAR_SDL_SOURCES)
+      if(IS_ABSOLUTE "${TOPGEAR_SDL_SOURCE}" AND
+         TOPGEAR_SDL_SOURCE MATCHES "\\.(c|cpp)$")
+        file(RELATIVE_PATH TOPGEAR_SDL_DIAGNOSTIC_FILE
+          "${TOPGEAR_SDL_SOURCE_DIR}" "${TOPGEAR_SDL_SOURCE}")
+        if(NOT TOPGEAR_SDL_DIAGNOSTIC_FILE MATCHES "^\\.\\.")
+          set_property(SOURCE "${TOPGEAR_SDL_SOURCE}"
+            DIRECTORY "${TOPGEAR_SDL_SOURCE_DIR}" APPEND PROPERTY
+            COMPILE_DEFINITIONS "SDL_FILE=\"SDL/${TOPGEAR_SDL_DIAGNOSTIC_FILE}\"")
+        endif()
+      endif()
+    endforeach()
+  endif()
+
 
 add_executable(topgear-launcher WIN32
     frontend/windows/topgear_app_win32.c
@@ -347,4 +367,18 @@ if(BUILD_TESTING AND WIN32)
  target_compile_definitions(topgear-controls-dialog-test PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _CRT_SECURE_NO_WARNINGS)
  target_link_libraries(topgear-controls-dialog-test PRIVATE topgear-static-recomp SDL3::SDL3-static user32 comctl32)
  add_test(NAME topgear-controls-dialog COMMAND topgear-controls-dialog-test)
+endif()
+if(BUILD_TESTING)
+ add_executable(topgear-experimental-60fps-test static-recomp/tests/test_experimental_60fps.c)
+ target_include_directories(topgear-experimental-60fps-test PRIVATE static-recomp/internal static-recomp/generated static-recomp/generated/v22 static-recomp/generated/v22_reentry)
+ target_link_libraries(topgear-experimental-60fps-test PRIVATE topgear-static-recomp)
+ add_test(NAME topgear-experimental-60fps COMMAND topgear-experimental-60fps-test)
+ if(WIN32 AND TOPGEAR_TEST_ROM)
+  add_executable(topgear-experimental-60fps-snapshot-test tests/test_experimental_60fps_snapshot.c frontend/windows/topgear_app_core.c frontend/common/topgear_time_trial_store.c frontend/common/topgear_player_settings_file.c)
+  target_include_directories(topgear-experimental-60fps-snapshot-test PRIVATE frontend/windows frontend/common)
+  target_compile_definitions(topgear-experimental-60fps-snapshot-test PRIVATE UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
+  target_link_libraries(topgear-experimental-60fps-snapshot-test PRIVATE topgear-static-recomp)
+  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/experimental-mode-snapshots")
+  add_test(NAME topgear-experimental-60fps-snapshots COMMAND topgear-experimental-60fps-snapshot-test "${TOPGEAR_TEST_ROM}" "${CMAKE_BINARY_DIR}/experimental-mode-snapshots")
+ endif()
 endif()

@@ -1,10 +1,10 @@
 Top Gear (SNES) Static Recompilation - Windows Source
-Release 2.1.1 - Top Gear Definitive Edition
+Release 2.2.0 - Top Gear Definitive Edition
 
 This package contains the Top Gear-specific static core and its native Windows
 Launcher frontend. The ROM is not included.
 
-See VERSION.txt for the latest fixes and history.txt for all four versions.
+See VERSION.txt for the latest features and history.txt for the version history.
 Docs/MENU-AUDIT-TEST.txt records the menu fixes and verification.
 Docs/TIMING-DATABASE-AUDIT-2.1.1.txt covers timing storage and its edge cases.
 Earlier settings and CPU additions are in Docs/RELEASE-NOTES-2.1.0.txt;
@@ -143,3 +143,10 @@ menu. It defaults to Off and requires Bottom Screen Off. Enable it to centre
 P1's original-sized race view with black above and below and no lower stats.
 While enabled, Career and Rally cannot select two players. Screen settings
 are saved automatically; CenterScreen=0 is the default.
+
+Experimental 60 FPS (2.2.0)
+--------------------------
+Disabled by default. Enable it with the frontend toolbar 60 FPS checkbox or
+Settings > Experimental 60 FPS in the menu bar. The experimental notice appears
+once on first enabling it; both the option and notice state are saved in
+settings.ini. Unticking it restores the original game update timing.

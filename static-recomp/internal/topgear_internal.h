@@ -51,6 +51,8 @@ typedef struct TopGearSmpInternal {
     uint64_t cycle_count;
 } TopGearSmpInternal;
 
+#include "topgear_60_timing_state.h"
+
 struct TopGearRecomp {
     uint8_t *rom;
     TopGearCpuInternal cpu;
@@ -604,6 +606,8 @@ struct TopGearRecomp {
     uint16_t mod_time_trial_font_palette[16];
     /* Append-only extension keeps the pre-rivals snapshot prefix intact. */
     TgRivals rivals;
+    Tg60TimingState timing60;
+    unsigned experimental_60fps_enabled,experimental_60fps_requested;
 };
 
 void tg_v25_note_mmio_read(struct TopGearRecomp*,uint16_t);

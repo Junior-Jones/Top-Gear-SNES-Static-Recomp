@@ -263,6 +263,8 @@ int topgear_recomp_snapshot_load(TopGearRecomp *instance, const char *path,
         memcmp(header.magic, TOPGEAR_SNAPSHOT_MAGIC,
                TOPGEAR_SNAPSHOT_MAGIC_SIZE) != 0 ||
         !((header.version==TOPGEAR_SNAPSHOT_VERSION&&header.core_size==sizeof(*core))||
+          (header.version==3u&&header.core_size==offsetof(TopGearRecomp,experimental_60fps_enabled))||
+          (header.version==2u&&header.core_size==offsetof(TopGearRecomp,timing60))||
           (header.version==1u&&header.core_size==481520u&&offsetof(TopGearRecomp,rivals)==481520u)) || header.apu_size != apu_size) {
         snapshot_error(error, error_capacity,
                        "The snapshot is invalid or belongs to another build.");
@@ -283,6 +285,8 @@ int topgear_recomp_snapshot_load(TopGearRecomp *instance, const char *path,
                        "The snapshot is corrupt or has unexpected trailing data.");
         goto cleanup;
     }
+    /* Version 3 was the qualified always-on experimental build. */
+    if(header.version==3u){core->experimental_60fps_enabled=1u;core->experimental_60fps_requested=1u;}
     if (fclose(file) != 0) {
         file = NULL;
         snapshot_error(error, error_capacity, "Unable to finish reading the snapshot.");

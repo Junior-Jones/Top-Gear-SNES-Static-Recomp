@@ -449,7 +449,7 @@ int tg_v22_reentry_group_0178_has(uint32_t key){switch(key){
  case 0x0005E3B6u:return 1;
  case 0x0005E0D4u:return 1;
  default:return 0;}}
-int tg_v22_reentry_group_0178_step(struct TopGearRecomp *instance){
+int tg60_original_0178_step(struct TopGearRecomp *instance){
  uint32_t key,address=0u,base24=0u;uint16_t word=0u;uint8_t byte=0u;
  if(!instance)return 0;
  (void)address;(void)base24;(void)word;(void)byte;

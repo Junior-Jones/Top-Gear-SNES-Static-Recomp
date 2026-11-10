@@ -703,9 +703,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 105057,
+      "bytes": 105065,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0021.c",
-      "sha256": "8ebef1272268f4bf8994d3d2f51d2a07ee38f268d452537361dd92cb5f71a0d5"
+      "sha256": "e13b9808b71b2165f60140366845ba78826e2b29c87f4dabd2982f25a1b44264"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -715,9 +715,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 96838,
+      "bytes": 96831,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0024.c",
-      "sha256": "93d0f293624cf87988b6b7d66764b87dbaea191a843e9a0e206bfbb432f00a9c"
+      "sha256": "adb8e149467568168b7cb40f0aa989dd70addd90f4c8206fc521722b637d2aaf"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -727,9 +727,9 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 78956,
+      "bytes": 78949,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0028.c",
-      "sha256": "357e065552a58c87c129a4de8d94cd99451a293598f5ad2d1eb68614d162b1ba"
+      "sha256": "782394724cfbc757d85ed099adcc8cb5f9abc5e224975ea85e8de517a90ab9c1"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -745,15 +745,15 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 116449,
+      "bytes": 116442,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002B.c",
-      "sha256": "d838a148d6567cb56b688867b2a42759dbb9b99c28a7a3313010f618934e8c51"
+      "sha256": "60e4aedabdca94ffadf1a79cb034dd2d36d5e6ecf132513773f712f43429cb42"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 114034,
+      "bytes": 114027,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_002C.c",
-      "sha256": "41ddd43edd9adaaf4a0ada0ff2b5dae4259f6847b4885a21cd0963498d6ba153"
+      "sha256": "ead926dbd92c7ade491e06c06fa635e89e90140fe775c607df7f3511929e911e"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -901,33 +901,33 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 34445,
+      "bytes": 34438,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0174.c",
-      "sha256": "a40f431a6f8a979900d3a4bf38f8356b6d9b1d6d6df8e06b0e14118f8da23590"
+      "sha256": "c7c0d49592ed116ab6e834fa7605888b8791257c38407306a4045b4a05d60f6b"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 121028,
+      "bytes": 121021,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0175.c",
-      "sha256": "4aae68124bf21a7f3efcd23fc0795cc1809b2b22b932c1e2d14651b3f2a8dd74"
+      "sha256": "f25ae465d0ffbd9779fab5031c96bef21ee4bea2f10c2a7a143cc068d8eb65f9"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 111879,
+      "bytes": 111872,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0176.c",
-      "sha256": "c87c86b6f9cc2fb67924bf0b5c3f797cb1c666f5011b93e97eb182c051d9c52d"
+      "sha256": "f7320d1246ad398293cd44def72465116f000f262e949e36147f1b6b3c5454b2"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 122006,
+      "bytes": 121999,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0177.c",
-      "sha256": "137791190519a0ce774197058a3a3237822b60ed1f4a892efb948e4f7f915b10"
+      "sha256": "7d8082cb87b57d77bfada12613f5cf7f40d221f96c2b239ae7fa9f6b31b7bbba"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 114658,
+      "bytes": 114651,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_0178.c",
-      "sha256": "e5e620958bc4cdbe582dec3d28c849019f705bb739826710226965837e4e9778"
+      "sha256": "93a574344e475de5d32d0aebde9663426936355543b59b12e9307434a5c7cddf"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -943,15 +943,15 @@
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 118045,
+      "bytes": 118038,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017B.c",
-      "sha256": "8b732806ae3d95e152fc927132e1701d15d9e962e105250c617a6390361c1f74"
+      "sha256": "60330d8d8106a1228537250b3674c37718d1b7d893059ca2f98e35aa4bdb5755"
     },
     {
       "authority": "generated-scpu-or-reentry",
-      "bytes": 116639,
+      "bytes": 116632,
       "path": "static-recomp/generated/v22_reentry/topgear_v22_reentry_group_017C.c",
-      "sha256": "1bd453792009c83ce059517dbaef559f72844c99d43cd23d12b9f0175f075df4"
+      "sha256": "61c846d8e6cba14ff8e37daf7093a7ab29352638c646352472aac9ff19b51fea"
     },
     {
       "authority": "generated-scpu-or-reentry",
@@ -1194,9 +1194,9 @@
       "sha256": "ab7b68f7a66a5256f6d25b6b7fab8f002b4a370b941d400acead8c0757f7cdaf"
     }
   ],
-  "inventory_sha256": "df6c37ce5b4756896773069e36b0ad6d80c8d6a01eb6fda9a6342f5e56fd2eb6",
+  "inventory_sha256": "801f4707bed4ae12d105552f9e8cc110121c4c5cbc1c87e1f884fea6045ed38d",
   "policy": "The release contains pinned generated authority, not its historical research generator. Changes require offline ROM/ARAM provenance, reviewed regenerated output, updated receipts and a new manifest.",
-  "project_version": "2.1.1",
+  "project_version": "2.2.0",
   "rom_sha256": "ca9889f17f184b3d99a2eaaa82af73e366f03ed00313fdd369e5e023b208e788",
   "schema": "topgear-generated-provenance-v1"
 }

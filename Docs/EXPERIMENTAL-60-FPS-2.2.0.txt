@@ -1,0 +1,39 @@
+Experimental 60 FPS - 2.2.0
+
+User controls
+The frontend Settings menu and toolbar checkbox control one saved option.
+It defaults Off. settings.ini stores General/Experimental60FPS and
+General/Experimental60FPSNoticeShown. The notice is shown on first enabling
+and its Close button commits the acknowledgement. Disabling and restarting
+preserve that acknowledgement. Existing user settings remain independent.
+
+Runtime integration
+The qualified 60 Hz graphics budget, race gate and fractional physics/pit/fuel
+integration are now gated per core. Off calls the original generated instruction
+bodies and uses the original graphics timing. Requested changes during a race
+commit at the native 00:86C7 loop boundary, clearing fractional carry state.
+Menus can commit immediately. Native NMI, beam, audio and nitro clocks are kept.
+Original CPU decision rules and the extra-CPU player/mode restrictions are kept.
+
+Generated reentry integration
+The instruction bodies are unchanged; selected step exports were renamed to
+original-entry aliases. topgear_60_timing.c and topgear_60_race_gate.c own their
+normal dispatcher entry names and choose original versus retimed behavior.
+Preserve these aliases when replacing generated shards. No Temp prototype,
+external checkout, runtime opcode decoder or test-driver input is required.
+
+Persistence
+Snapshot version 4 includes per-core timing state and requested/active mode.
+Versions 1 and 2 import as original timing; the earlier always-on version 3
+experimental snapshots import as enabled. The frontend preserves its current
+checkbox when loading progress and across resets.
+
+Verification
+Verification includes 12 cases x 1,200 fields in original 2.1.1, 2.2.0 Off and
+2.2.0 On. Off is compared in RAM, complete pixels and native PCM on every field.
+On is checked for one native physics update per steady field; first legacy
+snapshot transition fields are excluded from steady-cadence assertions.
+Solo Trial and two-player/extra-CPU limits are checked. Career, two-player
+Career, Rally and Trial also switch On -> Off -> On during an active race.
+Settings and snapshot/reset tests are registered with CTest. The frontend
+checkbox, menu and one-time notice are also verified in the built app.

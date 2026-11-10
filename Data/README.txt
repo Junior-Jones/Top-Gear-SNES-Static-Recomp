@@ -1,4 +1,4 @@
-Top Gear Definitive Edition 2.1.1 - runtime Data
+Top Gear Definitive Edition 2.2.0 - runtime Data
 ================================================
 The Data directory beside Launcher.exe contains persistent game settings and
 Time Trial history. Gameplay logic is compiled into the static core.

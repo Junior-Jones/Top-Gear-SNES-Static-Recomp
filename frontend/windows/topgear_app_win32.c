@@ -58,6 +58,7 @@
 #define ID_BROWSE_MENU 1019
 #define ID_FULLSCREEN 1020
 #define ID_SCREENSHOT 1021
+#define ID_EXPERIMENTAL_60FPS 1092
 #define ID_AUTO_RUN 1022
 #define ID_SNAPSHOT_SAVE_CURRENT 1024
 #define ID_SNAPSHOT_LOAD_CURRENT 1025
@@ -170,6 +171,7 @@ static HWND g_leaderboard_button;
 static HWND g_settings_button;
 static HWND g_fullscreen_checkbox;
 static HWND g_auto_run_checkbox;
+static HWND g_experimental_60fps_checkbox;
 static HWND g_rom_path;
 static HWND g_status;
 static HWND g_info_window;
@@ -775,6 +777,7 @@ static void set_toolbar_visible(int visible) {
     ShowWindow(g_settings_button, command);
     ShowWindow(g_fullscreen_checkbox, command);
     ShowWindow(g_auto_run_checkbox, command);
+    ShowWindow(g_experimental_60fps_checkbox, command);
     ShowWindow(g_status, command);
 }
 
@@ -874,6 +877,10 @@ static void update_controls(void) {
     EnableWindow(g_settings_button, !loading);
     EnableWindow(g_fullscreen_checkbox, !loading);
     EnableWindow(g_auto_run_checkbox, !loading);
+    EnableWindow(g_experimental_60fps_checkbox, !loading);
+    EnableMenuItem(g_menu,ID_EXPERIMENTAL_60FPS,MF_BYCOMMAND|(loading?MF_GRAYED:MF_ENABLED));
+    SendMessageW(g_experimental_60fps_checkbox,BM_SETCHECK,g_frontend_settings.experimental_60fps_enabled?BST_CHECKED:BST_UNCHECKED,0);
+    CheckMenuItem(g_menu,ID_EXPERIMENTAL_60FPS,MF_BYCOMMAND|(g_frontend_settings.experimental_60fps_enabled?MF_CHECKED:MF_UNCHECKED));
     set_accessible_control_text(g_browse_button,
                                 rom_path_known() ? L"&Run" : L"&Browse", 1);
     set_accessible_control_text(g_pause_play_button, L"&Play", 1);
@@ -1401,16 +1408,10 @@ static void show_key_bindings(void) {
 
 static const wchar_t g_welcome_text[] =
     L"Welcome to Top Gear (SNES) Static Recompilation\r\n\r\n"
-    L"Version 2.1.1\r\n"
+    L"Version 2.2.0\r\n"
     L"\r\n"
-    L"General,\r\n"
-    L"* Menu fix: The original menu layout no longer flashes when using Up, Down, Left or Right.\r\n"
-    L"* Time Trial menu fixes: The L/R shoulder buttons now change the car filter correctly. Results text stays inside the menu and no longer leaves stray digits on the leaderboard.\r\n"
-    L"* Timing data fix: A corrupt or unreadable timing file is protected from being overwritten.\r\n"
-    L"* Settings improvements: Options forced by 2 player mode stay silent and do not change your saved 1 player settings.\r\n"
-    L"* Menu spacing: Fixed leftover difficulty text and moved the Center Screen message inside the border.\r\n"
-    L"* Menu sounds: Pages with only one choice stay silent when Up or Down cannot change the selection.\r\n"
-    L"\r\n"
+    L"General\r\n\r\n"
+    L"* Added an Experimental 60 FPS mode, disabled as default\r\n\r\n"
     L"Feedback on any issues is welcomed\r\n"
     L"\r\n"
     L"Frontend shortcuts\r\n"
@@ -1429,6 +1430,58 @@ static const wchar_t g_welcome_text[] =
     L"Region: USA NTSC\r\n"
     L"File type: .sfc\r\n"
     L"Place the ROM in the Rom folder or select Browse ROM.";
+
+static LRESULT CALLBACK experimental_notice_proc(HWND window,UINT message,WPARAM wp,LPARAM lp){
+    switch(message){
+    case WM_CREATE:
+        set_control_font(CreateWindowExW(0,L"STATIC",L"This is a experimental feature, feedback is welcomed if any issues appear",WS_CHILD|WS_VISIBLE|SS_CENTER,20,22,400,58,window,NULL,g_instance,NULL));
+        set_control_font(CreateWindowExW(0,L"BUTTON",L"Close",WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_DEFPUSHBUTTON,180,104,80,28,window,(HMENU)(INT_PTR)IDOK,g_instance,NULL));
+        return 0;
+    case WM_COMMAND:
+        if(LOWORD(wp)==IDOK||LOWORD(wp)==IDCANCEL){DestroyWindow(window);return 0;}
+        break;
+    case WM_CLOSE:DestroyWindow(window);return 0;
+    }
+    return DefWindowProcW(window,message,wp,lp);
+}
+static int show_experimental_notice(void){
+    WNDCLASSW cls;HWND notice;RECT parent;MSG message;int quit=0;
+    memset(&message,0,sizeof(message));
+    memset(&cls,0,sizeof(cls));cls.lpfnWndProc=experimental_notice_proc;cls.hInstance=g_instance;
+    cls.hCursor=LoadCursorW(NULL,IDC_ARROW);cls.hbrBackground=(HBRUSH)(COLOR_BTNFACE+1);cls.lpszClassName=L"TopGearExperimental60FPSNotice";
+    if(!RegisterClassW(&cls)&&GetLastError()!=ERROR_CLASS_ALREADY_EXISTS)return 0;
+    GetWindowRect(g_window,&parent);
+    notice=CreateWindowExW(WS_EX_DLGMODALFRAME,cls.lpszClassName,L"Experimental 60 FPS",WS_POPUP|WS_CAPTION|WS_SYSMENU,
+        parent.left+((parent.right-parent.left)-456)/2,parent.top+((parent.bottom-parent.top)-178)/2,456,178,g_window,NULL,g_instance,NULL);
+    if(!notice)return 0;
+    EnableWindow(g_window,FALSE);ShowWindow(notice,SW_SHOW);UpdateWindow(notice);SetFocus(GetDlgItem(notice,IDOK));
+    while(IsWindow(notice)){
+        int result=GetMessageW(&message,NULL,0,0);
+        if(result<=0){quit=result==0;DestroyWindow(notice);break;}
+        if(!IsDialogMessageW(notice,&message)){TranslateMessage(&message);DispatchMessageW(&message);}
+    }
+    EnableWindow(g_window,TRUE);SetActiveWindow(g_window);
+    if(quit)PostQuitMessage((int)message.wParam);
+    return 1;
+}
+static void set_experimental_60fps(int enabled){
+    int resume_after=g_game&&!g_paused;
+    if(resume_after)pause_game(L"Paused while Experimental 60 FPS is changed.");
+    if(enabled&&!g_frontend_settings.experimental_60fps_notice_shown){
+        if(!show_experimental_notice()){
+            set_status(L"The Experimental 60 FPS notice could not be opened.");update_controls();
+            if(resume_after&&g_game)play_game();return;
+        }
+        g_frontend_settings.experimental_60fps_notice_shown=1;
+    }
+    g_frontend_settings.experimental_60fps_enabled=enabled?1:0;
+    if(g_game)topgear_app_set_experimental_60fps_enabled(g_game,enabled);
+    if(!topgear_frontend_settings_win32_save(&g_frontend_settings,g_settings_ini_path))
+        set_status(L"The Experimental 60 FPS setting could not be saved.");
+    else set_status(enabled?L"Experimental 60 FPS enabled.":L"Experimental 60 FPS disabled.");
+    update_controls();
+    if(resume_after&&g_game)play_game();
+}
 
 static void show_frontend_settings(void) {
     int resume_after = g_game && !g_paused;
@@ -2461,6 +2514,7 @@ static void layout_controls(HWND window) {
     MoveWindow(g_fullscreen_checkbox, 676, 10, 112, 26, TRUE);
     MoveWindow(g_auto_run_checkbox, 798, 10,
                width > 820 ? 88 : 82, 26, TRUE);
+    MoveWindow(g_experimental_60fps_checkbox,894,10,94,26,TRUE);
     MoveWindow(g_status, 12, 48, width - 24, 24, TRUE);
 }
 
@@ -3234,6 +3288,7 @@ static HMENU create_menu_bar(void) {
     AppendMenuW(settings, MF_SEPARATOR, 0, NULL);
     AppendMenuW(settings, MF_STRING, ID_FULLSCREEN,
                 L"Use &Full Screen When Playing");
+    AppendMenuW(settings,MF_STRING,ID_EXPERIMENTAL_60FPS,L"Experimental &60 FPS");
     AppendMenuW(settings, MF_STRING, ID_AUTO_RUN,
                 L"&Auto-Run at Startup");
     AppendMenuW(settings, MF_SEPARATOR, 0, NULL);
@@ -3376,6 +3431,7 @@ static void initialize_paths_and_settings(void) {
 static void continue_startup_after_welcome(void) {
     if (!g_startup_pending) return;
     g_startup_pending = 0;
+    if(g_frontend_settings.experimental_60fps_enabled&&!g_frontend_settings.experimental_60fps_notice_shown)set_experimental_60fps(1);
     reset_pacing_clock();
     if (g_adjacent_rom_found) {
         if (g_frontend_settings.auto_run_on_load) {
@@ -3472,6 +3528,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX,
                 798, 10, 88, 26, window,
                 (HMENU)(INT_PTR)ID_AUTO_RUN, g_instance, NULL);
+            g_experimental_60fps_checkbox=CreateWindowExW(0,L"BUTTON",L"60 FPS",WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_AUTOCHECKBOX,894,10,94,26,window,(HMENU)(INT_PTR)ID_EXPERIMENTAL_60FPS,g_instance,NULL);
             /* The ROM path remains internal. Status is exposed as native
                static text, not as an editable toolbar field. */
             g_rom_path = CreateWindowExW(
@@ -3494,6 +3551,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             set_control_font(g_settings_button);
             set_control_font(g_fullscreen_checkbox);
             set_control_font(g_auto_run_checkbox);
+            set_control_font(g_experimental_60fps_checkbox);
             set_control_font(g_rom_path);
             set_control_font(g_status);
             SendMessageW(g_fullscreen_checkbox, BM_SETCHECK, BST_UNCHECKED, 0);
@@ -3507,7 +3565,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
 
         case WM_GETMINMAXINFO: {
             MINMAXINFO *info = (MINMAXINFO *)lparam;
-            info->ptMinTrackSize.x = 940;
+            info->ptMinTrackSize.x = 1020;
             info->ptMinTrackSize.y = 580;
             return 0;
         }
@@ -3535,6 +3593,8 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                 case ID_PAUSE_PLAY: toggle_pause_play(); return 0;
                 case ID_KEYS: show_key_bindings(); return 0;
                 case ID_FRONTEND_SETTINGS: show_frontend_settings(); return 0;
+                case ID_EXPERIMENTAL_60FPS:
+                    set_experimental_60fps(lparam ? SendMessageW(g_experimental_60fps_checkbox,BM_GETCHECK,0,0)==BST_CHECKED : !g_frontend_settings.experimental_60fps_enabled);return 0;
                 case ID_AUDIO_SETTINGS: show_audio_settings(); return 0;
                 case ID_PROFILE: show_profile(); return 0;
                 case ID_LEADERBOARD: show_leaderboard(); return 0;
@@ -3580,7 +3640,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
                         static const wchar_t about[] =
                             L"F1 - Open the Welcome window\r\n\r\n"
                             L"Top Gear (SNES) Static Recompilation\r\n"
-                            L"Version 2.1.1\r\n\r\n"
+                            L"Version 2.2.0\r\n\r\n"
                             L"Title: Top Gear\r\n"
                             L"Region: USA NTSC\r\n"
                             L"File type: .sfc";
@@ -3704,6 +3764,7 @@ static LRESULT CALLBACK window_proc(HWND window, UINT message,
             if(!load_time_trial_data_win32(g_game))
                 MessageBoxW(window,L"The timing database could not be loaded. Its existing file has been left unchanged and timing saves are blocked. Close the game, restore a valid Data/time-trial.dat, then load the ROM again.",APP_TITLE,MB_OK|MB_ICONERROR);
             (void)topgear_app_player_settings_load(g_game,g_player_settings_path);
+            topgear_app_set_experimental_60fps_enabled(g_game,g_frontend_settings.experimental_60fps_enabled);
             if(g_frontend_settings.bottom_screen_saved)
                 topgear_app_set_bottom_screen_enabled(g_game,g_frontend_settings.bottom_screen_enabled);
             if(g_frontend_settings.extra_cpu_drivers_saved)
